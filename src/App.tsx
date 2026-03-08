@@ -10,6 +10,8 @@ import Dashboard from "./pages/Dashboard";
 import Apps from "./pages/Apps";
 import Profile from "./pages/Profile";
 import SettingsPage from "./pages/SettingsPage";
+import ActivityPage from "./pages/ActivityPage";
+import SubscriptionPage from "./pages/SubscriptionPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
