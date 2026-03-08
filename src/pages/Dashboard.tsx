@@ -1,6 +1,7 @@
-import { AppWindow, Activity, Zap, ArrowRight, Clock, Heart, DollarSign, BarChart3, MessageCircle, CalendarCheck } from "lucide-react";
+import { AppWindow, Activity, Zap, ArrowRight, Clock, Heart, DollarSign, BarChart3, MessageCircle, CalendarCheck, ExternalLink } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
+import { useAppLauncher } from "@/hooks/useAppLauncher";
 import { Link } from "react-router-dom";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -30,11 +31,13 @@ const recentActivity = [
 export default function Dashboard() {
   const { data: profile } = useProfile();
   const { data: apps } = useApps();
+  const { launchApp } = useAppLauncher();
 
   const firstName = profile?.full_name?.split(" ")[0] || "Usuário";
   const totalApps = apps?.length ?? 0;
   const activeApps = apps?.filter((a) => a.user_access === "active").length ?? 0;
   const featuredApps = apps?.filter((a) => a.app_status === "active" && a.user_access === "active").slice(0, 4) ?? [];
+  const allActiveApps = apps?.filter((a) => a.app_status === "active") ?? [];
 
   const stats = [
     { label: "Aplicativos Disponíveis", value: String(totalApps), icon: AppWindow, color: "text-primary" },
@@ -79,19 +82,56 @@ export default function Dashboard() {
               const Icon = iconMap[app.app_key] ?? BarChart3;
               const iconColor = colorMap[app.app_key] ?? "text-primary";
               return (
-                <Link
+                <button
                   key={app.id}
-                  to="/apps"
-                  className="rounded-xl border border-border bg-card p-4 card-glow flex flex-col items-center gap-3 text-center group"
+                  onClick={() => launchApp(app)}
+                  className="rounded-xl border border-border bg-card p-4 card-glow flex flex-col items-center gap-3 text-center group hover:border-primary/30 transition-colors"
                 >
                   <div className="h-10 w-10 rounded-lg bg-secondary/50 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                     <Icon className={`h-5 w-5 ${iconColor}`} />
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">{app.app_name}</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5">Ativo</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1 justify-center">
+                      Abrir <ExternalLink className="h-2.5 w-2.5" />
+                    </p>
                   </div>
-                </Link>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* All Apps Quick Access */}
+      {allActiveApps.length > 0 && (
+        <div>
+          <h2 className="font-display text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+            <Zap className="h-4 w-4 text-primary" /> Aplicativos mais utilizados
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {allActiveApps.map((app) => {
+              const Icon = iconMap[app.app_key] ?? BarChart3;
+              const iconColor = colorMap[app.app_key] ?? "text-primary";
+              const hasAccess = app.user_access === "active";
+              return (
+                <button
+                  key={app.id}
+                  onClick={() => launchApp(app)}
+                  disabled={!hasAccess}
+                  className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 card-glow group hover:border-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
+                >
+                  <div className="h-9 w-9 rounded-lg bg-secondary/50 flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
+                    <Icon className={`h-4 w-4 ${iconColor}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">{app.app_name}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{app.app_description}</p>
+                  </div>
+                  {hasAccess && (
+                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                  )}
+                </button>
               );
             })}
           </div>

@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
-import { Heart, DollarSign, BarChart3, MessageCircle, CalendarCheck, ArrowRight, CheckCircle2, Clock, XCircle, Search, Filter } from "lucide-react";
+import { Heart, DollarSign, BarChart3, MessageCircle, CalendarCheck, ArrowRight, CheckCircle2, Clock, XCircle, Search, Filter, ExternalLink } from "lucide-react";
 import { useApps } from "@/hooks/useApps";
+import { useAppLauncher } from "@/hooks/useAppLauncher";
 import { Input } from "@/components/ui/input";
 import { AppDetailModal } from "@/components/AppDetailModal";
 
@@ -24,6 +25,7 @@ type FilterType = "all" | "active" | "accessible";
 
 export default function Apps() {
   const { data: apps, isLoading } = useApps();
+  const { launchApp } = useAppLauncher();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterType>("all");
   const [selectedApp, setSelectedApp] = useState<typeof filteredApps[number] | null>(null);
@@ -161,12 +163,12 @@ export default function Apps() {
                     disabled={!available}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Future: navigate to app
+                      launchApp(app);
                     }}
                     className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary/10 px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
                     {available ? "Acessar" : app.app_status === "coming_soon" ? "Em breve" : "Indisponível"}
-                    {available && <ArrowRight className="h-4 w-4" />}
+                    {available && <ExternalLink className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
