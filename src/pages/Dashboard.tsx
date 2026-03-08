@@ -1,21 +1,30 @@
-import { AppWindow, Activity, Zap, ArrowRight, Clock } from "lucide-react";
+import { AppWindow, Activity, Zap, ArrowRight, Clock, Heart, DollarSign, BarChart3, MessageCircle, CalendarCheck } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
 import { Link } from "react-router-dom";
+
+const iconMap: Record<string, React.ElementType> = {
+  fitpulse: Heart,
+  financeflow: DollarSign,
+  marketflow: BarChart3,
+  whatsapp_auto: MessageCircle,
+  ia_agenda: CalendarCheck,
+};
+
+const colorMap: Record<string, string> = {
+  fitpulse: "text-rose-400",
+  financeflow: "text-emerald-400",
+  marketflow: "text-blue-400",
+  whatsapp_auto: "text-green-400",
+  ia_agenda: "text-violet-400",
+};
 
 const recentActivity = [
   { action: "FitPulse acessado", time: "Há 2 minutos" },
   { action: "FinanceFlow — relatório exportado", time: "Há 15 minutos" },
   { action: "MarketFlow — campanha criada", time: "Há 1 hora" },
-  { action: "WhatsApp Auto — automação ativada", time: "Há 3 horas" },
+  { action: "IA Agenda — agendamento criado", time: "Há 2 horas" },
   { action: "Configurações de perfil atualizadas", time: "Há 1 dia" },
-];
-
-const shortcuts = [
-  { label: "Abrir FitPulse", href: "/apps" },
-  { label: "Ver relatórios", href: "/apps" },
-  { label: "Configurar conta", href: "/settings" },
-  { label: "Ver perfil", href: "/profile" },
 ];
 
 export default function Dashboard() {
@@ -25,10 +34,11 @@ export default function Dashboard() {
   const firstName = profile?.full_name?.split(" ")[0] || "Usuário";
   const totalApps = apps?.length ?? 0;
   const activeApps = apps?.filter((a) => a.user_access === "active").length ?? 0;
+  const featuredApps = apps?.filter((a) => a.app_status === "active" && a.user_access === "active").slice(0, 4) ?? [];
 
   const stats = [
     { label: "Aplicativos Disponíveis", value: String(totalApps), icon: AppWindow, color: "text-primary" },
-    { label: "Aplicativos Ativos", value: String(activeApps), icon: Activity, color: "text-primary" },
+    { label: "Com Acesso Ativo", value: String(activeApps), icon: Activity, color: "text-primary" },
     { label: "Ações Rápidas", value: "12", icon: Zap, color: "text-primary" },
   ];
 
@@ -53,6 +63,41 @@ export default function Dashboard() {
         ))}
       </div>
 
+      {/* Featured Apps */}
+      {featuredApps.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
+              <AppWindow className="h-4 w-4 text-primary" /> Seus Aplicativos
+            </h2>
+            <Link to="/apps" className="text-xs text-primary hover:underline flex items-center gap-1">
+              Ver todos <ArrowRight className="h-3 w-3" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {featuredApps.map((app) => {
+              const Icon = iconMap[app.app_key] ?? BarChart3;
+              const iconColor = colorMap[app.app_key] ?? "text-primary";
+              return (
+                <Link
+                  key={app.id}
+                  to="/apps"
+                  className="rounded-xl border border-border bg-card p-4 card-glow flex flex-col items-center gap-3 text-center group"
+                >
+                  <div className="h-10 w-10 rounded-lg bg-secondary/50 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                    <Icon className={`h-5 w-5 ${iconColor}`} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{app.app_name}</p>
+                    <p className="text-[11px] text-muted-foreground mt-0.5">Ativo</p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <div className="lg:col-span-3 rounded-xl border border-border bg-card p-5">
           <h2 className="font-display text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
@@ -73,7 +118,11 @@ export default function Dashboard() {
             <Zap className="h-4 w-4 text-primary" /> Atalhos Rápidos
           </h2>
           <div className="space-y-2">
-            {shortcuts.map((s) => (
+            {[
+              { label: "Meus Aplicativos", href: "/apps" },
+              { label: "Configurar conta", href: "/settings" },
+              { label: "Ver perfil", href: "/profile" },
+            ].map((s) => (
               <Link
                 key={s.label}
                 to={s.href}
