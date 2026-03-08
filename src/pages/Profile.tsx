@@ -2,11 +2,13 @@ import { Mail, Calendar, AppWindow, Activity, Pencil, Check, X, Camera } from "l
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
 import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -20,6 +22,19 @@ export default function Profile() {
   const [name, setName] = useState("");
   const [avatarLoading, setAvatarLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: logCount } = useQuery({
+    queryKey: ["profile-log-count", user?.id],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("app_usage_logs")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user!.id);
+      if (error) throw error;
+      return count ?? 0;
+    },
+    enabled: !!user,
+  });
 
   const activeApps = apps?.filter((a) => a.user_access === "active").length ?? 0;
   const initials = profile?.full_name
@@ -35,9 +50,13 @@ export default function Profile() {
   };
 
   const handleSave = async () => {
+    if (!name.trim()) {
+      toast({ variant: "destructive", title: "Nome não pode ser vazio" });
+      return;
+    }
     try {
-      await updateProfile.mutateAsync({ full_name: name });
-      toast({ title: "Perfil atualizado!" });
+      await updateProfile.mutateAsync({ full_name: name.trim() });
+      toast({ title: "Perfil atualizado com sucesso!" });
       setEditing(false);
     } catch {
       toast({ variant: "destructive", title: "Erro ao atualizar perfil" });
@@ -75,7 +94,7 @@ export default function Profile() {
 
     try {
       await updateProfile.mutateAsync({ avatar_url: publicUrl });
-      toast({ title: "Avatar atualizado!" });
+      toast({ title: "Avatar atualizado com sucesso!" });
     } catch {
       toast({ variant: "destructive", title: "Erro ao salvar avatar" });
     }
@@ -83,7 +102,16 @@ export default function Profile() {
   };
 
   if (isLoading) {
-    return <div className="max-w-3xl mx-auto space-y-8"><div className="h-40 rounded-xl bg-card animate-pulse" /></div>;
+    return (
+      <div className="max-w-3xl mx-auto space-y-8">
+        <Skeleton className="h-10 w-32 rounded-lg" />
+        <Skeleton className="h-40 rounded-xl" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Skeleton className="h-24 rounded-xl" />
+          <Skeleton className="h-24 rounded-xl" />
+        </div>
+      </div>
+    );
   }
 
   const createdDate = profile?.created_at
@@ -132,7 +160,11 @@ export default function Profile() {
               <div className="flex items-center gap-2">
                 <Input value={name} onChange={(e) => setName(e.target.value)} className="max-w-xs" />
                 <Button size="icon" variant="ghost" onClick={handleSave} disabled={updateProfile.isPending}>
-                  <Check className="h-4 w-4 text-primary" />
+                  {updateProfile.isPending ? (
+                    <div className="h-4 w-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <Check className="h-4 w-4 text-primary" />
+                  )}
                 </Button>
                 <Button size="icon" variant="ghost" onClick={() => setEditing(false)}>
                   <X className="h-4 w-4" />
@@ -141,7 +173,7 @@ export default function Profile() {
             ) : (
               <div className="flex items-center gap-2">
                 <h2 className="font-display text-xl font-bold text-foreground">{profile?.full_name || "Sem nome"}</h2>
-                <button onClick={handleEdit} className="text-muted-foreground hover:text-primary">
+                <button onClick={handleEdit} className="text-muted-foreground hover:text-primary transition-colors">
                   <Pencil className="h-4 w-4" />
                 </button>
               </div>
@@ -160,16 +192,16 @@ export default function Profile() {
         <div className="rounded-xl border border-border bg-card p-5 card-glow">
           <div className="flex items-center gap-3 mb-2">
             <AppWindow className="h-5 w-5 text-primary" />
-            <span className="text-sm text-muted-foreground">Apps utilizados</span>
+            <span className="text-sm text-muted-foreground">Apps com acesso</span>
           </div>
           <p className="font-display text-3xl font-bold text-foreground">{activeApps}</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-5 card-glow">
           <div className="flex items-center gap-3 mb-2">
             <Activity className="h-5 w-5 text-primary" />
-            <span className="text-sm text-muted-foreground">Sessões este mês</span>
+            <span className="text-sm text-muted-foreground">Total de acessos</span>
           </div>
-          <p className="font-display text-3xl font-bold text-foreground">47</p>
+          <p className="font-display text-3xl font-bold text-foreground">{logCount ?? 0}</p>
         </div>
       </div>
     </div>
