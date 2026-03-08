@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_usage_logs: {
+        Row: {
+          accessed_at: string
+          app_key: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          accessed_at?: string
+          app_key: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          accessed_at?: string
+          app_key?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       platform_apps: {
         Row: {
           app_description: string | null
