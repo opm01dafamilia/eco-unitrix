@@ -1,4 +1,4 @@
-import { LayoutDashboard, Grid3X3, User, Settings, Hexagon, LogOut } from "lucide-react";
+import { LayoutDashboard, Grid3X3, User, Settings, Hexagon, LogOut, Activity, CreditCard } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
