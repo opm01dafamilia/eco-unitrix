@@ -1,0 +1,1 @@
+INSERT INTO public.platform_apps (app_key, app_name, app_description, app_status, app_url) VALUES ('ia_agenda', 'IA Agenda', 'Agendamentos e gestão de horários', 'active', '/apps/ia_agenda');
