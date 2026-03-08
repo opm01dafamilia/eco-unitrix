@@ -1,20 +1,25 @@
-import { Mail, Calendar, AppWindow, Activity, Pencil, Check, X } from "lucide-react";
+import { Mail, Calendar, AppWindow, Activity, Pencil, Check, X, Camera } from "lucide-react";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
-import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 export default function Profile() {
   const { data: profile, isLoading } = useProfile();
   const { data: apps } = useApps();
+  const { user } = useAuth();
   const updateProfile = useUpdateProfile();
   const { toast } = useToast();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
+  const [avatarLoading, setAvatarLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const activeApps = apps?.filter((a) => a.user_access === "active").length ?? 0;
   const initials = profile?.full_name
@@ -39,6 +44,44 @@ export default function Profile() {
     }
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({ variant: "destructive", title: "Selecione uma imagem" });
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast({ variant: "destructive", title: "Máximo 2MB" });
+      return;
+    }
+
+    setAvatarLoading(true);
+    const ext = file.name.split(".").pop();
+    const path = `${user.id}/avatar.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("avatars")
+      .upload(path, file, { upsert: true });
+
+    if (uploadError) {
+      toast({ variant: "destructive", title: "Erro no upload", description: uploadError.message });
+      setAvatarLoading(false);
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
+
+    try {
+      await updateProfile.mutateAsync({ avatar_url: publicUrl });
+      toast({ title: "Avatar atualizado!" });
+    } catch {
+      toast({ variant: "destructive", title: "Erro ao salvar avatar" });
+    }
+    setAvatarLoading(false);
+  };
+
   if (isLoading) {
     return <div className="max-w-3xl mx-auto space-y-8"><div className="h-40 rounded-xl bg-card animate-pulse" /></div>;
   }
@@ -53,8 +96,36 @@ export default function Profile() {
 
       <div className="rounded-xl border border-border bg-card p-6 md:p-8">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          <div className="h-20 w-20 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary font-display shrink-0">
-            {initials}
+          <div className="relative group shrink-0">
+            {profile?.avatar_url ? (
+              <img
+                src={profile.avatar_url}
+                alt="Avatar"
+                className="h-20 w-20 rounded-full object-cover border-2 border-border"
+              />
+            ) : (
+              <div className="h-20 w-20 rounded-full bg-primary/20 flex items-center justify-center text-2xl font-bold text-primary font-display border-2 border-border">
+                {initials}
+              </div>
+            )}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={avatarLoading}
+              className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+            >
+              {avatarLoading ? (
+                <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Camera className="h-5 w-5 text-white" />
+              )}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarUpload}
+            />
           </div>
           <div className="text-center sm:text-left space-y-1 flex-1">
             {editing ? (
