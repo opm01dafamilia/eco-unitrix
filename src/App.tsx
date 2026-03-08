@@ -38,6 +38,8 @@ const App = () => (
               <Route path="/apps" element={<Apps />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/activity" element={<ActivityPage />} />
+              <Route path="/subscription" element={<SubscriptionPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
