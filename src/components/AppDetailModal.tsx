@@ -1,7 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle2, Clock, XCircle, Shield } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock, XCircle, Shield, ExternalLink } from "lucide-react";
 import { Heart, DollarSign, BarChart3, MessageCircle, CalendarCheck } from "lucide-react";
+import { useAppLauncher } from "@/hooks/useAppLauncher";
 
 const iconMap: Record<string, React.ElementType> = {
   fitpulse: Heart,
@@ -42,6 +43,8 @@ interface AppDetailModalProps {
 }
 
 export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps) {
+  const { launchApp } = useAppLauncher();
+
   if (!app) return null;
 
   const Icon = iconMap[app.app_key] ?? BarChart3;
@@ -85,9 +88,10 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
           <Button
             className="w-full"
             disabled={!available}
+            onClick={() => launchApp(app)}
           >
             {available ? (
-              <>Acessar {app.app_name} <ArrowRight className="h-4 w-4 ml-1" /></>
+              <>Acessar {app.app_name} <ExternalLink className="h-4 w-4 ml-1" /></>
             ) : app.app_status === "coming_soon" ? "Em breve" : "Solicitar acesso"}
           </Button>
         </div>
