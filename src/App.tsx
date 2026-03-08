@@ -10,6 +10,8 @@ import Dashboard from "./pages/Dashboard";
 import Apps from "./pages/Apps";
 import Profile from "./pages/Profile";
 import SettingsPage from "./pages/SettingsPage";
+import ActivityPage from "./pages/ActivityPage";
+import SubscriptionPage from "./pages/SubscriptionPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -36,6 +38,8 @@ const App = () => (
               <Route path="/apps" element={<Apps />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/activity" element={<ActivityPage />} />
+              <Route path="/subscription" element={<SubscriptionPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

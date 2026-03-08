@@ -1,4 +1,4 @@
-import { LayoutDashboard, Grid3X3, User, Settings, Hexagon, LogOut } from "lucide-react";
+import { LayoutDashboard, Grid3X3, User, Settings, Hexagon, LogOut, Activity, CreditCard } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -19,6 +19,8 @@ import {
 const navItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Meus Aplicativos", url: "/apps", icon: Grid3X3 },
+  { title: "Atividade", url: "/activity", icon: Activity },
+  { title: "Assinatura", url: "/subscription", icon: CreditCard },
   { title: "Perfil", url: "/profile", icon: User },
   { title: "Configurações", url: "/settings", icon: Settings },
 ];
