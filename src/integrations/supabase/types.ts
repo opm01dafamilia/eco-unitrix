@@ -37,6 +37,7 @@ export type Database = {
       }
       platform_apps: {
         Row: {
+          app_category: string
           app_description: string | null
           app_key: string
           app_name: string
@@ -44,8 +45,12 @@ export type Database = {
           app_url: string | null
           created_at: string
           id: string
+          is_featured: boolean
+          is_visible: boolean
+          sort_order: number
         }
         Insert: {
+          app_category?: string
           app_description?: string | null
           app_key: string
           app_name: string
@@ -53,8 +58,12 @@ export type Database = {
           app_url?: string | null
           created_at?: string
           id?: string
+          is_featured?: boolean
+          is_visible?: boolean
+          sort_order?: number
         }
         Update: {
+          app_category?: string
           app_description?: string | null
           app_key?: string
           app_name?: string
@@ -62,6 +71,9 @@ export type Database = {
           app_url?: string | null
           created_at?: string
           id?: string
+          is_featured?: boolean
+          is_visible?: boolean
+          sort_order?: number
         }
         Relationships: []
       }

@@ -1,24 +1,8 @@
-import { AppWindow, Activity, Zap, ArrowRight, Clock, Heart, DollarSign, BarChart3, MessageCircle, CalendarCheck, ExternalLink } from "lucide-react";
+import { AppWindow, Activity, Zap, ArrowRight, Clock, ExternalLink, Star } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
 import { Link } from "react-router-dom";
-
-const iconMap: Record<string, React.ElementType> = {
-  fitpulse: Heart,
-  financeflow: DollarSign,
-  marketflow: BarChart3,
-  whatsapp_auto: MessageCircle,
-  ia_agenda: CalendarCheck,
-};
-
-const colorMap: Record<string, string> = {
-  fitpulse: "text-rose-400",
-  financeflow: "text-emerald-400",
-  marketflow: "text-blue-400",
-  whatsapp_auto: "text-green-400",
-  ia_agenda: "text-violet-400",
-};
 
 const recentActivity = [
   { action: "FitPulse acessado", time: "Há 2 minutos" },
@@ -34,10 +18,11 @@ export default function Dashboard() {
   const { launchApp } = useAppLauncher();
 
   const firstName = profile?.full_name?.split(" ")[0] || "Usuário";
-  const totalApps = apps?.length ?? 0;
-  const activeApps = apps?.filter((a) => a.user_access === "active").length ?? 0;
-  const featuredApps = apps?.filter((a) => a.app_status === "active" && a.user_access === "active").slice(0, 4) ?? [];
-  const allActiveApps = apps?.filter((a) => a.app_status === "active") ?? [];
+  const visibleApps = apps?.filter((a) => a.is_visible) ?? [];
+  const totalApps = visibleApps.length;
+  const activeApps = visibleApps.filter((a) => a.user_access === "active").length;
+  const featuredApps = visibleApps.filter((a) => a.is_featured && a.app_status === "active").slice(0, 4);
+  const allActiveApps = visibleApps.filter((a) => a.app_status === "active");
 
   const stats = [
     { label: "Aplicativos Disponíveis", value: String(totalApps), icon: AppWindow, color: "text-primary" },
@@ -71,7 +56,7 @@ export default function Dashboard() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
-              <AppWindow className="h-4 w-4 text-primary" /> Seus Aplicativos
+              <Star className="h-4 w-4 text-primary" /> Apps em Destaque
             </h2>
             <Link to="/apps" className="text-xs text-primary hover:underline flex items-center gap-1">
               Ver todos <ArrowRight className="h-3 w-3" />
@@ -79,21 +64,21 @@ export default function Dashboard() {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {featuredApps.map((app) => {
-              const Icon = iconMap[app.app_key] ?? BarChart3;
-              const iconColor = colorMap[app.app_key] ?? "text-primary";
+              const hasAccess = app.user_access === "active";
               return (
                 <button
                   key={app.id}
                   onClick={() => launchApp(app)}
-                  className="rounded-xl border border-border bg-card p-4 card-glow flex flex-col items-center gap-3 text-center group hover:border-primary/30 transition-colors"
+                  disabled={!hasAccess}
+                  className="rounded-xl border border-primary/20 ring-1 ring-primary/10 bg-card p-4 card-glow flex flex-col items-center gap-3 text-center group hover:border-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <div className="h-10 w-10 rounded-lg bg-secondary/50 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
-                    <Icon className={`h-5 w-5 ${iconColor}`} />
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <span className="text-lg font-display font-bold text-primary">{app.app_name.charAt(0)}</span>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">{app.app_name}</p>
                     <p className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1 justify-center">
-                      Abrir <ExternalLink className="h-2.5 w-2.5" />
+                      {hasAccess ? <>Abrir <ExternalLink className="h-2.5 w-2.5" /></> : "Sem acesso"}
                     </p>
                   </div>
                 </button>
@@ -111,8 +96,6 @@ export default function Dashboard() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {allActiveApps.map((app) => {
-              const Icon = iconMap[app.app_key] ?? BarChart3;
-              const iconColor = colorMap[app.app_key] ?? "text-primary";
               const hasAccess = app.user_access === "active";
               return (
                 <button
@@ -122,7 +105,7 @@ export default function Dashboard() {
                   className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 card-glow group hover:border-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
                 >
                   <div className="h-9 w-9 rounded-lg bg-secondary/50 flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
-                    <Icon className={`h-4 w-4 ${iconColor}`} />
+                    <span className="text-sm font-display font-bold text-primary">{app.app_name.charAt(0)}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground truncate">{app.app_name}</p>

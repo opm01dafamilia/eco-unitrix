@@ -17,6 +17,16 @@ export function useAppLauncher() {
       return;
     }
 
+    if (app.app_status === "maintenance") {
+      toast.warning(`${app.app_name} está em manutenção. Tente novamente mais tarde.`);
+      return;
+    }
+
+    if (app.app_status === "disabled") {
+      toast.error(`${app.app_name} está desativado no momento.`);
+      return;
+    }
+
     if (app.user_access !== "active") {
       toast.error(`Você não possui acesso ao ${app.app_name}. Entre em contato com o suporte.`);
       return;
