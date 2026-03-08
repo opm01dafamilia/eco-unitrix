@@ -14,7 +14,101 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      platform_apps: {
+        Row: {
+          app_description: string | null
+          app_key: string
+          app_name: string
+          app_status: string
+          app_url: string | null
+          created_at: string
+          id: string
+        }
+        Insert: {
+          app_description?: string | null
+          app_key: string
+          app_name: string
+          app_status?: string
+          app_url?: string | null
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          app_description?: string | null
+          app_key?: string
+          app_name?: string
+          app_status?: string
+          app_url?: string | null
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          theme_preference: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          theme_preference?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          theme_preference?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_app_access: {
+        Row: {
+          access_status: string
+          app_key: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          access_status?: string
+          app_key: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          access_status?: string
+          app_key?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_app_access_app_key_fkey"
+            columns: ["app_key"]
+            isOneToOne: false
+            referencedRelation: "platform_apps"
+            referencedColumns: ["app_key"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
