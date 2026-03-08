@@ -1,6 +1,8 @@
-import { LayoutDashboard, Grid3X3, User, Settings, Hexagon } from "lucide-react";
+import { LayoutDashboard, Grid3X3, User, Settings, Hexagon, LogOut } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { useProfile } from "@/hooks/useProfile";
 import {
   Sidebar,
   SidebarContent,
@@ -25,6 +27,8 @@ export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const { signOut } = useAuth();
+  const { data: profile } = useProfile();
 
   return (
     <Sidebar collapsible="icon">
@@ -66,13 +70,20 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-4 space-y-2">
         {!collapsed && (
           <div className="rounded-lg border border-border bg-secondary/50 p-3">
-            <p className="text-xs text-muted-foreground">Plano atual</p>
-            <p className="text-sm font-medium text-foreground">Professional</p>
+            <p className="text-xs text-muted-foreground">Logado como</p>
+            <p className="text-sm font-medium text-foreground truncate">{profile?.full_name || profile?.email || "..."}</p>
           </div>
         )}
+        <button
+          onClick={signOut}
+          className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          {!collapsed && <span>Sair</span>}
+        </button>
       </SidebarFooter>
     </Sidebar>
   );
