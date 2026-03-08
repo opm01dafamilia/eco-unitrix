@@ -1,0 +1,1 @@
+UPDATE public.platform_apps SET app_url = '/apps/whatsapp_auto' WHERE app_key = 'whatsapp_auto' AND app_url IS NULL
