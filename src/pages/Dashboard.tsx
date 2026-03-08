@@ -1,21 +1,52 @@
-import { AppWindow, Activity, Zap, ArrowRight, Clock, ExternalLink, Star } from "lucide-react";
+import { AppWindow, Activity, Zap, ArrowRight, Clock, ExternalLink, Star, AlertTriangle, Crown } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
-
-const recentActivity = [
-  { action: "FitPulse acessado", time: "Há 2 minutos" },
-  { action: "FinanceFlow — relatório exportado", time: "Há 15 minutos" },
-  { action: "MarketFlow — campanha criada", time: "Há 1 hora" },
-  { action: "IA Agenda — agendamento criado", time: "Há 2 horas" },
-  { action: "Configurações de perfil atualizadas", time: "Há 1 dia" },
-];
+import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export default function Dashboard() {
-  const { data: profile } = useProfile();
-  const { data: apps } = useApps();
+  const { user } = useAuth();
+  const { data: profile, isLoading: profileLoading } = useProfile();
+  const { data: apps, isLoading: appsLoading, isError: appsError } = useApps();
   const { launchApp } = useAppLauncher();
+
+  const { data: recentLogs } = useQuery({
+    queryKey: ["recent-logs", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("app_usage_logs")
+        .select("*")
+        .eq("user_id", user!.id)
+        .order("accessed_at", { ascending: false })
+        .limit(5);
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const { data: subscription } = useQuery({
+    queryKey: ["user-subscription-dash", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_subscriptions")
+        .select("*, subscription_plans(*)")
+        .eq("user_id", user!.id)
+        .eq("status", "active")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
 
   const firstName = profile?.full_name?.split(" ")[0] || "Usuário";
   const visibleApps = apps?.filter((a) => a.is_visible) ?? [];
@@ -23,6 +54,9 @@ export default function Dashboard() {
   const activeApps = visibleApps.filter((a) => a.user_access === "active").length;
   const featuredApps = visibleApps.filter((a) => a.is_featured && a.app_status === "active").slice(0, 4);
   const allActiveApps = visibleApps.filter((a) => a.app_status === "active");
+  const plan = subscription?.subscription_plans as { plan_name: string } | null;
+
+  const isLoading = profileLoading || appsLoading;
 
   const stats = [
     { label: "Aplicativos Disponíveis", value: String(totalApps), icon: AppWindow, color: "text-primary" },
@@ -30,29 +64,76 @@ export default function Dashboard() {
     { label: "Ações Rápidas", value: "12", icon: Zap, color: "text-primary" },
   ];
 
+  const appNameMap = new Map(visibleApps.map((a) => [a.app_key, a.app_name]));
+
   return (
     <div className="max-w-6xl mx-auto space-y-8">
+      {/* Header */}
       <div>
         <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">
-          Bem-vindo, <span className="gradient-text">{firstName}</span>
+          Bem-vindo, <span className="gradient-text">{isLoading ? "..." : firstName}</span>
         </h1>
         <p className="text-muted-foreground mt-1">Aqui está o resumo da sua plataforma.</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {stats.map((s) => (
-          <div key={s.label} className="rounded-xl border border-border bg-card p-5 card-glow">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">{s.label}</p>
-              <s.icon className={`h-5 w-5 ${s.color}`} />
-            </div>
-            <p className="font-display text-3xl font-bold text-foreground mt-2">{s.value}</p>
+      {/* Stats */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-24 rounded-xl" />
+          ))}
+        </div>
+      ) : appsError ? (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5 flex items-center gap-3">
+          <AlertTriangle className="h-5 w-5 text-destructive shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-foreground">Erro ao carregar dados</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Não foi possível carregar os aplicativos. Tente recarregar a página.</p>
           </div>
-        ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {stats.map((s) => (
+            <div key={s.label} className="rounded-xl border border-border bg-card p-5 card-glow">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">{s.label}</p>
+                <s.icon className={`h-5 w-5 ${s.color}`} />
+              </div>
+              <p className="font-display text-3xl font-bold text-foreground mt-2">{s.value}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Account Summary */}
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h2 className="font-display text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+          <Crown className="h-4 w-4 text-primary" /> Resumo da Conta
+        </h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+          <div>
+            <p className="text-muted-foreground">Plano</p>
+            <p className="font-medium text-foreground mt-0.5">{plan?.plan_name ?? "—"}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Apps com acesso</p>
+            <p className="font-medium text-foreground mt-0.5">{activeApps}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Total de acessos</p>
+            <p className="font-medium text-foreground mt-0.5">{recentLogs?.length ?? 0}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Membro desde</p>
+            <p className="font-medium text-foreground mt-0.5">
+              {profile?.created_at ? format(new Date(profile.created_at), "MMM yyyy", { locale: ptBR }) : "—"}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Featured Apps */}
-      {featuredApps.length > 0 && (
+      {!isLoading && featuredApps.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
@@ -89,7 +170,7 @@ export default function Dashboard() {
       )}
 
       {/* All Apps Quick Access */}
-      {allActiveApps.length > 0 && (
+      {!isLoading && allActiveApps.length > 0 && (
         <div>
           <h2 className="font-display text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
             <Zap className="h-4 w-4 text-primary" /> Aplicativos mais utilizados
@@ -122,18 +203,29 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Recent Activity - now from real data */}
         <div className="lg:col-span-3 rounded-xl border border-border bg-card p-5">
           <h2 className="font-display text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
             <Clock className="h-4 w-4 text-primary" /> Atividade Recente
           </h2>
-          <div className="space-y-3">
-            {recentActivity.map((item, i) => (
-              <div key={i} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                <span className="text-sm text-foreground">{item.action}</span>
-                <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">{item.time}</span>
-              </div>
-            ))}
-          </div>
+          {!recentLogs || recentLogs.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground">
+              <Activity className="h-8 w-8 mx-auto mb-2 opacity-40" />
+              <p className="text-sm">Nenhuma atividade registrada ainda.</p>
+              <p className="text-xs mt-1">Acesse um aplicativo para começar.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {recentLogs.map((log) => (
+                <div key={log.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                  <span className="text-sm text-foreground">{appNameMap.get(log.app_key) ?? log.app_key} acessado</span>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">
+                    {format(new Date(log.accessed_at), "dd MMM, HH:mm", { locale: ptBR })}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="lg:col-span-2 rounded-xl border border-border bg-card p-5">
@@ -145,6 +237,7 @@ export default function Dashboard() {
               { label: "Meus Aplicativos", href: "/apps" },
               { label: "Configurar conta", href: "/settings" },
               { label: "Ver perfil", href: "/profile" },
+              { label: "Minha assinatura", href: "/subscription" },
             ].map((s) => (
               <Link
                 key={s.label}

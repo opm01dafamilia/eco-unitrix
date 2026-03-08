@@ -1,38 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Heart, DollarSign, BarChart3, MessageCircle, CalendarCheck, Clock, Activity } from "lucide-react";
+import { useApps } from "@/hooks/useApps";
+import { Clock, Activity, AlertTriangle, AppWindow } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-const iconMap: Record<string, React.ElementType> = {
-  fitpulse: Heart,
-  financeflow: DollarSign,
-  marketflow: BarChart3,
-  whatsapp_auto: MessageCircle,
-  ia_agenda: CalendarCheck,
-};
-
-const colorMap: Record<string, string> = {
-  fitpulse: "text-rose-400",
-  financeflow: "text-emerald-400",
-  marketflow: "text-blue-400",
-  whatsapp_auto: "text-green-400",
-  ia_agenda: "text-violet-400",
-};
-
-const nameMap: Record<string, string> = {
-  fitpulse: "FitPulse",
-  financeflow: "FinanceFlow",
-  marketflow: "MarketFlow",
-  whatsapp_auto: "WhatsApp Auto",
-  ia_agenda: "IA Agenda",
-};
-
 export default function ActivityPage() {
   const { user } = useAuth();
+  const { data: apps } = useApps();
 
-  const { data: logs, isLoading } = useQuery({
+  const { data: logs, isLoading, isError, refetch } = useQuery({
     queryKey: ["app-usage-logs", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -47,6 +26,7 @@ export default function ActivityPage() {
     enabled: !!user,
   });
 
+  const appNameMap = new Map(apps?.map((a) => [a.app_key, a.app_name]) ?? []);
   const uniqueApps = new Set(logs?.map((l) => l.app_key) ?? []);
 
   return (
@@ -63,16 +43,32 @@ export default function ActivityPage() {
             <Activity className="h-5 w-5 text-primary" />
             <span className="text-sm text-muted-foreground">Total de acessos</span>
           </div>
-          <p className="font-display text-3xl font-bold text-foreground">{logs?.length ?? 0}</p>
+          <p className="font-display text-3xl font-bold text-foreground">
+            {isLoading ? <Skeleton className="h-9 w-12 inline-block" /> : (logs?.length ?? 0)}
+          </p>
         </div>
         <div className="rounded-xl border border-border bg-card p-5 card-glow">
           <div className="flex items-center gap-3 mb-2">
-            <Clock className="h-5 w-5 text-primary" />
+            <AppWindow className="h-5 w-5 text-primary" />
             <span className="text-sm text-muted-foreground">Apps utilizados</span>
           </div>
-          <p className="font-display text-3xl font-bold text-foreground">{uniqueApps.size}</p>
+          <p className="font-display text-3xl font-bold text-foreground">
+            {isLoading ? <Skeleton className="h-9 w-12 inline-block" /> : uniqueApps.size}
+          </p>
         </div>
       </div>
+
+      {/* Error state */}
+      {isError && (
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
+          <AlertTriangle className="h-8 w-8 text-destructive mx-auto mb-3" />
+          <p className="text-sm font-medium text-foreground">Erro ao carregar atividade</p>
+          <p className="text-xs text-muted-foreground mt-1">Verifique sua conexão e tente novamente.</p>
+          <button onClick={() => refetch()} className="mt-3 text-xs text-primary hover:underline">
+            Tentar novamente
+          </button>
+        </div>
+      )}
 
       {/* Activity Log */}
       <div className="rounded-xl border border-border bg-card p-5 md:p-6">
@@ -83,7 +79,7 @@ export default function ActivityPage() {
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-12 rounded-lg bg-secondary/30 animate-pulse" />
+              <Skeleton key={i} className="h-12 rounded-lg" />
             ))}
           </div>
         ) : !logs || logs.length === 0 ? (
@@ -95,15 +91,13 @@ export default function ActivityPage() {
         ) : (
           <div className="space-y-1">
             {logs.map((log) => {
-              const Icon = iconMap[log.app_key] ?? BarChart3;
-              const color = colorMap[log.app_key] ?? "text-primary";
-              const appName = nameMap[log.app_key] ?? log.app_key;
+              const appName = appNameMap.get(log.app_key) ?? log.app_key;
               const date = format(new Date(log.accessed_at), "dd MMM yyyy, HH:mm", { locale: ptBR });
 
               return (
                 <div key={log.id} className="flex items-center gap-3 py-3 border-b border-border last:border-0">
-                  <div className="h-8 w-8 rounded-lg bg-secondary/50 flex items-center justify-center shrink-0">
-                    <Icon className={`h-4 w-4 ${color}`} />
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <span className="text-xs font-display font-bold text-primary">{appName.charAt(0)}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground">{appName} acessado</p>

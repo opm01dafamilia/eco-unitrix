@@ -1,10 +1,11 @@
-import { User, Palette, Shield, LogOut, Save, Upload, Bell, Globe, Monitor, Clock, Camera } from "lucide-react";
+import { User, Palette, Shield, LogOut, Save, Bell, Globe, Monitor, Clock, Camera } from "lucide-react";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +13,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 export default function SettingsPage() {
-  const { data: profile } = useProfile();
+  const { data: profile, isLoading } = useProfile();
   const updateProfile = useUpdateProfile();
   const { user, signOut } = useAuth();
   const { toast } = useToast();
@@ -37,6 +38,13 @@ export default function SettingsPage() {
     .slice(0, 2)
     .toUpperCase() ?? "U";
 
+  // Apply theme on mount
+  useEffect(() => {
+    if (profile?.theme_preference) {
+      document.documentElement.classList.toggle("dark", profile.theme_preference === "dark");
+    }
+  }, [profile?.theme_preference]);
+
   const handleSaveName = async () => {
     if (!name.trim()) {
       toast({ variant: "destructive", title: "Nome não pode ser vazio" });
@@ -44,10 +52,10 @@ export default function SettingsPage() {
     }
     try {
       await updateProfile.mutateAsync({ full_name: name.trim() });
-      toast({ title: "Nome atualizado!" });
+      toast({ title: "Nome atualizado com sucesso!" });
       setEditingName(false);
     } catch {
-      toast({ variant: "destructive", title: "Erro ao atualizar" });
+      toast({ variant: "destructive", title: "Erro ao atualizar nome" });
     }
   };
 
@@ -78,7 +86,7 @@ export default function SettingsPage() {
     if (error) {
       toast({ variant: "destructive", title: "Erro", description: error.message });
     } else {
-      toast({ title: "Senha atualizada!" });
+      toast({ title: "Senha atualizada com sucesso!" });
       setChangingPassword(false);
       setNewPassword("");
     }
@@ -117,7 +125,7 @@ export default function SettingsPage() {
 
     try {
       await updateProfile.mutateAsync({ avatar_url: publicUrl });
-      toast({ title: "Avatar atualizado!" });
+      toast({ title: "Avatar atualizado com sucesso!" });
     } catch {
       toast({ variant: "destructive", title: "Erro ao salvar avatar" });
     }
@@ -139,6 +147,17 @@ export default function SettingsPage() {
     navigate("/login");
   };
 
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto space-y-8">
+        <Skeleton className="h-10 w-48 rounded-lg" />
+        <Skeleton className="h-48 rounded-xl" />
+        <Skeleton className="h-36 rounded-xl" />
+        <Skeleton className="h-36 rounded-xl" />
+      </div>
+    );
+  }
+
   const createdDate = profile?.created_at
     ? format(new Date(profile.created_at), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
     : "—";
@@ -148,7 +167,7 @@ export default function SettingsPage() {
     : "—";
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
+    <div className="max-w-3xl mx-auto space-y-6">
       <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">Configurações</h1>
 
       <div className="space-y-5">
@@ -217,7 +236,7 @@ export default function SettingsPage() {
                 </div>
               ) : (
                 <button
-                  className="text-sm text-foreground font-medium hover:text-primary"
+                  className="text-sm text-foreground font-medium hover:text-primary transition-colors"
                   onClick={() => { setName(profile?.full_name ?? ""); setEditingName(true); }}
                 >
                   {profile?.full_name || "Sem nome"} ✎
@@ -238,13 +257,13 @@ export default function SettingsPage() {
                     className="h-8 w-48"
                   />
                   <Button size="sm" onClick={handleChangeEmail} disabled={emailLoading}>
-                    {emailLoading ? "..." : "Salvar"}
+                    {emailLoading ? <div className="h-3 w-3 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> : "Salvar"}
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => setEditingEmail(false)}>✕</Button>
                 </div>
               ) : (
                 <button
-                  className="text-sm text-foreground font-medium hover:text-primary"
+                  className="text-sm text-foreground font-medium hover:text-primary transition-colors"
                   onClick={() => { setNewEmail(profile?.email ?? ""); setEditingEmail(true); }}
                 >
                   {profile?.email} ✎
@@ -274,7 +293,7 @@ export default function SettingsPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => handleThemeChange("dark")}
-                  className={`text-xs px-3 py-1 rounded-md border transition-colors ${
+                  className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${
                     profile?.theme_preference === "dark"
                       ? "border-primary bg-primary/10 text-primary"
                       : "border-border text-muted-foreground hover:border-primary/50"
@@ -284,7 +303,7 @@ export default function SettingsPage() {
                 </button>
                 <button
                   onClick={() => handleThemeChange("light")}
-                  className={`text-xs px-3 py-1 rounded-md border transition-colors ${
+                  className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${
                     profile?.theme_preference === "light"
                       ? "border-primary bg-primary/10 text-primary"
                       : "border-border text-muted-foreground hover:border-primary/50"
@@ -317,7 +336,6 @@ export default function SettingsPage() {
             <Shield className="h-4 w-4 text-primary" /> Segurança
           </h2>
           <div className="space-y-3">
-            {/* Last login */}
             <div className="flex items-center justify-between py-2 border-b border-border">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
@@ -326,7 +344,6 @@ export default function SettingsPage() {
               <span className="text-sm text-foreground font-medium">{lastSignIn}</span>
             </div>
 
-            {/* Change password */}
             <div className="flex items-center justify-between py-2 border-b border-border">
               <span className="text-sm text-muted-foreground">Alterar senha</span>
               {changingPassword ? (
@@ -339,7 +356,7 @@ export default function SettingsPage() {
                     className="h-8 w-48"
                   />
                   <Button size="sm" onClick={handleChangePassword} disabled={passwordLoading}>
-                    {passwordLoading ? "..." : "Salvar"}
+                    {passwordLoading ? <div className="h-3 w-3 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> : "Salvar"}
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => setChangingPassword(false)}>Cancelar</Button>
                 </div>
@@ -353,7 +370,6 @@ export default function SettingsPage() {
               )}
             </div>
 
-            {/* Active session */}
             <div className="flex items-center justify-between py-2 border-b border-border">
               <span className="text-sm text-muted-foreground">Sessão ativa</span>
               <div className="flex items-center gap-1.5 text-xs text-primary">
@@ -362,7 +378,6 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* 2FA */}
             <div className="flex items-center justify-between py-2">
               <span className="text-sm text-muted-foreground">Autenticação em 2 fatores</span>
               <span className="text-sm text-foreground font-medium">Desativada</span>
