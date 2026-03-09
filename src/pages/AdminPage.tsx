@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { Shield, CheckCircle2, XCircle, Wrench, Loader2 } from "lucide-react";
+import { Shield, CheckCircle2, XCircle, Wrench, Loader2, Webhook, CreditCard, Activity } from "lucide-react";
 import { getAppIcon } from "@/lib/appIcons";
 import { useApps } from "@/hooks/useApps";
 import { useIsAdmin } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { AppWindow } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const statusOptions = [
   { value: "active", label: "Ativo", icon: CheckCircle2, color: "text-primary" },
