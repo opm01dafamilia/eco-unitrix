@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Outlet } from "react-router-dom";
 import { useProfile } from "@/hooks/useProfile";
+import { Hexagon } from "lucide-react";
 
 export function DashboardLayout() {
   const { data: profile } = useProfile();
@@ -30,6 +31,12 @@ export function DashboardLayout() {
           <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">
             <Outlet />
           </main>
+          <footer className="border-t border-border px-4 py-3 flex items-center justify-center gap-2 shrink-0">
+            <Hexagon className="h-3.5 w-3.5 text-primary/60" />
+            <span className="text-[11px] text-muted-foreground">
+              Platform Hub — Central do Ecossistema
+            </span>
+          </footer>
         </div>
       </div>
     </SidebarProvider>

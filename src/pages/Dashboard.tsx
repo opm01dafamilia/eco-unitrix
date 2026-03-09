@@ -10,12 +10,13 @@ import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { AccessBlockedModal } from "@/components/AccessBlockedModal";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const { data: apps, isLoading: appsLoading, isError: appsError } = useApps();
-  const { launchApp } = useAppLauncher();
+  const { launchApp, blockedApp, clearBlockedApp } = useAppLauncher();
 
   const { data: recentLogs } = useQuery({
     queryKey: ["recent-logs", user?.id],
@@ -252,6 +253,16 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {blockedApp && (
+        <AccessBlockedModal
+          open={!!blockedApp}
+          onOpenChange={(open) => !open && clearBlockedApp()}
+          appName={blockedApp.appName}
+          appKey={blockedApp.appKey}
+          reason={blockedApp.reason}
+        />
+      )}
     </div>
   );
 }

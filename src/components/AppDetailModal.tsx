@@ -152,6 +152,7 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
             open={!!blockedApp}
             onOpenChange={(open) => !open && clearBlockedApp()}
             appName={blockedApp.appName}
+            appKey={blockedApp.appKey}
             reason={blockedApp.reason}
           />
         )}
