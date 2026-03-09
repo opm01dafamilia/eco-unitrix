@@ -154,6 +154,9 @@ export default function SubscriptionPage() {
         </div>
       )}
 
+      {/* Premium Pricing Cards */}
+      {!isError && <PricingCards />}
+
       {/* Available apps to subscribe */}
       {!isError && unsubscribedApps.length > 0 && (
         <div className="space-y-4">
