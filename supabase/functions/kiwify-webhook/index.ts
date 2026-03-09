@@ -15,11 +15,25 @@ const PRODUCT_APP_MAP: Record<string, string> = {
   "whatsapp auto": "whatsapp_auto",
 };
 
+const ALL_APP_KEYS = [
+  "fitpulse",
+  "financeflow",
+  "marketflow",
+  "ia_agenda",
+  "whatsapp_auto",
+];
+
+function isEcosystemPlan(productName: string): boolean {
+  const normalized = productName.toLowerCase().trim();
+  return (
+    normalized.includes("ecossistema") ||
+    normalized.includes("ecosystem")
+  );
+}
+
 function resolveAppKey(productName: string): string | null {
   const normalized = productName.toLowerCase().trim();
-  // Direct match
   if (PRODUCT_APP_MAP[normalized]) return PRODUCT_APP_MAP[normalized];
-  // Partial match
   for (const [key, value] of Object.entries(PRODUCT_APP_MAP)) {
     if (normalized.includes(key)) return value;
   }
@@ -66,7 +80,6 @@ Deno.serve(async (req) => {
 
     console.log("Webhook received:", { eventType, customerEmail, productName });
 
-    // Log webhook event
     const logWebhook = async (status: string) => {
       await supabase.from("webhook_logs").insert({
         event_type: eventType,
@@ -96,20 +109,6 @@ Deno.serve(async (req) => {
       );
     }
 
-    const appKey = resolveAppKey(productName);
-    if (!appKey) {
-      console.error("Could not resolve app_key for product:", productName);
-      await logWebhook("error");
-      await logSystem("product_mapping_error", `Product not mapped: ${productName}`);
-      return new Response(
-        JSON.stringify({ error: "Product not mapped to any app" }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
-    }
-
     // Find user by email
     const { data: userData, error: userError } = await supabase.auth.admin
       .listUsers();
@@ -132,27 +131,62 @@ Deno.serve(async (req) => {
     }
 
     const userId = user.id;
+    const ecosystem = isEcosystemPlan(productName);
+
+    // Determine which app_keys to process
+    let appKeys: string[];
+    if (ecosystem) {
+      appKeys = ALL_APP_KEYS;
+    } else {
+      const singleKey = resolveAppKey(productName);
+      if (!singleKey) {
+        console.error("Could not resolve app_key for product:", productName);
+        await logWebhook("error");
+        await logSystem("product_mapping_error", `Product not mapped: ${productName}`);
+        return new Response(
+          JSON.stringify({ error: "Product not mapped to any app" }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+      appKeys = [singleKey];
+    }
+
+    // For ecosystem plan, use "ecosystem" as the plan lookup key
+    const planLookupKey = ecosystem ? "ecosystem" : appKeys[0];
 
     // Find plan
     const { data: plans } = await supabase
       .from("subscription_plans")
       .select("id")
-      .eq("app_key", appKey)
+      .eq("app_key", planLookupKey)
       .eq("status", "active")
       .limit(1);
 
     const planId = plans?.[0]?.id;
     if (!planId) {
       await logWebhook("error");
-      await logSystem("plan_not_found", `No active plan found for app: ${appKey}`);
+      await logSystem("plan_not_found", `No active plan found for: ${planLookupKey}`);
       return new Response(
-        JSON.stringify({ error: "No active plan found for app" }),
+        JSON.stringify({ error: "No active plan found" }),
         {
           status: 404,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         },
       );
     }
+
+    // Helper to update all app keys
+    const updateAllAccess = async (accessStatus: string) => {
+      for (const key of appKeys) {
+        await supabase.from("user_app_access").upsert(
+          { user_id: userId, app_key: key, access_status: accessStatus },
+          { onConflict: "user_id,app_key" },
+        );
+      }
+    };
 
     // Handle events
     switch (eventType) {
@@ -164,7 +198,7 @@ Deno.serve(async (req) => {
           {
             user_id: userId,
             plan_id: planId,
-            app_key: appKey,
+            app_key: planLookupKey,
             subscription_status: "active",
             status: "active",
             started_at: new Date().toISOString(),
@@ -173,18 +207,16 @@ Deno.serve(async (req) => {
           { onConflict: "user_id,plan_id" },
         );
 
-        // Grant access
-        await supabase.from("user_app_access").upsert(
-          {
-            user_id: userId,
-            app_key: appKey,
-            access_status: "active",
-          },
-          { onConflict: "user_id,app_key" },
-        );
+        await updateAllAccess("active");
         await logWebhook("success");
-        await logSystem("access_granted", `Access granted to ${appKey} for user ${customerEmail}`);
-        console.log("Access granted:", { userId, appKey });
+
+        if (ecosystem) {
+          await logSystem("ecosystem_activated", `Plano ecossistema ativado para usuário ${customerEmail}`);
+          console.log("Ecosystem plan activated:", { userId });
+        } else {
+          await logSystem("access_granted", `Access granted to ${appKeys[0]} for user ${customerEmail}`);
+          console.log("Access granted:", { userId, appKey: appKeys[0] });
+        }
         break;
       }
 
@@ -200,17 +232,17 @@ Deno.serve(async (req) => {
             expires_at: newExpiry.toISOString(),
           })
           .eq("user_id", userId)
-          .eq("app_key", appKey);
+          .eq("app_key", planLookupKey);
 
-        await supabase
-          .from("user_app_access")
-          .update({ access_status: "active" })
-          .eq("user_id", userId)
-          .eq("app_key", appKey);
-
+        await updateAllAccess("active");
         await logWebhook("success");
-        await logSystem("subscription_renewed", `Subscription renewed for ${appKey} - user ${customerEmail}`);
-        console.log("Subscription renewed:", { userId, appKey });
+
+        const logEvent = ecosystem ? "ecosystem_renewed" : "subscription_renewed";
+        const logDesc = ecosystem
+          ? `Plano ecossistema renovado para usuário ${customerEmail}`
+          : `Subscription renewed for ${appKeys[0]} - user ${customerEmail}`;
+        await logSystem(logEvent, logDesc);
+        console.log("Subscription renewed:", { userId, planLookupKey });
         break;
       }
 
@@ -219,17 +251,17 @@ Deno.serve(async (req) => {
           .from("user_subscriptions")
           .update({ subscription_status: "cancelled", status: "cancelled" })
           .eq("user_id", userId)
-          .eq("app_key", appKey);
+          .eq("app_key", planLookupKey);
 
-        await supabase
-          .from("user_app_access")
-          .update({ access_status: "inactive" })
-          .eq("user_id", userId)
-          .eq("app_key", appKey);
-
+        await updateAllAccess("inactive");
         await logWebhook("success");
-        await logSystem("subscription_cancelled", `Subscription cancelled for ${appKey} - user ${customerEmail}`);
-        console.log("Subscription cancelled:", { userId, appKey });
+
+        const logEvent = ecosystem ? "ecosystem_cancelled" : "subscription_cancelled";
+        const logDesc = ecosystem
+          ? `Plano ecossistema cancelado para usuário ${customerEmail}`
+          : `Subscription cancelled for ${appKeys[0]} - user ${customerEmail}`;
+        await logSystem(logEvent, logDesc);
+        console.log("Subscription cancelled:", { userId, planLookupKey });
         break;
       }
 
@@ -238,17 +270,17 @@ Deno.serve(async (req) => {
           .from("user_subscriptions")
           .update({ subscription_status: "expired", status: "expired" })
           .eq("user_id", userId)
-          .eq("app_key", appKey);
+          .eq("app_key", planLookupKey);
 
-        await supabase
-          .from("user_app_access")
-          .update({ access_status: "inactive" })
-          .eq("user_id", userId)
-          .eq("app_key", appKey);
-
+        await updateAllAccess("inactive");
         await logWebhook("success");
-        await logSystem("subscription_suspended", `Subscription suspended for ${appKey} - user ${customerEmail}`);
-        console.log("Subscription suspended:", { userId, appKey });
+
+        const logEvent = ecosystem ? "ecosystem_suspended" : "subscription_suspended";
+        const logDesc = ecosystem
+          ? `Plano ecossistema suspenso para usuário ${customerEmail}`
+          : `Subscription suspended for ${appKeys[0]} - user ${customerEmail}`;
+        await logSystem(logEvent, logDesc);
+        console.log("Subscription suspended:", { userId, planLookupKey });
         break;
       }
 
@@ -258,17 +290,17 @@ Deno.serve(async (req) => {
           .from("user_subscriptions")
           .update({ subscription_status: "cancelled", status: "cancelled" })
           .eq("user_id", userId)
-          .eq("app_key", appKey);
+          .eq("app_key", planLookupKey);
 
-        await supabase
-          .from("user_app_access")
-          .update({ access_status: "inactive" })
-          .eq("user_id", userId)
-          .eq("app_key", appKey);
-
+        await updateAllAccess("inactive");
         await logWebhook("success");
-        await logSystem("refund_processed", `Refund processed for ${appKey} - user ${customerEmail}`);
-        console.log("Refund processed:", { userId, appKey });
+
+        const logEvent = ecosystem ? "ecosystem_refunded" : "refund_processed";
+        const logDesc = ecosystem
+          ? `Reembolso do plano ecossistema para usuário ${customerEmail}`
+          : `Refund processed for ${appKeys[0]} - user ${customerEmail}`;
+        await logSystem(logEvent, logDesc);
+        console.log("Refund processed:", { userId, planLookupKey });
         break;
       }
 

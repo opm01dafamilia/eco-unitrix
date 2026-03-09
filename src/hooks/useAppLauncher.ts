@@ -39,14 +39,13 @@ export function useAppLauncher() {
       return;
     }
 
-    // Check subscription status
+    // Check subscription status (direct or ecosystem)
     const { data: subs, error } = await supabase
       .from("user_subscriptions")
-      .select("status, subscription_status, expires_at")
+      .select("status, subscription_status, expires_at, app_key")
       .eq("user_id", user.id)
-      .eq("app_key", app.app_key)
-      .order("created_at", { ascending: false })
-      .limit(1);
+      .in("app_key", [app.app_key, "ecosystem"])
+      .order("created_at", { ascending: false });
 
     if (error) {
       toast.error("Erro ao verificar sua assinatura.");
