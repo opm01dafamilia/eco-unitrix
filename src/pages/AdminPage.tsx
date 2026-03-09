@@ -62,7 +62,7 @@ export default function AdminPage() {
         <p className="text-muted-foreground mt-1">Gerencie os aplicativos e visualize logs do sistema.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <Link to="/admin/webhook-logs">
           <Card className="hover:bg-secondary/20 transition-colors cursor-pointer">
             <CardHeader>
