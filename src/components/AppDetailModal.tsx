@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Clock, XCircle, ExternalLink, Star, Wrench, EyeOff, Calendar } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, ExternalLink, Star, Wrench, EyeOff, Calendar, AppWindow } from "lucide-react";
+import { getAppIcon } from "@/lib/appIcons";
 import { Badge } from "@/components/ui/badge";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
 import type { AppWithAccess } from "@/hooks/useApps";
