@@ -1,5 +1,6 @@
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import SavingsComparison from "@/components/SavingsComparison";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
@@ -284,6 +285,22 @@ export default function LandingPage() {
                 <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{b.description}</p>
               </motion.div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── Savings Comparison ─── */}
+      <section className="border-t border-border/50 bg-muted/20 py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+          >
+            <motion.div variants={fadeUp} custom={0}>
+              <SavingsComparison />
+            </motion.div>
           </motion.div>
         </div>
       </section>
