@@ -118,6 +118,20 @@ export default function AdminPage() {
             </CardHeader>
           </Card>
         </Link>
+
+        <Link to="/admin/user-access">
+          <Card className="hover:bg-secondary/20 transition-colors cursor-pointer">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Users className="h-5 w-5 text-primary" />
+                Controle de Acesso
+              </CardTitle>
+              <CardDescription>
+                Tipos de acesso por usuário e aplicativo
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
       </div>
 
       <div>
