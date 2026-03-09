@@ -1,9 +1,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Clock, XCircle, ExternalLink, Star, Wrench, EyeOff, Calendar, AppWindow } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, ExternalLink, Star, Wrench, EyeOff, Calendar, AppWindow, CreditCard } from "lucide-react";
 import { getAppIcon } from "@/lib/appIcons";
 import { Badge } from "@/components/ui/badge";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
+import { useSubscriptionPlans } from "@/hooks/useSubscriptions";
 import type { AppWithAccess } from "@/hooks/useApps";
 
 const categoryLabels: Record<string, string> = {
@@ -23,12 +24,14 @@ interface AppDetailModalProps {
 
 export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps) {
   const { launchApp } = useAppLauncher();
+  const { data: plans } = useSubscriptionPlans(app?.app_key);
 
   if (!app) return null;
 
   const available = app.app_status === "active" && app.user_access === "active";
 
   const getStatusInfo = () => {
+    if (app.app_status === "inactive") return { label: "Indisponível", icon: XCircle, class: "text-muted-foreground bg-muted" };
     if (app.app_status === "disabled") return { label: "Desativado", icon: EyeOff, class: "text-muted-foreground bg-muted" };
     if (app.app_status === "maintenance") return { label: "Em manutenção", icon: Wrench, class: "text-orange-400 bg-orange-400/10" };
     if (app.app_status === "coming_soon") return { label: "Em breve", icon: Clock, class: "text-amber-400 bg-amber-400/10" };
@@ -38,6 +41,7 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
   };
 
   const getButtonLabel = () => {
+    if (app.app_status === "inactive") return "Indisponível no momento";
     if (app.app_status === "disabled") return "Desativado";
     if (app.app_status === "maintenance") return "Em manutenção";
     if (app.app_status === "coming_soon") return "Em breve";
@@ -47,6 +51,7 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
 
   const status = getStatusInfo();
   const createdDate = new Date(app.created_at).toLocaleDateString("pt-BR");
+  const activePlans = plans?.filter((p) => p.status === "active") ?? [];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -108,6 +113,37 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
             {getButtonLabel()}
             {available && <ExternalLink className="h-4 w-4 ml-1" />}
           </Button>
+
+          {/* Subscription Plans */}
+          {activePlans.length > 0 && (
+            <div className="rounded-lg border border-border bg-secondary/30 p-4 space-y-3">
+              <h4 className="text-sm font-medium text-foreground flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-primary" />
+                Assinar plano
+              </h4>
+              <div className="grid gap-2">
+                {activePlans.map((plan) => (
+                  <a
+                    key={plan.id}
+                    href={plan.kiwify_url ?? "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3 transition-colors hover:border-primary/30 hover:bg-primary/5 group"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{plan.plan_name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {plan.billing_type === "yearly" ? "Cobrança anual" : "Cobrança mensal"}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-xs font-medium text-primary group-hover:underline">
+                      Assinar <ExternalLink className="h-3 w-3" />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>

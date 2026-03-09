@@ -112,24 +112,36 @@ export type Database = {
       }
       subscription_plans: {
         Row: {
+          app_key: string | null
+          billing_type: string
           created_at: string
           description: string | null
           id: string
+          kiwify_url: string | null
           plan_name: string
+          price_description: string | null
           status: string
         }
         Insert: {
+          app_key?: string | null
+          billing_type?: string
           created_at?: string
           description?: string | null
           id?: string
+          kiwify_url?: string | null
           plan_name: string
+          price_description?: string | null
           status?: string
         }
         Update: {
+          app_key?: string | null
+          billing_type?: string
           created_at?: string
           description?: string | null
           id?: string
+          kiwify_url?: string | null
           plan_name?: string
+          price_description?: string | null
           status?: string
         }
         Relationships: []
@@ -186,30 +198,36 @@ export type Database = {
       }
       user_subscriptions: {
         Row: {
+          app_key: string | null
           created_at: string
           expires_at: string | null
           id: string
           plan_id: string
           started_at: string
           status: string
+          subscription_status: string
           user_id: string
         }
         Insert: {
+          app_key?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string
           plan_id: string
           started_at?: string
           status?: string
+          subscription_status?: string
           user_id: string
         }
         Update: {
+          app_key?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string
           plan_id?: string
           started_at?: string
           status?: string
+          subscription_status?: string
           user_id?: string
         }
         Relationships: [
