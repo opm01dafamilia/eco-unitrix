@@ -2,10 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 
+export type AccessType = "lifetime" | "paid" | "trial" | "inactive";
+
 export interface AppAccessResult {
   hasAccess: boolean;
   status: "active" | "expired" | "cancelled" | "suspended" | "no_subscription";
-  accessType?: "subscription" | "lifetime" | "trial";
+  accessType?: AccessType;
 }
 
 export function useAppAccess(appKey?: string) {
@@ -42,7 +44,7 @@ export function useAppAccess(appKey?: string) {
         }
       }
 
-      // 3. Check subscriptions (existing logic)
+      // 3. Check subscriptions
       const { data: subs, error } = await supabase
         .from("user_subscriptions")
         .select("status, subscription_status, expires_at, app_key")
@@ -60,7 +62,7 @@ export function useAppAccess(appKey?: string) {
         const subStatus = sub.subscription_status || sub.status;
         if (subStatus === "active") {
           if (!sub.expires_at || new Date(sub.expires_at) >= new Date()) {
-            return { hasAccess: true, status: "active", accessType: "subscription" };
+            return { hasAccess: true, status: "active", accessType: "paid" };
           }
         }
       }

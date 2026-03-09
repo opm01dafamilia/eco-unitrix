@@ -10,7 +10,7 @@ import { Navigate, Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { AppWindow } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Gift } from "lucide-react";
+import { Gift, Users } from "lucide-react";
 
 const statusOptions = [
   { value: "active", label: "Ativo", icon: CheckCircle2, color: "text-primary" },
@@ -114,6 +114,20 @@ export default function AdminPage() {
               </CardTitle>
               <CardDescription>
                 Liberar acesso de teste para usuários
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+
+        <Link to="/admin/user-access">
+          <Card className="hover:bg-secondary/20 transition-colors cursor-pointer">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Users className="h-5 w-5 text-primary" />
+                Controle de Acesso
+              </CardTitle>
+              <CardDescription>
+                Tipos de acesso por usuário e aplicativo
               </CardDescription>
             </CardHeader>
           </Card>
