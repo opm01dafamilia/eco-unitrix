@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export interface AppAccessResult {
   hasAccess: boolean;
   status: "active" | "expired" | "cancelled" | "suspended" | "no_subscription";
+  accessType?: "subscription" | "lifetime" | "trial";
 }
 
 export function useAppAccess(appKey?: string) {
@@ -13,7 +14,35 @@ export function useAppAccess(appKey?: string) {
   return useQuery({
     queryKey: ["app-access", user?.id, appKey],
     queryFn: async (): Promise<AppAccessResult> => {
-      // Check for direct app subscription OR ecosystem subscription
+      // 1. Check lifetime access
+      const { data: lifetime } = await supabase
+        .from("lifetime_access")
+        .select("id")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+
+      if (lifetime) {
+        return { hasAccess: true, status: "active", accessType: "lifetime" };
+      }
+
+      // 2. Check active free trial
+      const { data: trials } = await supabase
+        .from("free_trials")
+        .select("*")
+        .eq("user_id", user!.id)
+        .eq("status", "active")
+        .gte("expires_at", new Date().toISOString());
+
+      if (trials && trials.length > 0) {
+        const hasTrialAccess = trials.some(
+          (t) => t.trial_type === "all_apps" || t.app_key === appKey
+        );
+        if (hasTrialAccess) {
+          return { hasAccess: true, status: "active", accessType: "trial" };
+        }
+      }
+
+      // 3. Check subscriptions (existing logic)
       const { data: subs, error } = await supabase
         .from("user_subscriptions")
         .select("status, subscription_status, expires_at, app_key")
@@ -27,21 +56,17 @@ export function useAppAccess(appKey?: string) {
         return { hasAccess: false, status: "no_subscription" };
       }
 
-      // Check if any subscription (direct or ecosystem) is active
       for (const sub of subs) {
         const subStatus = sub.subscription_status || sub.status;
-
         if (subStatus === "active") {
           if (!sub.expires_at || new Date(sub.expires_at) >= new Date()) {
-            return { hasAccess: true, status: "active" };
+            return { hasAccess: true, status: "active", accessType: "subscription" };
           }
         }
       }
 
-      // Return the most relevant inactive status
       const sub = subs[0];
       const subStatus = sub.subscription_status || sub.status;
-
       if (subStatus === "cancelled") return { hasAccess: false, status: "cancelled" };
       if (subStatus === "suspended" || subStatus === "overdue") return { hasAccess: false, status: "suspended" };
       if (sub.expires_at && new Date(sub.expires_at) < new Date()) return { hasAccess: false, status: "expired" };
@@ -52,12 +77,6 @@ export function useAppAccess(appKey?: string) {
   });
 }
 
-export async function logAccessEvent(
-  eventType: string,
-  description: string
-) {
-  await supabase.from("system_logs").insert({
-    event_type: eventType,
-    description,
-  });
+export async function logAccessEvent(eventType: string, description: string) {
+  await supabase.from("system_logs").insert({ event_type: eventType, description });
 }

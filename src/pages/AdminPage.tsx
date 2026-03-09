@@ -10,6 +10,7 @@ import { Navigate, Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { AppWindow } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Gift } from "lucide-react";
 
 const statusOptions = [
   { value: "active", label: "Ativo", icon: CheckCircle2, color: "text-primary" },
@@ -99,6 +100,20 @@ export default function AdminPage() {
               </CardTitle>
               <CardDescription>
                 Logs de eventos e erros
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+
+        <Link to="/admin/free-trials">
+          <Card className="hover:bg-secondary/20 transition-colors cursor-pointer">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Gift className="h-5 w-5 text-primary" />
+                Teste Grátis
+              </CardTitle>
+              <CardDescription>
+                Liberar acesso de teste para usuários
               </CardDescription>
             </CardHeader>
           </Card>

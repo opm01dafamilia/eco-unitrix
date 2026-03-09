@@ -17,6 +17,7 @@ import AdminPage from "./pages/AdminPage";
 import AdminWebhookLogs from "./pages/AdminWebhookLogs";
 import AdminSubscriptions from "./pages/AdminSubscriptions";
 import AdminSystemLogs from "./pages/AdminSystemLogs";
+import AdminFreeTrials from "./pages/AdminFreeTrials";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="/admin/webhook-logs" element={<AdminWebhookLogs />} />
               <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
               <Route path="/admin/system-logs" element={<AdminSystemLogs />} />
+              <Route path="/admin/free-trials" element={<AdminFreeTrials />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
