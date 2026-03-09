@@ -1,6 +1,7 @@
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import SavingsComparison from "@/components/SavingsComparison";
+import EcosystemVisual from "@/components/EcosystemVisual";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
@@ -195,6 +196,22 @@ export default function LandingPage() {
                 </span>
               </motion.div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ─── Ecosystem Visual ─── */}
+      <section className="py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+          >
+            <motion.div variants={fadeUp} custom={0}>
+              <EcosystemVisual />
+            </motion.div>
           </motion.div>
         </div>
       </section>
