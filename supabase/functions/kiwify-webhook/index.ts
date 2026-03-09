@@ -227,6 +227,8 @@ Deno.serve(async (req) => {
           .eq("user_id", userId)
           .eq("app_key", appKey);
 
+        await logWebhook("success");
+        await logSystem("subscription_cancelled", `Subscription cancelled for ${appKey} - user ${customerEmail}`);
         console.log("Subscription cancelled:", { userId, appKey });
         break;
       }
