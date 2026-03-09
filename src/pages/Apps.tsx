@@ -63,14 +63,16 @@ export default function Apps() {
   ];
 
   const getStatusBadge = (app: AppWithAccess) => {
+    if (app.app_status === "inactive") return { label: "Indisponível", icon: XCircle, class: "text-muted-foreground bg-muted border-border" };
     if (app.app_status === "disabled") return { label: "Desativado", icon: EyeOff, class: "text-muted-foreground bg-muted border-border" };
-    if (app.app_status === "maintenance") return { label: "Manutenção", icon: Wrench, class: "text-orange-400 bg-orange-400/10 border-orange-400/20" };
+    if (app.app_status === "maintenance") return { label: "Em manutenção", icon: Wrench, class: "text-orange-400 bg-orange-400/10 border-orange-400/20" };
     if (app.app_status === "coming_soon") return { label: "Em breve", icon: Clock, class: "text-amber-400 bg-amber-400/10 border-amber-400/20" };
     if (app.user_access === "active") return { label: "Ativo", icon: CheckCircle2, class: "text-primary bg-primary/10 border-primary/20" };
     return { label: "Sem acesso", icon: XCircle, class: "text-muted-foreground bg-muted border-border" };
   };
 
   const getButtonState = (app: AppWithAccess) => {
+    if (app.app_status === "inactive") return { label: "Indisponível no momento", disabled: true };
     if (app.app_status === "disabled") return { label: "Desativado", disabled: true };
     if (app.app_status === "maintenance") return { label: "Em manutenção", disabled: true };
     if (app.app_status === "coming_soon") return { label: "Em breve", disabled: true };
@@ -296,7 +298,9 @@ function AppCard({
               : "bg-muted-foreground"
           }`} />
           <span className="text-xs text-muted-foreground">
-            {app.app_status === "coming_soon"
+            {app.app_status === "inactive"
+              ? "Indisponível no momento"
+              : app.app_status === "coming_soon"
               ? "Lançamento em breve"
               : app.app_status === "maintenance"
               ? "Em manutenção"
