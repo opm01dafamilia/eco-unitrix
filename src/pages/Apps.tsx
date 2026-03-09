@@ -235,6 +235,15 @@ export default function Apps() {
         open={!!selectedApp}
         onOpenChange={(open) => !open && setSelectedApp(null)}
       />
+
+      {blockedApp && (
+        <AccessBlockedModal
+          open={!!blockedApp}
+          onOpenChange={(open) => !open && clearBlockedApp()}
+          appName={blockedApp.appName}
+          reason={blockedApp.reason}
+        />
+      )}
     </div>
   );
 }
