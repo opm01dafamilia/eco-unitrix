@@ -102,4 +102,24 @@ export const appPlansConfig: Record<string, AppPlanConfig> = {
       "Experiência profissional de atendimento",
     ],
   },
+  ecosystem: {
+    monthly: {
+      promoPrice: "R$ 67,00",
+      renewalPrice: "R$ 97,00 / mês",
+    },
+    yearly: {
+      promoPrice: "R$ 697,00 à vista",
+      installment: "12x de R$ 67,42",
+      renewalPrice: "R$ 997,00 / ano",
+    },
+    benefits: [
+      "Acesso a todos os aplicativos",
+      "FitPulse — treino e dieta",
+      "FinanceFlow — controle financeiro",
+      "MarketFlow — marketing digital",
+      "IA Agenda — agendamentos",
+      "WhatsApp Auto — automação",
+      "Atualizações e novos apps inclusos",
+    ],
+  },
 };
