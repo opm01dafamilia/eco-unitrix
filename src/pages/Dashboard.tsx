@@ -1,4 +1,5 @@
 import { AppWindow, Activity, Zap, ArrowRight, Clock, ExternalLink, Star, AlertTriangle, Crown } from "lucide-react";
+import { getAppIcon } from "@/lib/appIcons";
 import { useProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
