@@ -155,7 +155,7 @@ export default function Dashboard() {
                   className="rounded-xl border border-primary/20 ring-1 ring-primary/10 bg-card p-4 card-glow flex flex-col items-center gap-3 text-center group hover:border-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <span className="text-lg font-display font-bold text-primary">{app.app_name.charAt(0)}</span>
+                    {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-5 w-5 text-primary" /> : <AppWindow className="h-5 w-5 text-primary" />; })()}
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">{app.app_name}</p>
