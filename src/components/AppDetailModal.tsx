@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Clock, XCircle, ExternalLink, Star, Wrench, EyeOff, Calendar } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, ExternalLink, Star, Wrench, EyeOff, Calendar, AppWindow } from "lucide-react";
+import { getAppIcon } from "@/lib/appIcons";
 import { Badge } from "@/components/ui/badge";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
 import type { AppWithAccess } from "@/hooks/useApps";
@@ -51,7 +52,7 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg border-border bg-card">
         <div className="-mx-6 -mt-6 h-32 bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center rounded-t-lg relative">
-          <span className="text-4xl font-display font-bold text-primary/40">{app.app_name.charAt(0)}</span>
+          {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-12 w-12 text-primary/60" strokeWidth={1.5} /> : <AppWindow className="h-12 w-12 text-primary/40" strokeWidth={1.5} />; })()}
           {app.is_featured && (
             <div className="absolute top-3 left-3 flex items-center gap-1 text-primary">
               <Star className="h-4 w-4 fill-primary" />

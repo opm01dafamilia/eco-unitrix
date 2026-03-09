@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { BarChart3, ArrowRight, CheckCircle2, Clock, XCircle, Search, Filter, ExternalLink, Star, Wrench, EyeOff, AlertTriangle } from "lucide-react";
+import { BarChart3, ArrowRight, CheckCircle2, Clock, XCircle, Search, Filter, ExternalLink, Star, Wrench, EyeOff, AlertTriangle, AppWindow } from "lucide-react";
+import { getAppIcon } from "@/lib/appIcons";
 import { useApps, AppWithAccess } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
 import { Input } from "@/components/ui/input";
@@ -264,7 +265,7 @@ function AppCard({
       onClick={() => onSelect(app)}
     >
       <div className="h-28 bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center relative">
-        <span className="text-3xl font-display font-bold text-primary/40">{app.app_name.charAt(0)}</span>
+        {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-10 w-10 text-primary/60" strokeWidth={1.5} /> : <AppWindow className="h-10 w-10 text-primary/40" strokeWidth={1.5} />; })()}
         <div className={`absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium border ${status.class}`}>
           <status.icon className="h-3 w-3" />
           {status.label}
