@@ -182,6 +182,8 @@ Deno.serve(async (req) => {
           },
           { onConflict: "user_id,app_key" },
         );
+        await logWebhook("success");
+        await logSystem("access_granted", `Access granted to ${appKey} for user ${customerEmail}`);
         console.log("Access granted:", { userId, appKey });
         break;
       }
