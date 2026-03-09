@@ -24,7 +24,7 @@ interface AppDetailModalProps {
 }
 
 export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps) {
-  const { launchApp } = useAppLauncher();
+  const { launchApp, blockedApp, clearBlockedApp } = useAppLauncher();
   const { data: plans } = useSubscriptionPlans(app?.app_key);
 
   if (!app) return null;
