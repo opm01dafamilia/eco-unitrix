@@ -241,6 +241,7 @@ export default function Apps() {
           open={!!blockedApp}
           onOpenChange={(open) => !open && clearBlockedApp()}
           appName={blockedApp.appName}
+          appKey={blockedApp.appKey}
           reason={blockedApp.reason}
         />
       )}
