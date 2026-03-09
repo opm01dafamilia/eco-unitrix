@@ -61,7 +61,11 @@ export default function Login() {
               </button>
             </div>
           </div>
-          <div className="text-right">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Checkbox id="keep-logged" checked={keepLoggedIn} onCheckedChange={(v) => setKeepLoggedIn(v === true)} />
+              <Label htmlFor="keep-logged" className="text-xs text-muted-foreground cursor-pointer">Manter conectado</Label>
+            </div>
             <Link to="/forgot-password" className="text-xs text-primary hover:underline">Esqueci minha senha</Link>
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
