@@ -1,12 +1,14 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ShieldX, CreditCard, ArrowRight } from "lucide-react";
+import { ShieldX, CreditCard, ArrowRight, Hexagon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { getAppIcon } from "@/lib/appIcons";
 
 interface AccessBlockedModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   appName: string;
+  appKey?: string;
   reason: "no_subscription" | "expired" | "cancelled" | "suspended";
 }
 
@@ -29,20 +31,26 @@ const reasonMessages: Record<string, { title: string; description: string }> = {
   },
 };
 
-export function AccessBlockedModal({ open, onOpenChange, appName, reason }: AccessBlockedModalProps) {
+export function AccessBlockedModal({ open, onOpenChange, appName, appKey, reason }: AccessBlockedModalProps) {
   const navigate = useNavigate();
   const msg = reasonMessages[reason] ?? reasonMessages.no_subscription;
+  const AppIcon = appKey ? getAppIcon(appKey) : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md border-border bg-card">
-        <div className="-mx-6 -mt-6 h-28 bg-gradient-to-br from-destructive/20 to-destructive/10 flex items-center justify-center rounded-t-lg">
-          <ShieldX className="h-12 w-12 text-destructive/60" strokeWidth={1.5} />
+        <div className="-mx-6 -mt-6 h-32 bg-gradient-to-br from-destructive/15 to-destructive/5 flex flex-col items-center justify-center rounded-t-lg gap-2">
+          {AppIcon ? (
+            <AppIcon className="h-10 w-10 text-destructive/50" strokeWidth={1.5} />
+          ) : (
+            <ShieldX className="h-10 w-10 text-destructive/50" strokeWidth={1.5} />
+          )}
+          <span className="text-xs font-medium text-destructive/70">{appName}</span>
         </div>
         <DialogHeader className="pt-2">
           <DialogTitle className="font-display text-xl text-foreground">{msg.title}</DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            <span className="font-medium text-foreground">{appName}</span> — {msg.description}
+            {msg.description}
           </DialogDescription>
         </DialogHeader>
 
@@ -62,11 +70,11 @@ export function AccessBlockedModal({ open, onOpenChange, appName, reason }: Acce
             className="w-full"
             onClick={() => {
               onOpenChange(false);
-              navigate("/apps");
+              navigate("/dashboard");
             }}
           >
-            <ArrowRight className="h-4 w-4 mr-2" />
-            Voltar aos aplicativos
+            <Hexagon className="h-4 w-4 mr-2" />
+            Voltar ao Platform Hub
           </Button>
         </div>
       </DialogContent>
