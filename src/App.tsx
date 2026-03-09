@@ -42,6 +42,7 @@ const App = () => (
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/activity" element={<ActivityPage />} />
               <Route path="/subscription" element={<SubscriptionPage />} />
+              <Route path="/admin" element={<AdminPage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
