@@ -66,6 +66,24 @@ Deno.serve(async (req) => {
 
     console.log("Webhook received:", { eventType, customerEmail, productName });
 
+    // Log webhook event
+    const logWebhook = async (status: string) => {
+      await supabase.from("webhook_logs").insert({
+        event_type: eventType,
+        product_name: productName,
+        customer_email: customerEmail,
+        status,
+        raw_payload: body,
+      });
+    };
+
+    const logSystem = async (event: string, desc: string) => {
+      await supabase.from("system_logs").insert({
+        event_type: event,
+        description: desc,
+      });
+    };
+
     if (!customerEmail) {
       return new Response(
         JSON.stringify({ error: "Customer email not found" }),
