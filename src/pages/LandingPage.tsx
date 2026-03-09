@@ -200,6 +200,22 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ─── Ecosystem Visual ─── */}
+      <section className="py-24">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+          >
+            <motion.div variants={fadeUp} custom={0}>
+              <EcosystemVisual />
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ─── How it works ─── */}
       <section className="py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
