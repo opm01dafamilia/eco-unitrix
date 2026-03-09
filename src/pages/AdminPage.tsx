@@ -10,7 +10,7 @@ import { Navigate, Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { AppWindow } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Gift } from "lucide-react";
+import { Gift, Users } from "lucide-react";
 
 const statusOptions = [
   { value: "active", label: "Ativo", icon: CheckCircle2, color: "text-primary" },
