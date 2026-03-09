@@ -39,7 +39,7 @@ export default function Dashboard() {
         .from("user_subscriptions")
         .select("*, subscription_plans(*)")
         .eq("user_id", user!.id)
-        .eq("status", "active")
+        .eq("subscription_status", "active")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
