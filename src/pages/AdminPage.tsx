@@ -62,7 +62,7 @@ export default function AdminPage() {
         <p className="text-muted-foreground mt-1">Gerencie os aplicativos e visualize logs do sistema.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
         <Link to="/admin/webhook-logs">
           <Card className="hover:bg-secondary/20 transition-colors cursor-pointer">
             <CardHeader>
@@ -141,9 +141,9 @@ export default function AdminPage() {
       </div>
 
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-center gap-4 px-5 py-3 border-b border-border bg-secondary/30 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <div className="hidden sm:grid grid-cols-[1fr_auto_auto] items-center gap-4 px-4 sm:px-5 py-3 border-b border-border bg-secondary/30 text-xs font-medium text-muted-foreground uppercase tracking-wider">
           <span>Aplicativo</span>
-          <span className="hidden sm:block">Status atual</span>
+          <span>Status atual</span>
           <span>Ação</span>
         </div>
 
@@ -155,7 +155,7 @@ export default function AdminPage() {
           return (
             <div
               key={app.id}
-              className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-center gap-4 px-5 py-4 border-b border-border last:border-0 hover:bg-secondary/20 transition-colors"
+              className="flex flex-col sm:grid sm:grid-cols-[1fr_auto_auto] items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 border-b border-border last:border-0 hover:bg-secondary/20 transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -177,7 +177,7 @@ export default function AdminPage() {
                 </Badge>
               </div>
 
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 flex-wrap">
                 {statusOptions.map((opt) => (
                   <button
                     key={opt.value}

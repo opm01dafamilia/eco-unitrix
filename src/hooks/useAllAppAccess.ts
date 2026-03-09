@@ -122,5 +122,6 @@ export function useAllAppAccess() {
       return result;
     },
     enabled: !!user,
+    staleTime: 30000,
   });
 }
