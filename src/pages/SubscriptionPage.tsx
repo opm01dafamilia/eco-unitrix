@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Link } from "react-router-dom";
+import PricingCards from "@/components/PricingCards";
 
 const statusMap: Record<string, { label: string; color: string; icon: typeof CheckCircle2 }> = {
   active: { label: "Ativa", color: "text-primary bg-primary/10", icon: CheckCircle2 },
