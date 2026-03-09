@@ -113,5 +113,6 @@ export function useApps() {
       });
     },
     enabled: !!user,
+    staleTime: 30000,
   });
 }
