@@ -5,6 +5,7 @@ import { getAppIcon } from "@/lib/appIcons";
 import { Badge } from "@/components/ui/badge";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
 import { useSubscriptionPlans } from "@/hooks/useSubscriptions";
+import { AccessBlockedModal } from "@/components/AccessBlockedModal";
 import type { AppWithAccess } from "@/hooks/useApps";
 
 const categoryLabels: Record<string, string> = {
