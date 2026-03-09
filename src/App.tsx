@@ -17,6 +17,7 @@ import AdminPage from "./pages/AdminPage";
 import AdminWebhookLogs from "./pages/AdminWebhookLogs";
 import AdminSubscriptions from "./pages/AdminSubscriptions";
 import AdminSystemLogs from "./pages/AdminSystemLogs";
+import AdminFreeTrials from "./pages/AdminFreeTrials";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
