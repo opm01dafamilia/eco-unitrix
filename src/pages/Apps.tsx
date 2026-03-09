@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { BarChart3, ArrowRight, CheckCircle2, Clock, XCircle, Search, Filter, ExternalLink, Star, Wrench, EyeOff, AlertTriangle } from "lucide-react";
+import { BarChart3, ArrowRight, CheckCircle2, Clock, XCircle, Search, Filter, ExternalLink, Star, Wrench, EyeOff, AlertTriangle, AppWindow } from "lucide-react";
+import { getAppIcon } from "@/lib/appIcons";
 import { useApps, AppWithAccess } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
 import { Input } from "@/components/ui/input";
