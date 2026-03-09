@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const navItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Meus Aplicativos", url: "/apps", icon: Grid3X3 },
   { title: "Atividade", url: "/activity", icon: Activity },
   { title: "Assinatura", url: "/subscription", icon: CreditCard },
