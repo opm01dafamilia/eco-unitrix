@@ -187,7 +187,7 @@ export default function Dashboard() {
                   className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 card-glow group hover:border-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left"
                 >
                   <div className="h-9 w-9 rounded-lg bg-secondary/50 flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
-                    <span className="text-sm font-display font-bold text-primary">{app.app_name.charAt(0)}</span>
+                    {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-4 w-4 text-primary" /> : <AppWindow className="h-4 w-4 text-primary" />; })()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground truncate">{app.app_name}</p>
