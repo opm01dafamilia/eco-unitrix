@@ -35,6 +35,69 @@ export type Database = {
         }
         Relationships: []
       }
+      free_trials: {
+        Row: {
+          app_key: string | null
+          created_at: string
+          duration_days: number
+          expires_at: string
+          granted_by: string | null
+          id: string
+          started_at: string
+          status: string
+          trial_type: string
+          user_id: string
+        }
+        Insert: {
+          app_key?: string | null
+          created_at?: string
+          duration_days?: number
+          expires_at: string
+          granted_by?: string | null
+          id?: string
+          started_at?: string
+          status?: string
+          trial_type?: string
+          user_id: string
+        }
+        Update: {
+          app_key?: string | null
+          created_at?: string
+          duration_days?: number
+          expires_at?: string
+          granted_by?: string | null
+          id?: string
+          started_at?: string
+          status?: string
+          trial_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lifetime_access: {
+        Row: {
+          granted_at: string
+          granted_by: string | null
+          id: string
+          notes: string | null
+          user_id: string
+        }
+        Insert: {
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          notes?: string | null
+          user_id: string
+        }
+        Update: {
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          notes?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       platform_apps: {
         Row: {
           app_category: string
