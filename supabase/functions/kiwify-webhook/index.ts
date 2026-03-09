@@ -85,6 +85,8 @@ Deno.serve(async (req) => {
     };
 
     if (!customerEmail) {
+      await logWebhook("error");
+      await logSystem("webhook_error", "Customer email not found in webhook payload");
       return new Response(
         JSON.stringify({ error: "Customer email not found" }),
         {
