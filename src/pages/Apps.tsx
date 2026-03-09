@@ -5,6 +5,7 @@ import { useApps, AppWithAccess } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
 import { Input } from "@/components/ui/input";
 import { AppDetailModal } from "@/components/AppDetailModal";
+import { AccessBlockedModal } from "@/components/AccessBlockedModal";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
