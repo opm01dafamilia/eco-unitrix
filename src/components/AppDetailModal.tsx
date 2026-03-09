@@ -5,6 +5,7 @@ import { getAppIcon } from "@/lib/appIcons";
 import { Badge } from "@/components/ui/badge";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
 import { useSubscriptionPlans } from "@/hooks/useSubscriptions";
+import { AccessBlockedModal } from "@/components/AccessBlockedModal";
 import type { AppWithAccess } from "@/hooks/useApps";
 
 const categoryLabels: Record<string, string> = {
@@ -23,7 +24,7 @@ interface AppDetailModalProps {
 }
 
 export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps) {
-  const { launchApp } = useAppLauncher();
+  const { launchApp, blockedApp, clearBlockedApp } = useAppLauncher();
   const { data: plans } = useSubscriptionPlans(app?.app_key);
 
   if (!app) return null;
@@ -145,6 +146,15 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
             </div>
           )}
         </div>
+
+        {blockedApp && (
+          <AccessBlockedModal
+            open={!!blockedApp}
+            onOpenChange={(open) => !open && clearBlockedApp()}
+            appName={blockedApp.appName}
+            reason={blockedApp.reason}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

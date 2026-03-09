@@ -5,6 +5,7 @@ import { useApps, AppWithAccess } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
 import { Input } from "@/components/ui/input";
 import { AppDetailModal } from "@/components/AppDetailModal";
+import { AccessBlockedModal } from "@/components/AccessBlockedModal";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -21,7 +22,7 @@ type FilterType = "all" | "active" | "accessible" | "featured";
 
 export default function Apps() {
   const { data: apps, isLoading, isError, refetch } = useApps();
-  const { launchApp } = useAppLauncher();
+  const { launchApp, blockedApp, clearBlockedApp } = useAppLauncher();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterType>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
@@ -234,6 +235,15 @@ export default function Apps() {
         open={!!selectedApp}
         onOpenChange={(open) => !open && setSelectedApp(null)}
       />
+
+      {blockedApp && (
+        <AccessBlockedModal
+          open={!!blockedApp}
+          onOpenChange={(open) => !open && clearBlockedApp()}
+          appName={blockedApp.appName}
+          reason={blockedApp.reason}
+        />
+      )}
     </div>
   );
 }
