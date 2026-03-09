@@ -32,6 +32,7 @@ export function AppSidebar() {
   const location = useLocation();
   const { signOut } = useAuth();
   const { data: profile } = useProfile();
+  const { data: isAdmin } = useIsAdmin();
 
   return (
     <Sidebar collapsible="icon">
