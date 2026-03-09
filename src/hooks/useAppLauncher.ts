@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { logAccessEvent } from "@/hooks/useAppAccess";
+import type { AppWithAccess } from "@/hooks/useApps";
 
 export function useAppLauncher() {
   const { user } = useAuth();
@@ -12,102 +13,39 @@ export function useAppLauncher() {
     reason: "no_subscription" | "expired" | "cancelled" | "suspended";
   } | null>(null);
 
-  const launchApp = async (app: {
-    app_key: string;
-    app_name: string;
-    app_url: string | null;
-    app_status: string;
-    user_access: string | null;
-  }) => {
+  const launchApp = async (app: AppWithAccess) => {
     if (app.app_status === "coming_soon") {
       toast.info(`${app.app_name} estará disponível em breve.`);
       return;
     }
-
     if (app.app_status === "maintenance") {
       toast.warning(`${app.app_name} está em manutenção. Tente novamente mais tarde.`);
       return;
     }
-
     if (app.app_status === "disabled") {
       toast.error(`${app.app_name} está desativado no momento.`);
       return;
     }
-
     if (!user) {
       toast.error("Você precisa estar logado para acessar os aplicativos.");
       return;
     }
 
-    // Check subscription status (direct or ecosystem)
-    const { data: subs, error } = await supabase
-      .from("user_subscriptions")
-      .select("status, subscription_status, expires_at, app_key")
-      .eq("user_id", user.id)
-      .in("app_key", [app.app_key, "ecosystem"])
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      toast.error("Erro ao verificar sua assinatura.");
-      return;
-    }
-
-    if (!subs || subs.length === 0) {
-      await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura inexistente (usuário: ${user.email})`);
-      setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "no_subscription" });
-      return;
-    }
-
-    // Check if any subscription (direct or ecosystem) is active
-    const activeSub = subs.find((s) => {
-      const st = s.subscription_status || s.status;
-      if (st !== "active") return false;
-      if (s.expires_at && new Date(s.expires_at) < new Date()) return false;
-      return true;
-    });
-
-    if (activeSub) {
-      // Access granted — fall through to open the app
-    } else {
-      // Use the first sub to determine the block reason
-      const sub = subs[0];
-      const subStatus = sub.subscription_status || sub.status;
-
-      if (subStatus === "cancelled") {
-        await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura cancelada (usuário: ${user.email})`);
-        setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "cancelled" });
+    // If useApps already determined access is active (lifetime, paid, or trial)
+    if (app.user_access === "active" && app.access_type !== "inactive") {
+      if (!app.app_url) {
+        toast.error(`O link de acesso do ${app.app_name} ainda não está configurado.`);
         return;
       }
-      if (subStatus === "suspended" || subStatus === "overdue") {
-        await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura suspensa (usuário: ${user.email})`);
-        setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "suspended" });
-        return;
-      }
-      if (sub.expires_at && new Date(sub.expires_at) < new Date()) {
-        await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura expirada (usuário: ${user.email})`);
-        setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "expired" });
-        return;
-      }
-      await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura inativa (usuário: ${user.email})`);
-      setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "no_subscription" });
+      await logAccessEvent("acesso_permitido", `Acesso permitido ao ${app.app_name} via ${app.access_type} (usuário: ${user.email})`);
+      await supabase.from("app_usage_logs").insert({ user_id: user.id, app_key: app.app_key });
+      window.open(app.app_url, "_blank", "noopener,noreferrer");
       return;
     }
 
-    if (!app.app_url) {
-      toast.error(`O link de acesso do ${app.app_name} ainda não está configurado.`);
-      return;
-    }
-
-    // Log successful access
-    await logAccessEvent("acesso_permitido", `Acesso permitido ao ${app.app_name} (usuário: ${user.email})`);
-
-    // Log usage
-    await supabase.from("app_usage_logs").insert({
-      user_id: user.id,
-      app_key: app.app_key,
-    });
-
-    window.open(app.app_url, "_blank", "noopener,noreferrer");
+    // No access
+    await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} (usuário: ${user.email})`);
+    setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "no_subscription" });
   };
 
   return { launchApp, blockedApp, clearBlockedApp: () => setBlockedApp(null) };
