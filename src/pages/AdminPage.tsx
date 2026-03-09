@@ -141,9 +141,9 @@ export default function AdminPage() {
       </div>
 
       <div className="rounded-xl border border-border bg-card overflow-hidden">
-        <div className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-center gap-4 px-5 py-3 border-b border-border bg-secondary/30 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <div className="hidden sm:grid grid-cols-[1fr_auto_auto] items-center gap-4 px-4 sm:px-5 py-3 border-b border-border bg-secondary/30 text-xs font-medium text-muted-foreground uppercase tracking-wider">
           <span>Aplicativo</span>
-          <span className="hidden sm:block">Status atual</span>
+          <span>Status atual</span>
           <span>Ação</span>
         </div>
 
