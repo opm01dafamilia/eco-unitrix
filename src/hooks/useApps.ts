@@ -81,7 +81,7 @@ export function useApps() {
 
       const trialAllApps = trials?.some((t) => t.trial_type === "all_apps") ?? false;
       const trialAppKeys = new Set(
-        (trials ?? []).filter((t) => t.trial_type === "single_app").map((t) => t.app_key)
+        (trials ?? []).filter((t) => t.trial_type !== "all_apps" && t.app_key).map((t) => t.app_key)
       );
 
       const accessMap = new Map(access?.map((a) => [a.app_key, a.access_status]) ?? []);
