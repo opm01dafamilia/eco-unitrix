@@ -44,13 +44,13 @@ export default function AdminSystemLogs() {
   );
 
   const getEventColor = (eventType: string) => {
-    if (eventType.includes("error") || eventType.includes("suspended")) {
+    if (eventType.includes("erro") || eventType.includes("error") || eventType.includes("negado")) {
       return "destructive";
     }
-    if (eventType.includes("granted") || eventType.includes("renewed")) {
+    if (eventType.includes("permitido") || eventType.includes("granted") || eventType.includes("renewed") || eventType.includes("liberado") || eventType.includes("renovado")) {
       return "default";
     }
-    if (eventType.includes("cancelled")) {
+    if (eventType.includes("cancelad") || eventType.includes("cancelled")) {
       return "secondary";
     }
     return "outline";
