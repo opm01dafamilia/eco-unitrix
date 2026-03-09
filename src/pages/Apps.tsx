@@ -206,17 +206,23 @@ export default function Apps() {
         </div>
       ) : !isError ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-          {filteredApps.map((app, i) => (
-            <AppCard
-              key={app.id}
-              app={app}
-              index={i}
-              getStatusBadge={getStatusBadge}
-              getButtonState={getButtonState}
-              onSelect={setSelectedApp}
-              onLaunch={launchApp}
-            />
-          ))}
+          {filteredApps
+            .filter((app) => {
+              // If featured section is visible, exclude featured apps from main grid to avoid duplication
+              const featuredSectionVisible = filter !== "featured" && featuredApps.length > 0 && categoryFilter === "all" && !search;
+              return !featuredSectionVisible || !app.is_featured;
+            })
+            .map((app, i) => (
+              <AppCard
+                key={app.id}
+                app={app}
+                index={i}
+                getStatusBadge={getStatusBadge}
+                getButtonState={getButtonState}
+                onSelect={setSelectedApp}
+                onLaunch={launchApp}
+              />
+            ))}
         </div>
       ) : null}
 
