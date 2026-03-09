@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search, Filter, ExternalLink, Star, Wrench, EyeOff, AlertTriangle, AppWindow, Crown, CreditCard, Gift, XCircle, CheckCircle2, Clock } from "lucide-react";
+import { Search, Filter, ExternalLink, Star, Wrench, AlertTriangle, AppWindow, Crown, CreditCard, Gift, XCircle, Clock } from "lucide-react";
 import { getAppIcon } from "@/lib/appIcons";
 import { useApps, AppWithAccess } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
@@ -7,6 +7,8 @@ import { useAllAppAccess } from "@/hooks/useAllAppAccess";
 import { Input } from "@/components/ui/input";
 import { AppDetailModal } from "@/components/AppDetailModal";
 import { AccessBlockedModal } from "@/components/AccessBlockedModal";
+import { EcosystemBadge } from "@/components/EcosystemBadge";
+import { EmptyState } from "@/components/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -63,7 +65,6 @@ export default function Apps() {
 
   const featuredApps = useMemo(() => filteredApps.filter((a) => a.is_featured), [filteredApps]);
 
-  // Trial warning
   const trialApps = useMemo(() => {
     if (!accessMap) return [];
     return Object.values(accessMap).filter((a) => a.accessType === "trial" && a.expiresAt);
@@ -85,15 +86,18 @@ export default function Apps() {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div>
-        <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">Meus Aplicativos</h1>
-        <p className="text-muted-foreground mt-1">Acesse todos os aplicativos da plataforma.</p>
+    <div className="max-w-6xl mx-auto space-y-5 sm:space-y-6">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground">Meus Aplicativos</h1>
+          <p className="text-muted-foreground text-sm mt-1 hidden sm:block">Acesse todos os aplicativos da plataforma.</p>
+        </div>
+        <EcosystemBadge className="hidden sm:inline-flex" />
       </div>
 
       {/* Trial warning banner */}
       {nearestTrialExpiry && trialDaysLeft >= 0 && (
-        <div className="rounded-xl border border-blue-400/20 bg-blue-400/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="rounded-xl border border-blue-400/20 bg-blue-400/5 p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Gift className="h-5 w-5 text-blue-400 shrink-0" />
             <div>
@@ -101,12 +105,12 @@ export default function Apps() {
                 Seu teste grátis termina em {trialDaysLeft} dia{trialDaysLeft !== 1 ? "s" : ""}.
               </p>
               <p className="text-xs text-muted-foreground">
-                Assine agora para manter o acesso aos seus aplicativos.
+                Assine agora para manter o acesso.
               </p>
             </div>
           </div>
           <Link to="/subscription">
-            <Button size="sm" className="shrink-0">Assinar agora</Button>
+            <Button size="sm" className="shrink-0 w-full sm:w-auto">Assinar agora</Button>
           </Link>
         </div>
       )}
@@ -118,10 +122,10 @@ export default function Apps() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Buscar aplicativo..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
           </div>
-          <div className="flex items-center gap-1 rounded-lg border border-border bg-card p-1">
+          <div className="flex items-center gap-1 rounded-lg border border-border bg-card p-1 overflow-x-auto">
             <Filter className="h-4 w-4 text-muted-foreground ml-2 mr-1 shrink-0" />
             {filters.map((f) => (
-              <button key={f.key} onClick={() => setFilter(f.key)} className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${filter === f.key ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}`}>
+              <button key={f.key} onClick={() => setFilter(f.key)} className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${filter === f.key ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}`}>
                 {f.label}
               </button>
             ))}
@@ -144,7 +148,7 @@ export default function Apps() {
 
       {/* Summary */}
       {!isLoading && !isError && (
-        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+        <div className="flex items-center gap-4 text-xs sm:text-sm text-muted-foreground">
           <span>{filteredApps.length} aplicativo{filteredApps.length !== 1 ? "s" : ""}</span>
           <span className="h-1 w-1 rounded-full bg-border" />
           <span>{visibleApps.filter((a) => a.user_access === "active").length} com acesso ativo</span>
@@ -155,17 +159,18 @@ export default function Apps() {
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
           <AlertTriangle className="h-8 w-8 text-destructive mx-auto mb-3" />
           <p className="text-sm font-medium text-foreground">Erro ao carregar aplicativos</p>
-          <button onClick={() => refetch()} className="mt-3 text-xs text-primary hover:underline">Tentar novamente</button>
+          <p className="text-xs text-muted-foreground mt-1">Verifique sua conexão e tente novamente.</p>
+          <Button variant="outline" size="sm" onClick={() => refetch()} className="mt-3">Tentar novamente</Button>
         </div>
       )}
 
       {/* Featured section */}
       {!isError && filter !== "featured" && featuredApps.length > 0 && categoryFilter === "all" && !search && (
         <div>
-          <h2 className="font-display text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+          <h2 className="font-display text-base sm:text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
             <Star className="h-4 w-4 text-primary" /> Em Destaque
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
             {featuredApps.map((app, i) => (
               <AppCard key={app.id} app={app} index={i} featured accessInfo={accessMap?.[app.app_key]} onSelect={setSelectedApp} onLaunch={launchApp} />
             ))}
@@ -175,16 +180,17 @@ export default function Apps() {
 
       {/* Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
-          {[1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="h-72 rounded-xl" />)}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
+          {[1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="h-64 sm:h-72 rounded-xl" />)}
         </div>
       ) : !isError && filteredApps.length === 0 ? (
-        <div className="text-center py-16 text-muted-foreground">
-          <Search className="h-10 w-10 mx-auto mb-3 opacity-40" />
-          <p className="font-medium">Nenhum aplicativo encontrado</p>
-        </div>
+        <EmptyState
+          icon={Search}
+          title="Nenhum aplicativo encontrado"
+          description="Tente ajustar os filtros ou a busca."
+        />
       ) : !isError ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
           {filteredApps
             .filter((app) => {
               const featuredSectionVisible = filter !== "featured" && featuredApps.length > 0 && categoryFilter === "all" && !search;
@@ -238,35 +244,32 @@ function AppCard({
   return (
     <div
       className={`group rounded-xl border bg-card overflow-hidden card-glow animate-fade-in cursor-pointer ${featured ? "border-primary/20 ring-1 ring-primary/10" : "border-border"}`}
-      style={{ animationDelay: `${index * 80}ms` }}
+      style={{ animationDelay: `${index * 60}ms` }}
       onClick={() => onSelect(app)}
     >
-      <div className="h-28 bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center relative">
-        {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-10 w-10 text-primary/60" strokeWidth={1.5} /> : <AppWindow className="h-10 w-10 text-primary/40" strokeWidth={1.5} />; })()}
-        <div className={`absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-medium border ${atCfg.color}`}>
-          <atCfg.icon className="h-3 w-3" />
+      <div className="h-24 sm:h-28 bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center relative">
+        {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-8 sm:h-10 w-8 sm:w-10 text-primary/60" strokeWidth={1.5} /> : <AppWindow className="h-8 sm:h-10 w-8 sm:w-10 text-primary/40" strokeWidth={1.5} />; })()}
+        <div className={`absolute top-2 sm:top-3 right-2 sm:right-3 flex items-center gap-1 px-2 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-medium border ${atCfg.color}`}>
+          <atCfg.icon className="h-2.5 sm:h-3 w-2.5 sm:w-3" />
           {atCfg.label}
         </div>
         {featured && (
-          <div className="absolute top-3 left-3">
+          <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
             <Star className="h-4 w-4 text-primary fill-primary" />
           </div>
         )}
       </div>
 
-      <div className="p-5 space-y-3">
+      <div className="p-4 sm:p-5 space-y-3">
         <div>
-          <h3 className="font-display font-semibold text-foreground text-lg">{app.app_name}</h3>
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{app.app_description || "Sem descrição disponível."}</p>
+          <h3 className="font-display font-semibold text-foreground text-base sm:text-lg">{app.app_name}</h3>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 line-clamp-2">{app.app_description || "Sem descrição disponível."}</p>
         </div>
 
-        {/* Access details */}
         <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">
-              {categoryLabels[app.app_category] ?? app.app_category}
-            </Badge>
-          </div>
+          <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">
+            {categoryLabels[app.app_category] ?? app.app_category}
+          </Badge>
 
           {isAppUnavailable ? (
             <p className="text-xs text-muted-foreground flex items-center gap-1.5">
@@ -293,23 +296,23 @@ function AppCard({
           {!isAppUnavailable && isActive && (
             <button
               onClick={(e) => { e.stopPropagation(); onLaunch(app); }}
-              className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary/10 px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
+              className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary/10 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-primary transition-colors hover:bg-primary/20 active:scale-[0.98]"
             >
-              Abrir aplicativo <ExternalLink className="h-4 w-4" />
+              Abrir <ExternalLink className="h-3.5 w-3.5" />
             </button>
           )}
           {!isAppUnavailable && isTrial && (
-            <Link to="/subscription" onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-1 rounded-lg border border-primary/20 px-3 py-2.5 text-xs font-medium text-primary transition-colors hover:bg-primary/5">
-              Assinar plano
+            <Link to="/subscription" onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-1 rounded-lg border border-primary/20 px-2.5 sm:px-3 py-2 sm:py-2.5 text-[11px] sm:text-xs font-medium text-primary transition-colors hover:bg-primary/5 active:scale-[0.98]">
+              Assinar
             </Link>
           )}
           {!isAppUnavailable && isInactive && (
-            <Link to="/subscription" onClick={(e) => e.stopPropagation()} className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary/10 px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20">
+            <Link to="/subscription" onClick={(e) => e.stopPropagation()} className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary/10 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-primary transition-colors hover:bg-primary/20 active:scale-[0.98]">
               Assinar plano
             </Link>
           )}
           {isAppUnavailable && (
-            <button disabled className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-muted px-4 py-2.5 text-sm font-medium text-muted-foreground opacity-40 cursor-not-allowed">
+            <button disabled className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-muted px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-muted-foreground opacity-40 cursor-not-allowed">
               {appStatusLabel}
             </button>
           )}
