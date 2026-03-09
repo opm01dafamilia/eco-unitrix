@@ -63,7 +63,7 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg border-border bg-card max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-lg border-border bg-card max-h-[85vh] sm:max-h-[90vh] overflow-y-auto mx-2 sm:mx-auto">
         <div className="-mx-6 -mt-6 h-32 bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center rounded-t-lg relative">
           {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-12 w-12 text-primary/60" strokeWidth={1.5} /> : <AppWindow className="h-12 w-12 text-primary/40" strokeWidth={1.5} />; })()}
           {app.is_featured && (
