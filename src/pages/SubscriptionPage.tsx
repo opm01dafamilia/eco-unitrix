@@ -2,6 +2,7 @@ import { useUserSubscriptions } from "@/hooks/useSubscriptions";
 import { useApps } from "@/hooks/useApps";
 import { useSubscriptionPlans } from "@/hooks/useSubscriptions";
 import { getAppIcon } from "@/lib/appIcons";
+import SavingsComparison from "@/components/SavingsComparison";
 import {
   CreditCard,
   CheckCircle2,
@@ -156,6 +157,9 @@ export default function SubscriptionPage() {
 
       {/* Premium Pricing Cards */}
       {!isError && <PricingCards />}
+
+      {/* Savings Comparison */}
+      {!isError && <SavingsComparison />}
 
       {/* Available apps to subscribe */}
       {!isError && unsubscribedApps.length > 0 && (
