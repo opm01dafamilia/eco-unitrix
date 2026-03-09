@@ -155,7 +155,7 @@ export default function AdminPage() {
           return (
             <div
               key={app.id}
-              className="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_auto_auto] items-center gap-4 px-5 py-4 border-b border-border last:border-0 hover:bg-secondary/20 transition-colors"
+              className="flex flex-col sm:grid sm:grid-cols-[1fr_auto_auto] items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 border-b border-border last:border-0 hover:bg-secondary/20 transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
