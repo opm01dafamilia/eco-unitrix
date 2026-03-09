@@ -50,6 +50,7 @@ const App = () => (
               <Route path="/admin/webhook-logs" element={<AdminWebhookLogs />} />
               <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
               <Route path="/admin/system-logs" element={<AdminSystemLogs />} />
+              <Route path="/admin/free-trials" element={<AdminFreeTrials />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

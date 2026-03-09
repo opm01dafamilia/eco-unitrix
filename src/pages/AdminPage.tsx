@@ -104,6 +104,20 @@ export default function AdminPage() {
             </CardHeader>
           </Card>
         </Link>
+
+        <Link to="/admin/free-trials">
+          <Card className="hover:bg-secondary/20 transition-colors cursor-pointer">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Gift className="h-5 w-5 text-primary" />
+                Teste Grátis
+              </CardTitle>
+              <CardDescription>
+                Liberar acesso de teste para usuários
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
       </div>
 
       <div>
