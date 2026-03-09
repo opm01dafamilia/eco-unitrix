@@ -146,6 +146,15 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
             </div>
           )}
         </div>
+
+        {blockedApp && (
+          <AccessBlockedModal
+            open={!!blockedApp}
+            onOpenChange={(open) => !open && clearBlockedApp()}
+            appName={blockedApp.appName}
+            reason={blockedApp.reason}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );
