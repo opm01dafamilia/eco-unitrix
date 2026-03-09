@@ -46,6 +46,9 @@ const App = () => (
               <Route path="/activity" element={<ActivityPage />} />
               <Route path="/subscription" element={<SubscriptionPage />} />
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/admin/webhook-logs" element={<AdminWebhookLogs />} />
+              <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
+              <Route path="/admin/system-logs" element={<AdminSystemLogs />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

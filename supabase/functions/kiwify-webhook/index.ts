@@ -266,6 +266,8 @@ Deno.serve(async (req) => {
           .eq("user_id", userId)
           .eq("app_key", appKey);
 
+        await logWebhook("success");
+        await logSystem("refund_processed", `Refund processed for ${appKey} - user ${customerEmail}`);
         console.log("Refund processed:", { userId, appKey });
         break;
       }
