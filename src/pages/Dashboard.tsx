@@ -17,7 +17,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const { data: apps, isLoading: appsLoading, isError: appsError } = useApps();
-  const { launchApp } = useAppLauncher();
+  const { launchApp, blockedApp, clearBlockedApp } = useAppLauncher();
 
   const { data: recentLogs } = useQuery({
     queryKey: ["recent-logs", user?.id],
