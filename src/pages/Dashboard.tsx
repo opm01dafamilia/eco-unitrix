@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { AccessBlockedModal } from "@/components/AccessBlockedModal";
+import { ptBR } from "date-fns/locale";
 
 export default function Dashboard() {
   const { user } = useAuth();
