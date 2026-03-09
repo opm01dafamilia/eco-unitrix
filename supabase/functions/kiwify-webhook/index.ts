@@ -99,6 +99,8 @@ Deno.serve(async (req) => {
     const appKey = resolveAppKey(productName);
     if (!appKey) {
       console.error("Could not resolve app_key for product:", productName);
+      await logWebhook("error");
+      await logSystem("product_mapping_error", `Product not mapped: ${productName}`);
       return new Response(
         JSON.stringify({ error: "Product not mapped to any app" }),
         {
