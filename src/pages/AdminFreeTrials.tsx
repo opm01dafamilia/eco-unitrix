@@ -133,11 +133,11 @@ export default function AdminFreeTrials() {
 
     // Create one trial row per selected app, or a single "all_apps" row
     const rows = isAllApps
-      ? [{ user_id: profile.user_id, app_key: null, trial_type: "all_apps" as const, duration_days: durationDays, expires_at: expiresAt.toISOString(), status: "active", granted_by: user?.id ?? null }]
+      ? [{ user_id: profile.user_id, app_key: null as string | null, trial_type: "all_apps", duration_days: durationDays, expires_at: expiresAt.toISOString(), status: "active", granted_by: user?.id ?? null }]
       : selectedApps.map((appKey) => ({
           user_id: profile.user_id,
-          app_key: appKey,
-          trial_type: "selected_apps" as const,
+          app_key: appKey as string | null,
+          trial_type: "selected_apps",
           duration_days: durationDays,
           expires_at: expiresAt.toISOString(),
           status: "active",
