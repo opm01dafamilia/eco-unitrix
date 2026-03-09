@@ -143,6 +143,8 @@ Deno.serve(async (req) => {
 
     const planId = plans?.[0]?.id;
     if (!planId) {
+      await logWebhook("error");
+      await logSystem("plan_not_found", `No active plan found for app: ${appKey}`);
       return new Response(
         JSON.stringify({ error: "No active plan found for app" }),
         {
