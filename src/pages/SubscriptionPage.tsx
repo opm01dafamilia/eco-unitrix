@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Link } from "react-router-dom";
+import PricingCards from "@/components/PricingCards";
 
 const statusMap: Record<string, { label: string; color: string; icon: typeof CheckCircle2 }> = {
   active: { label: "Ativa", color: "text-primary bg-primary/10", icon: CheckCircle2 },
@@ -65,7 +66,7 @@ export default function SubscriptionPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-8">
       <div>
         <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">Minha Assinatura</h1>
         <p className="text-muted-foreground mt-1">Gerencie seus planos e veja os aplicativos incluídos.</p>
@@ -152,6 +153,9 @@ export default function SubscriptionPage() {
           </p>
         </div>
       )}
+
+      {/* Premium Pricing Cards */}
+      {!isError && <PricingCards />}
 
       {/* Available apps to subscribe */}
       {!isError && unsubscribedApps.length > 0 && (
