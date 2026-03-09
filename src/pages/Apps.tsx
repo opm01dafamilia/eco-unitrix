@@ -22,7 +22,7 @@ type FilterType = "all" | "active" | "accessible" | "featured";
 
 export default function Apps() {
   const { data: apps, isLoading, isError, refetch } = useApps();
-  const { launchApp } = useAppLauncher();
+  const { launchApp, blockedApp, clearBlockedApp } = useAppLauncher();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterType>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
