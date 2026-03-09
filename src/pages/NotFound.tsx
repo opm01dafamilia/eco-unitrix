@@ -17,7 +17,7 @@ export default function NotFound() {
           <p className="text-sm text-muted-foreground mt-1">A página que você procura não existe ou foi movida.</p>
         </div>
         <Button asChild>
-          <Link to="/">
+          <Link to="/dashboard">
             <ArrowLeft className="h-4 w-4 mr-2" /> Voltar ao Dashboard
           </Link>
         </Button>

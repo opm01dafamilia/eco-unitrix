@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Hexagon, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -14,9 +15,10 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  if (user) return <Navigate to="/" replace />;
+  if (user) return <Navigate to="/dashboard" replace />;
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +61,11 @@ export default function Login() {
               </button>
             </div>
           </div>
-          <div className="text-right">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Checkbox id="keep-logged" checked={keepLoggedIn} onCheckedChange={(v) => setKeepLoggedIn(v === true)} />
+              <Label htmlFor="keep-logged" className="text-xs text-muted-foreground cursor-pointer">Manter conectado</Label>
+            </div>
             <Link to="/forgot-password" className="text-xs text-primary hover:underline">Esqueci minha senha</Link>
           </div>
           <Button type="submit" className="w-full" disabled={loading}>

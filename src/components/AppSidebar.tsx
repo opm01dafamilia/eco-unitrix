@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const navItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Meus Aplicativos", url: "/apps", icon: Grid3X3 },
   { title: "Atividade", url: "/activity", icon: Activity },
   { title: "Assinatura", url: "/subscription", icon: CreditCard },
@@ -57,7 +57,7 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <NavLink
                       to={item.url}
-                      end={item.url === "/"}
+                      end={item.url === "/dashboard"}
                       className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
                       activeClassName="bg-primary/10 text-primary font-medium"
                     >
