@@ -120,6 +120,8 @@ Deno.serve(async (req) => {
     );
     if (!user) {
       console.error("User not found for email:", customerEmail);
+      await logWebhook("error");
+      await logSystem("user_not_found", `User not found for email: ${customerEmail}`);
       return new Response(
         JSON.stringify({ error: "User not found" }),
         {
