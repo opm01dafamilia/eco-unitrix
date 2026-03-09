@@ -1,11 +1,12 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Clock, XCircle, ExternalLink, Star, Wrench, EyeOff, Calendar, AppWindow, CreditCard } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, ExternalLink, Star, Wrench, EyeOff, Calendar, AppWindow, CreditCard, Check, Tag } from "lucide-react";
 import { getAppIcon } from "@/lib/appIcons";
 import { Badge } from "@/components/ui/badge";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
 import { useSubscriptionPlans } from "@/hooks/useSubscriptions";
 import { AccessBlockedModal } from "@/components/AccessBlockedModal";
+import { appPlansConfig } from "@/lib/appPlansConfig";
 import type { AppWithAccess } from "@/hooks/useApps";
 
 const categoryLabels: Record<string, string> = {
@@ -30,6 +31,7 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
   if (!app) return null;
 
   const available = app.app_status === "active" && app.user_access === "active";
+  const config = appPlansConfig[app.app_key];
 
   const getStatusInfo = () => {
     if (app.app_status === "inactive") return { label: "Indisponível", icon: XCircle, class: "text-muted-foreground bg-muted" };
@@ -54,9 +56,14 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
   const createdDate = new Date(app.created_at).toLocaleDateString("pt-BR");
   const activePlans = plans?.filter((p) => p.status === "active") ?? [];
 
+  const monthlyPlans = activePlans.filter((p) => p.billing_type === "monthly");
+  const yearlyPlans = activePlans.filter((p) => p.billing_type === "yearly");
+
+  const isAppUnavailable = ["inactive", "disabled", "maintenance", "coming_soon"].includes(app.app_status);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg border-border bg-card">
+      <DialogContent className="sm:max-w-lg border-border bg-card max-h-[90vh] overflow-y-auto">
         <div className="-mx-6 -mt-6 h-32 bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center rounded-t-lg relative">
           {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-12 w-12 text-primary/60" strokeWidth={1.5} /> : <AppWindow className="h-12 w-12 text-primary/40" strokeWidth={1.5} />; })()}
           {app.is_featured && (
@@ -115,33 +122,149 @@ export function AppDetailModal({ app, open, onOpenChange }: AppDetailModalProps)
             {available && <ExternalLink className="h-4 w-4 ml-1" />}
           </Button>
 
-          {/* Subscription Plans */}
-          {activePlans.length > 0 && (
+          {/* Benefits */}
+          {config && (
             <div className="rounded-lg border border-border bg-secondary/30 p-4 space-y-3">
+              <h4 className="text-sm font-medium text-foreground">O que você recebe</h4>
+              <ul className="space-y-1.5">
+                {config.benefits.map((benefit, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <Check className="h-3.5 w-3.5 text-primary shrink-0" />
+                    {benefit}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Subscription Plans */}
+          {(activePlans.length > 0 || config) && (
+            <div className="rounded-lg border border-border bg-secondary/30 p-4 space-y-4">
               <h4 className="text-sm font-medium text-foreground flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-primary" />
                 Assinar plano
               </h4>
-              <div className="grid gap-2">
-                {activePlans.map((plan) => (
-                  <a
-                    key={plan.id}
-                    href={plan.kiwify_url ?? "#"}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3 transition-colors hover:border-primary/30 hover:bg-primary/5 group"
-                  >
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{plan.plan_name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {plan.billing_type === "yearly" ? "Cobrança anual" : "Cobrança mensal"}
-                      </p>
+
+              {isAppUnavailable && (
+                <p className="text-xs text-muted-foreground italic">
+                  Este aplicativo está indisponível no momento. Os planos serão ativados quando o app estiver disponível.
+                </p>
+              )}
+
+              <div className="grid gap-3">
+                {/* Monthly Plans */}
+                {monthlyPlans.map((plan) => {
+                  const pricing = config?.monthly;
+                  return (
+                    <div
+                      key={plan.id}
+                      className={`rounded-lg border border-border bg-card p-4 space-y-2 ${isAppUnavailable ? "opacity-60" : ""}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-semibold text-foreground">{plan.plan_name}</p>
+                          <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">Mensal</Badge>
+                        </div>
+                      </div>
+
+                      {pricing && (
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Tag className="h-3 w-3 text-primary" />
+                            <span className="text-xs text-primary font-medium">Primeiro mês:</span>
+                            <span className="text-sm font-bold text-foreground">{pricing.promoPrice}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground pl-5">
+                            Depois: {pricing.renewalPrice}
+                          </p>
+                        </div>
+                      )}
+
+                      {!pricing && plan.price_description && (
+                        <p className="text-xs text-muted-foreground">{plan.price_description}</p>
+                      )}
+
+                      <a
+                        href={!isAppUnavailable ? (plan.kiwify_url ?? "#") : undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`mt-2 flex items-center justify-center gap-1.5 rounded-md px-4 py-2 text-xs font-medium transition-colors ${
+                          isAppUnavailable
+                            ? "bg-muted text-muted-foreground cursor-not-allowed pointer-events-none"
+                            : "bg-primary text-primary-foreground hover:bg-primary/90"
+                        }`}
+                      >
+                        {isAppUnavailable ? "Indisponível" : "Assinar plano mensal"}
+                        {!isAppUnavailable && <ExternalLink className="h-3 w-3" />}
+                      </a>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs font-medium text-primary group-hover:underline">
-                      Assinar <ExternalLink className="h-3 w-3" />
+                  );
+                })}
+
+                {/* Yearly Plans */}
+                {yearlyPlans.map((plan) => {
+                  const pricing = config?.yearly;
+                  return (
+                    <div
+                      key={plan.id}
+                      className={`rounded-lg border border-primary/30 bg-card p-4 space-y-2 relative ${isAppUnavailable ? "opacity-60" : ""}`}
+                    >
+                      <div className="absolute -top-2.5 right-3">
+                        <Badge className="text-[10px] bg-primary text-primary-foreground">Melhor oferta</Badge>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-semibold text-foreground">{plan.plan_name}</p>
+                        <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">Anual</Badge>
+                      </div>
+
+                      {pricing && (
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Tag className="h-3 w-3 text-primary" />
+                            <span className="text-xs text-primary font-medium">Primeiro ano:</span>
+                          </div>
+                          <div className="pl-5 space-y-0.5">
+                            {pricing.installment && (
+                              <p className="text-sm font-bold text-foreground">{pricing.installment}</p>
+                            )}
+                            {pricing.promoPrice && (
+                              <p className="text-xs text-muted-foreground">ou {pricing.promoPrice}</p>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground pl-5">
+                            Depois: {pricing.renewalPrice}
+                          </p>
+                        </div>
+                      )}
+
+                      {!pricing && plan.price_description && (
+                        <p className="text-xs text-muted-foreground">{plan.price_description}</p>
+                      )}
+
+                      <a
+                        href={!isAppUnavailable ? (plan.kiwify_url ?? "#") : undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`mt-2 flex items-center justify-center gap-1.5 rounded-md px-4 py-2 text-xs font-medium transition-colors ${
+                          isAppUnavailable
+                            ? "bg-muted text-muted-foreground cursor-not-allowed pointer-events-none"
+                            : "bg-primary text-primary-foreground hover:bg-primary/90"
+                        }`}
+                      >
+                        {isAppUnavailable ? "Indisponível" : "Assinar plano anual"}
+                        {!isAppUnavailable && <ExternalLink className="h-3 w-3" />}
+                      </a>
                     </div>
-                  </a>
-                ))}
+                  );
+                })}
+
+                {/* Fallback if no DB plans but config exists */}
+                {activePlans.length === 0 && config && (
+                  <p className="text-xs text-muted-foreground text-center py-2">
+                    Planos serão disponibilizados em breve.
+                  </p>
+                )}
               </div>
             </div>
           )}
