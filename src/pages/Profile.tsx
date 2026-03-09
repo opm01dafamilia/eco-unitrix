@@ -1,4 +1,4 @@
-import { Mail, Calendar, AppWindow, Activity, Pencil, Check, X, Camera } from "lucide-react";
+import { Mail, Calendar, AppWindow, Activity, Pencil, Check, X, Camera, Crown, CreditCard, Gift, XCircle } from "lucide-react";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,9 +8,18 @@ import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { getAppIcon } from "@/lib/appIcons";
+
+const accessTypeConfig = {
+  lifetime: { label: "Vitalício", icon: Crown, color: "text-yellow-500" },
+  paid: { label: "Assinatura", icon: CreditCard, color: "text-primary" },
+  trial: { label: "Teste grátis", icon: Gift, color: "text-blue-400" },
+  inactive: { label: "Inativo", icon: XCircle, color: "text-muted-foreground" },
+} as const;
 
 export default function Profile() {
   const { data: profile, isLoading } = useProfile();
@@ -202,6 +211,35 @@ export default function Profile() {
             <span className="text-sm text-muted-foreground">Total de acessos</span>
           </div>
           <p className="font-display text-3xl font-bold text-foreground">{logCount ?? 0}</p>
+        </div>
+      </div>
+
+      {/* App access details */}
+      <div>
+        <h2 className="font-display text-xl font-bold text-foreground mb-4">Seus aplicativos</h2>
+        <div className="rounded-xl border border-border bg-card overflow-hidden divide-y divide-border">
+          {apps?.filter((a) => a.is_visible).map((app) => {
+            const cfg = accessTypeConfig[app.access_type];
+            const Icon = getAppIcon(app.app_key) || AppWindow;
+
+            return (
+              <div key={app.id} className="flex items-center justify-between px-5 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Icon className="h-4 w-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{app.app_name}</p>
+                    <p className="text-xs text-muted-foreground">{app.app_category}</p>
+                  </div>
+                </div>
+                <Badge variant="outline" className={`${cfg.color} border-current/20 gap-1`}>
+                  <cfg.icon className="h-3 w-3" />
+                  {cfg.label}
+                </Badge>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

@@ -15,6 +15,7 @@ export interface AppWithAccess {
   sort_order: number;
   created_at: string;
   user_access: string | null;
+  access_type: "lifetime" | "paid" | "trial" | "inactive";
 }
 
 export function useApps() {
@@ -35,7 +36,14 @@ export function useApps() {
         .eq("user_id", user!.id);
       if (accessError) throw accessError;
 
-      // Also check for ecosystem subscription
+      // Check lifetime access
+      const { data: lifetime } = await supabase
+        .from("lifetime_access")
+        .select("id")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+
+      // Check ecosystem subscription
       const { data: ecosystemSub } = await supabase
         .from("user_subscriptions")
         .select("subscription_status, status, expires_at")
@@ -47,16 +55,62 @@ export function useApps() {
       const hasEcosystem = ecosystemSub && ecosystemSub.length > 0 &&
         (!ecosystemSub[0].expires_at || new Date(ecosystemSub[0].expires_at) >= new Date());
 
+      // Check per-app subscriptions
+      const { data: appSubs } = await supabase
+        .from("user_subscriptions")
+        .select("app_key, subscription_status, status, expires_at")
+        .eq("user_id", user!.id)
+        .neq("app_key", "ecosystem");
+
+      const paidAppKeys = new Set(
+        (appSubs ?? [])
+          .filter((s) => {
+            const st = s.subscription_status || s.status;
+            return st === "active" && (!s.expires_at || new Date(s.expires_at) >= new Date());
+          })
+          .map((s) => s.app_key)
+      );
+
+      // Check free trials
+      const { data: trials } = await supabase
+        .from("free_trials")
+        .select("app_key, trial_type")
+        .eq("user_id", user!.id)
+        .eq("status", "active")
+        .gte("expires_at", new Date().toISOString());
+
+      const trialAllApps = trials?.some((t) => t.trial_type === "all_apps") ?? false;
+      const trialAppKeys = new Set(
+        (trials ?? []).filter((t) => t.trial_type === "single_app").map((t) => t.app_key)
+      );
+
       const accessMap = new Map(access?.map((a) => [a.app_key, a.access_status]) ?? []);
 
-      return (apps as any[]).map((app): AppWithAccess => ({
-        ...app,
-        is_visible: app.is_visible ?? true,
-        app_category: app.app_category ?? "produtividade",
-        is_featured: app.is_featured ?? false,
-        sort_order: app.sort_order ?? 0,
-        user_access: hasEcosystem ? "active" : (accessMap.get(app.app_key) ?? null),
-      }));
+      return (apps as any[]).map((app): AppWithAccess => {
+        let accessType: AppWithAccess["access_type"] = "inactive";
+        let userAccess: string | null = accessMap.get(app.app_key) ?? null;
+
+        if (lifetime) {
+          accessType = "lifetime";
+          userAccess = "active";
+        } else if (hasEcosystem || paidAppKeys.has(app.app_key)) {
+          accessType = "paid";
+          userAccess = "active";
+        } else if (trialAllApps || trialAppKeys.has(app.app_key)) {
+          accessType = "trial";
+          userAccess = "active";
+        }
+
+        return {
+          ...app,
+          is_visible: app.is_visible ?? true,
+          app_category: app.app_category ?? "produtividade",
+          is_featured: app.is_featured ?? false,
+          sort_order: app.sort_order ?? 0,
+          user_access: userAccess,
+          access_type: accessType,
+        };
+      });
     },
     enabled: !!user,
   });
