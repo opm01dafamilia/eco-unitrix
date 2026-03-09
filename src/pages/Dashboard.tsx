@@ -253,6 +253,15 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {blockedApp && (
+        <AccessBlockedModal
+          open={!!blockedApp}
+          onOpenChange={(open) => !open && clearBlockedApp()}
+          appName={blockedApp.appName}
+          reason={blockedApp.reason}
+        />
+      )}
     </div>
   );
 }
