@@ -298,7 +298,9 @@ function AppCard({
               : "bg-muted-foreground"
           }`} />
           <span className="text-xs text-muted-foreground">
-            {app.app_status === "coming_soon"
+            {app.app_status === "inactive"
+              ? "Indisponível no momento"
+              : app.app_status === "coming_soon"
               ? "Lançamento em breve"
               : app.app_status === "maintenance"
               ? "Em manutenção"
