@@ -1,5 +1,6 @@
 import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import SavingsComparison from "@/components/SavingsComparison";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
