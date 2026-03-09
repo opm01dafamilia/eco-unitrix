@@ -39,14 +39,13 @@ export function useAppLauncher() {
       return;
     }
 
-    // Check subscription status
+    // Check subscription status (direct or ecosystem)
     const { data: subs, error } = await supabase
       .from("user_subscriptions")
-      .select("status, subscription_status, expires_at")
+      .select("status, subscription_status, expires_at, app_key")
       .eq("user_id", user.id)
-      .eq("app_key", app.app_key)
-      .order("created_at", { ascending: false })
-      .limit(1);
+      .in("app_key", [app.app_key, "ecosystem"])
+      .order("created_at", { ascending: false });
 
     if (error) {
       toast.error("Erro ao verificar sua assinatura.");
@@ -59,28 +58,36 @@ export function useAppLauncher() {
       return;
     }
 
-    const sub = subs[0];
-    const subStatus = sub.subscription_status || sub.status;
+    // Check if any subscription (direct or ecosystem) is active
+    const activeSub = subs.find((s) => {
+      const st = s.subscription_status || s.status;
+      if (st !== "active") return false;
+      if (s.expires_at && new Date(s.expires_at) < new Date()) return false;
+      return true;
+    });
 
-    if (subStatus === "cancelled") {
-      await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura cancelada (usuário: ${user.email})`);
-      setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "cancelled" });
-      return;
-    }
+    if (activeSub) {
+      // Access granted — fall through to open the app
+    } else {
+      // Use the first sub to determine the block reason
+      const sub = subs[0];
+      const subStatus = sub.subscription_status || sub.status;
 
-    if (subStatus === "suspended" || subStatus === "overdue") {
-      await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura suspensa (usuário: ${user.email})`);
-      setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "suspended" });
-      return;
-    }
-
-    if (sub.expires_at && new Date(sub.expires_at) < new Date()) {
-      await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura expirada (usuário: ${user.email})`);
-      setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "expired" });
-      return;
-    }
-
-    if (subStatus !== "active") {
+      if (subStatus === "cancelled") {
+        await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura cancelada (usuário: ${user.email})`);
+        setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "cancelled" });
+        return;
+      }
+      if (subStatus === "suspended" || subStatus === "overdue") {
+        await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura suspensa (usuário: ${user.email})`);
+        setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "suspended" });
+        return;
+      }
+      if (sub.expires_at && new Date(sub.expires_at) < new Date()) {
+        await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura expirada (usuário: ${user.email})`);
+        setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "expired" });
+        return;
+      }
       await logAccessEvent("acesso_negado", `Acesso negado ao ${app.app_name} por assinatura inativa (usuário: ${user.email})`);
       setBlockedApp({ appName: app.app_name, appKey: app.app_key, reason: "no_subscription" });
       return;

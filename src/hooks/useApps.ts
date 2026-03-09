@@ -35,6 +35,18 @@ export function useApps() {
         .eq("user_id", user!.id);
       if (accessError) throw accessError;
 
+      // Also check for ecosystem subscription
+      const { data: ecosystemSub } = await supabase
+        .from("user_subscriptions")
+        .select("subscription_status, status, expires_at")
+        .eq("user_id", user!.id)
+        .eq("app_key", "ecosystem")
+        .eq("subscription_status", "active")
+        .limit(1);
+
+      const hasEcosystem = ecosystemSub && ecosystemSub.length > 0 &&
+        (!ecosystemSub[0].expires_at || new Date(ecosystemSub[0].expires_at) >= new Date());
+
       const accessMap = new Map(access?.map((a) => [a.app_key, a.access_status]) ?? []);
 
       return (apps as any[]).map((app): AppWithAccess => ({
@@ -43,7 +55,7 @@ export function useApps() {
         app_category: app.app_category ?? "produtividade",
         is_featured: app.is_featured ?? false,
         sort_order: app.sort_order ?? 0,
-        user_access: accessMap.get(app.app_key) ?? null,
+        user_access: hasEcosystem ? "active" : (accessMap.get(app.app_key) ?? null),
       }));
     },
     enabled: !!user,
