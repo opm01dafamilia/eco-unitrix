@@ -2,6 +2,7 @@ import { useUserSubscriptions } from "@/hooks/useSubscriptions";
 import { useApps } from "@/hooks/useApps";
 import { useSubscriptionPlans } from "@/hooks/useSubscriptions";
 import { getAppIcon } from "@/lib/appIcons";
+import SavingsComparison from "@/components/SavingsComparison";
 import {
   CreditCard,
   CheckCircle2,
