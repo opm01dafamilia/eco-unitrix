@@ -146,6 +146,27 @@ export type Database = {
         }
         Relationships: []
       }
+      system_logs: {
+        Row: {
+          created_at: string
+          description: string
+          event_type: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          event_type: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          event_type?: string
+          id?: string
+        }
+        Relationships: []
+      }
       user_app_access: {
         Row: {
           access_status: string
@@ -239,6 +260,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      webhook_logs: {
+        Row: {
+          customer_email: string | null
+          event_type: string
+          id: string
+          product_name: string | null
+          raw_payload: Json | null
+          received_at: string
+          status: string
+        }
+        Insert: {
+          customer_email?: string | null
+          event_type: string
+          id?: string
+          product_name?: string | null
+          raw_payload?: Json | null
+          received_at?: string
+          status: string
+        }
+        Update: {
+          customer_email?: string | null
+          event_type?: string
+          id?: string
+          product_name?: string | null
+          raw_payload?: Json | null
+          received_at?: string
+          status?: string
+        }
+        Relationships: []
       }
     }
     Views: {

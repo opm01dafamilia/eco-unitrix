@@ -66,7 +66,27 @@ Deno.serve(async (req) => {
 
     console.log("Webhook received:", { eventType, customerEmail, productName });
 
+    // Log webhook event
+    const logWebhook = async (status: string) => {
+      await supabase.from("webhook_logs").insert({
+        event_type: eventType,
+        product_name: productName,
+        customer_email: customerEmail,
+        status,
+        raw_payload: body,
+      });
+    };
+
+    const logSystem = async (event: string, desc: string) => {
+      await supabase.from("system_logs").insert({
+        event_type: event,
+        description: desc,
+      });
+    };
+
     if (!customerEmail) {
+      await logWebhook("error");
+      await logSystem("webhook_error", "Customer email not found in webhook payload");
       return new Response(
         JSON.stringify({ error: "Customer email not found" }),
         {
@@ -79,6 +99,8 @@ Deno.serve(async (req) => {
     const appKey = resolveAppKey(productName);
     if (!appKey) {
       console.error("Could not resolve app_key for product:", productName);
+      await logWebhook("error");
+      await logSystem("product_mapping_error", `Product not mapped: ${productName}`);
       return new Response(
         JSON.stringify({ error: "Product not mapped to any app" }),
         {
@@ -98,6 +120,8 @@ Deno.serve(async (req) => {
     );
     if (!user) {
       console.error("User not found for email:", customerEmail);
+      await logWebhook("error");
+      await logSystem("user_not_found", `User not found for email: ${customerEmail}`);
       return new Response(
         JSON.stringify({ error: "User not found" }),
         {
@@ -119,6 +143,8 @@ Deno.serve(async (req) => {
 
     const planId = plans?.[0]?.id;
     if (!planId) {
+      await logWebhook("error");
+      await logSystem("plan_not_found", `No active plan found for app: ${appKey}`);
       return new Response(
         JSON.stringify({ error: "No active plan found for app" }),
         {
@@ -156,6 +182,8 @@ Deno.serve(async (req) => {
           },
           { onConflict: "user_id,app_key" },
         );
+        await logWebhook("success");
+        await logSystem("access_granted", `Access granted to ${appKey} for user ${customerEmail}`);
         console.log("Access granted:", { userId, appKey });
         break;
       }
@@ -180,6 +208,8 @@ Deno.serve(async (req) => {
           .eq("user_id", userId)
           .eq("app_key", appKey);
 
+        await logWebhook("success");
+        await logSystem("subscription_renewed", `Subscription renewed for ${appKey} - user ${customerEmail}`);
         console.log("Subscription renewed:", { userId, appKey });
         break;
       }
@@ -197,6 +227,8 @@ Deno.serve(async (req) => {
           .eq("user_id", userId)
           .eq("app_key", appKey);
 
+        await logWebhook("success");
+        await logSystem("subscription_cancelled", `Subscription cancelled for ${appKey} - user ${customerEmail}`);
         console.log("Subscription cancelled:", { userId, appKey });
         break;
       }
@@ -214,6 +246,8 @@ Deno.serve(async (req) => {
           .eq("user_id", userId)
           .eq("app_key", appKey);
 
+        await logWebhook("success");
+        await logSystem("subscription_suspended", `Subscription suspended for ${appKey} - user ${customerEmail}`);
         console.log("Subscription suspended:", { userId, appKey });
         break;
       }
@@ -232,6 +266,8 @@ Deno.serve(async (req) => {
           .eq("user_id", userId)
           .eq("app_key", appKey);
 
+        await logWebhook("success");
+        await logSystem("refund_processed", `Refund processed for ${appKey} - user ${customerEmail}`);
         console.log("Refund processed:", { userId, appKey });
         break;
       }

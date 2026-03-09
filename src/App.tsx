@@ -14,6 +14,9 @@ import SettingsPage from "./pages/SettingsPage";
 import ActivityPage from "./pages/ActivityPage";
 import SubscriptionPage from "./pages/SubscriptionPage";
 import AdminPage from "./pages/AdminPage";
+import AdminWebhookLogs from "./pages/AdminWebhookLogs";
+import AdminSubscriptions from "./pages/AdminSubscriptions";
+import AdminSystemLogs from "./pages/AdminSystemLogs";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -43,6 +46,9 @@ const App = () => (
               <Route path="/activity" element={<ActivityPage />} />
               <Route path="/subscription" element={<SubscriptionPage />} />
               <Route path="/admin" element={<AdminPage />} />
+              <Route path="/admin/webhook-logs" element={<AdminWebhookLogs />} />
+              <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
+              <Route path="/admin/system-logs" element={<AdminSystemLogs />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

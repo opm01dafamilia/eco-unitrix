@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { Shield, CheckCircle2, XCircle, Wrench, Loader2 } from "lucide-react";
+import { Shield, CheckCircle2, XCircle, Wrench, Loader2, Webhook, CreditCard, Activity } from "lucide-react";
 import { getAppIcon } from "@/lib/appIcons";
 import { useApps } from "@/hooks/useApps";
 import { useIsAdmin } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { AppWindow } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 const statusOptions = [
   { value: "active", label: "Ativo", icon: CheckCircle2, color: "text-primary" },
@@ -52,12 +53,62 @@ export default function AdminPage() {
   const allApps = apps ?? [];
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-6">
       <div>
         <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground flex items-center gap-3">
           <Shield className="h-7 w-7 text-primary" /> Administração
         </h1>
-        <p className="text-muted-foreground mt-1">Gerencie os aplicativos do ecossistema.</p>
+        <p className="text-muted-foreground mt-1">Gerencie os aplicativos e visualize logs do sistema.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link to="/admin/webhook-logs">
+          <Card className="hover:bg-secondary/20 transition-colors cursor-pointer">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Webhook className="h-5 w-5 text-primary" />
+                Webhook Logs
+              </CardTitle>
+              <CardDescription>
+                Eventos recebidos da Kiwify
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+
+        <Link to="/admin/subscriptions">
+          <Card className="hover:bg-secondary/20 transition-colors cursor-pointer">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <CreditCard className="h-5 w-5 text-primary" />
+                Assinaturas
+              </CardTitle>
+              <CardDescription>
+                Gerenciar assinaturas dos usuários
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+
+        <Link to="/admin/system-logs">
+          <Card className="hover:bg-secondary/20 transition-colors cursor-pointer">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Activity className="h-5 w-5 text-primary" />
+                Eventos do Sistema
+              </CardTitle>
+              <CardDescription>
+                Logs de eventos e erros
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </Link>
+      </div>
+
+      <div>
+        <h2 className="font-display text-xl font-bold text-foreground mb-4">
+          Gerenciar Aplicativos
+        </h2>
       </div>
 
       <div className="rounded-xl border border-border bg-card overflow-hidden">
