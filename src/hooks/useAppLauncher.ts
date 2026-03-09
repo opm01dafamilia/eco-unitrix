@@ -8,6 +8,7 @@ export function useAppLauncher() {
   const { user } = useAuth();
   const [blockedApp, setBlockedApp] = useState<{
     appName: string;
+    appKey: string;
     reason: "no_subscription" | "expired" | "cancelled" | "suspended";
   } | null>(null);
 
