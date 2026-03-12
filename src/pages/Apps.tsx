@@ -36,7 +36,7 @@ type FilterType = "all" | "active" | "accessible" | "featured";
 
 export default function Apps() {
   const { data: apps, isLoading, isError, refetch } = useApps();
-  const { launchApp, blockedApp, clearBlockedApp } = useAppLauncher();
+  const { launchApp, launchingAppKey, blockedApp, clearBlockedApp } = useAppLauncher();
   const { data: accessMap } = useAllAppAccess();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterType>("all");
