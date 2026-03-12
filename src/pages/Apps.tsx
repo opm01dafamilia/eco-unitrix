@@ -172,7 +172,7 @@ export default function Apps() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
             {featuredApps.map((app, i) => (
-              <AppCard key={app.id} app={app} index={i} featured accessInfo={accessMap?.[app.app_key]} onSelect={setSelectedApp} onLaunch={launchApp} />
+              <AppCard key={app.id} app={app} index={i} featured accessInfo={accessMap?.[app.app_key]} onSelect={setSelectedApp} onLaunch={launchApp} launchingAppKey={launchingAppKey} />
             ))}
           </div>
         </div>
