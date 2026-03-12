@@ -217,6 +217,7 @@ function AppCard({
   accessInfo,
   onSelect,
   onLaunch,
+  launchingAppKey,
 }: {
   app: AppWithAccess;
   index: number;
@@ -224,14 +225,16 @@ function AppCard({
   accessInfo?: { accessType: string; expiresAt: string | null };
   onSelect: (app: AppWithAccess) => void;
   onLaunch: (app: AppWithAccess) => void;
+  launchingAppKey: string | null;
 }) {
   const atCfg = accessTypeConfig[app.access_type] ?? accessTypeConfig.inactive;
   const isActive = app.user_access === "active" && app.access_type !== "inactive";
   const isTrial = app.access_type === "trial";
   const isInactive = app.access_type === "inactive";
+  const isLaunching = launchingAppKey === app.app_key;
 
   const getAppStatusLabel = () => {
-    if (app.app_status === "inactive") return "Indisponível no momento";
+    if (app.app_status === "inactive") return "Indisponível";
     if (app.app_status === "maintenance") return "Em manutenção";
     if (app.app_status === "coming_soon") return "Em breve";
     if (app.app_status === "disabled") return "Desativado";
@@ -258,6 +261,13 @@ function AppCard({
             <Star className="h-4 w-4 text-primary fill-primary" />
           </div>
         )}
+        {/* Secondary "Ver detalhes" button on hover */}
+        <button
+          onClick={(e) => { e.stopPropagation(); onSelect(app); }}
+          className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 rounded-md bg-background/80 backdrop-blur-sm text-[10px] font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:text-foreground"
+        >
+          <Eye className="h-3 w-3" /> Ver detalhes
+        </button>
       </div>
 
       <div className="p-4 sm:p-5 space-y-3">
@@ -295,24 +305,34 @@ function AppCard({
         <div className="flex gap-2">
           {!isAppUnavailable && isActive && (
             <button
+              disabled={isLaunching}
               onClick={(e) => { e.stopPropagation(); onLaunch(app); }}
-              className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary/10 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-primary transition-colors hover:bg-primary/20 active:scale-[0.98]"
+              className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)] active:scale-[0.97] disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Abrir <ExternalLink className="h-3.5 w-3.5" />
+              {isLaunching ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Abrindo...
+                </>
+              ) : (
+                <>
+                  Acessar aplicativo <ExternalLink className="h-3.5 w-3.5" />
+                </>
+              )}
             </button>
           )}
           {!isAppUnavailable && isTrial && (
-            <Link to="/subscription" onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-1 rounded-lg border border-primary/20 px-2.5 sm:px-3 py-2 sm:py-2.5 text-[11px] sm:text-xs font-medium text-primary transition-colors hover:bg-primary/5 active:scale-[0.98]">
+            <Link to="/subscription" onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-1 rounded-lg border border-primary/20 px-2.5 sm:px-3 py-2.5 sm:py-3 text-[11px] sm:text-xs font-medium text-primary transition-colors hover:bg-primary/5 active:scale-[0.97]">
               Assinar
             </Link>
           )}
           {!isAppUnavailable && isInactive && (
-            <Link to="/subscription" onClick={(e) => e.stopPropagation()} className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary/10 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-primary transition-colors hover:bg-primary/20 active:scale-[0.98]">
+            <Link to="/subscription" onClick={(e) => e.stopPropagation()} className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary/10 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-primary transition-colors hover:bg-primary/20 active:scale-[0.97]">
               Assinar plano
             </Link>
           )}
           {isAppUnavailable && (
-            <button disabled className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-muted px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-muted-foreground opacity-40 cursor-not-allowed">
+            <button disabled className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-muted px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-muted-foreground opacity-40 cursor-not-allowed">
               {appStatusLabel}
             </button>
           )}
