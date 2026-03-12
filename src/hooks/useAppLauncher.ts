@@ -46,9 +46,38 @@ export function useAppLauncher() {
           toast.error("Aplicativo ainda não configurado.");
           return;
         }
+
+        toast.loading("Conectando ao aplicativo...", { id: "sso-launch" });
+
         await logAccessEvent("acesso_permitido", `Acesso permitido ao ${app.app_name} via ${app.access_type} (usuário: ${user.email})`);
         await supabase.from("app_usage_logs").insert({ user_id: user.id, app_key: app.app_key });
-        window.open(app.app_url, "_blank", "noopener,noreferrer");
+
+        // Generate SSO token
+        let finalUrl = app.app_url;
+        try {
+          const { data, error } = await supabase.functions.invoke("generate-sso-token", {
+            body: { app_key: app.app_key },
+          });
+
+          if (!error && data?.sso_token) {
+            const url = new URL(app.app_url);
+            url.searchParams.set("sso_token", data.sso_token);
+            url.searchParams.set("sso_app", app.app_key);
+            finalUrl = url.toString();
+
+            await logAccessEvent("sso_token_generated", `Token SSO gerado para ${app.app_name} (usuário: ${user.email})`);
+          } else {
+            // SSO failed, fallback to normal open
+            console.warn("SSO token generation failed, opening normally:", error);
+            await logAccessEvent("sso_fallback", `Fallback sem SSO para ${app.app_name} (usuário: ${user.email})`);
+          }
+        } catch (ssoErr) {
+          console.warn("SSO error, falling back:", ssoErr);
+          await logAccessEvent("sso_fallback", `Fallback sem SSO para ${app.app_name} (erro: ${ssoErr})`);
+        }
+
+        toast.success("Aplicativo aberto!", { id: "sso-launch" });
+        window.open(finalUrl, "_blank", "noopener,noreferrer");
         return;
       }
 
