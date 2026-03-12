@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search, Filter, ExternalLink, Star, Wrench, AlertTriangle, AppWindow, Crown, CreditCard, Gift, XCircle, Clock } from "lucide-react";
+import { Search, Filter, ExternalLink, Star, Wrench, AlertTriangle, AppWindow, Crown, CreditCard, Gift, XCircle, Clock, Loader2, Eye } from "lucide-react";
 import { getAppIcon } from "@/lib/appIcons";
 import { useApps, AppWithAccess } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
