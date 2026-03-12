@@ -197,7 +197,7 @@ export default function Apps() {
               return !featuredSectionVisible || !app.is_featured;
             })
             .map((app, i) => (
-              <AppCard key={app.id} app={app} index={i} accessInfo={accessMap?.[app.app_key]} onSelect={setSelectedApp} onLaunch={launchApp} />
+              <AppCard key={app.id} app={app} index={i} accessInfo={accessMap?.[app.app_key]} onSelect={setSelectedApp} onLaunch={launchApp} launchingAppKey={launchingAppKey} />
             ))}
         </div>
       ) : null}
