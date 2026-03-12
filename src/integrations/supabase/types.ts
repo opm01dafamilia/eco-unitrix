@@ -173,6 +173,42 @@ export type Database = {
         }
         Relationships: []
       }
+      sso_tokens: {
+        Row: {
+          app_key: string
+          created_at: string
+          expires_at: string
+          id: string
+          token: string
+          used: boolean
+          used_at: string | null
+          user_email: string | null
+          user_id: string
+        }
+        Insert: {
+          app_key: string
+          created_at?: string
+          expires_at: string
+          id?: string
+          token: string
+          used?: boolean
+          used_at?: string | null
+          user_email?: string | null
+          user_id: string
+        }
+        Update: {
+          app_key?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          token?: string
+          used?: boolean
+          used_at?: string | null
+          user_email?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           app_key: string | null
@@ -359,6 +395,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_sso_tokens: { Args: never; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
