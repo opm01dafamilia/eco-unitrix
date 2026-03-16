@@ -75,9 +75,13 @@
     @apply border-border;
     -webkit-tap-highlight-color: transparent;
   }
-  html, body {
+  html {
     overflow-x: hidden;
-    overscroll-behavior: none;
+  }
+  body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   body {
     @apply bg-background text-foreground;
