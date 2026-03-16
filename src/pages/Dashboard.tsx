@@ -1,15 +1,18 @@
-import { AppWindow, Activity, Zap, ArrowRight, Clock, ExternalLink, Star, AlertTriangle, Crown, Lock } from "lucide-react";
+import { useMemo } from "react";
+import { AppWindow, Activity, ArrowRight, Clock, ExternalLink, Star, AlertTriangle, Crown, Lock, Gift, CreditCard, Loader2, Zap } from "lucide-react";
 import { getAppIcon } from "@/lib/appIcons";
 import { useProfile } from "@/hooks/useProfile";
-import { useApps } from "@/hooks/useApps";
+import { useApps, AppWithAccess } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
+import { useAllAppAccess } from "@/hooks/useAllAppAccess";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/EmptyState";
-import { format } from "date-fns";
+import { Badge } from "@/components/ui/badge";
+import { format, differenceInDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AccessBlockedModal } from "@/components/AccessBlockedModal";
 
@@ -17,7 +20,8 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const { data: apps, isLoading: appsLoading, isError: appsError } = useApps();
-  const { launchApp, blockedApp, clearBlockedApp } = useAppLauncher();
+  const { data: accessMap } = useAllAppAccess();
+  const { launchApp, launchingAppKey, blockedApp, clearBlockedApp } = useAppLauncher();
 
   const { data: recentLogs } = useQuery({
     queryKey: ["recent-logs", user?.id],
@@ -54,149 +58,181 @@ export default function Dashboard() {
   });
 
   const firstName = profile?.full_name?.split(" ")[0] || "Usuário";
-  const visibleApps = apps?.filter((a) => a.is_visible) ?? [];
-  
-  // Only accessible apps
-  const accessibleApps = visibleApps.filter(
-    (a) => a.user_access === "active" && a.access_type !== "inactive" && a.app_status === "active"
-  );
-  const totalApps = visibleApps.filter((a) => a.app_status === "active").length;
+  const visibleApps = useMemo(() => apps?.filter((a) => a.is_visible && a.app_status === "active") ?? [], [apps]);
   const plan = subscription?.subscription_plans as { plan_name: string } | null;
-
   const isLoading = profileLoading || appsLoading;
 
-  const stats = [
-    { label: "Apps Disponíveis", value: String(totalApps), icon: AppWindow, color: "text-primary" },
-    { label: "Com Acesso Ativo", value: String(accessibleApps.length), icon: Activity, color: "text-primary" },
-    { label: "Ações Rápidas", value: "12", icon: Zap, color: "text-primary" },
-  ];
+  // Split into 3 groups
+  const myApps = useMemo(() =>
+    visibleApps.filter((a) => a.user_access === "active" && (a.access_type === "paid" || a.access_type === "lifetime")),
+    [visibleApps]
+  );
 
+  const trialApps = useMemo(() =>
+    visibleApps.filter((a) => a.user_access === "active" && a.access_type === "trial"),
+    [visibleApps]
+  );
+
+  const upgradeApps = useMemo(() =>
+    visibleApps.filter((a) => !(a.user_access === "active" && a.access_type !== "inactive")),
+    [visibleApps]
+  );
+
+  const totalAccessible = myApps.length + trialApps.length;
   const appNameMap = new Map(visibleApps.map((a) => [a.app_key, a.app_name]));
+
+  const getTrialDaysLeft = (appKey: string) => {
+    const info = accessMap?.[appKey];
+    if (!info?.expiresAt) return null;
+    return Math.max(0, differenceInDays(new Date(info.expiresAt), new Date()));
+  };
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8">
-      {/* Header */}
-      <div>
-        <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground">
-          Bem-vindo, <span className="gradient-text">{isLoading ? "..." : firstName}</span>
-        </h1>
-        <p className="text-muted-foreground mt-1 text-sm">Aqui está o resumo da sua plataforma.</p>
+      {/* Hero Header */}
+      <div className="rounded-2xl border border-border bg-gradient-to-br from-card via-card to-primary/5 p-5 sm:p-7">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground">
+              Olá, <span className="gradient-text">{isLoading ? "..." : firstName}</span> 👋
+            </h1>
+            <p className="text-muted-foreground mt-1 text-sm">
+              Seu hub central do ecossistema de aplicativos.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="rounded-xl border border-border bg-background/60 backdrop-blur-sm px-4 py-2.5 text-center min-w-[80px]">
+              <p className="font-display text-lg sm:text-xl font-bold text-foreground">{isLoading ? "—" : totalAccessible}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Apps ativos</p>
+            </div>
+            <div className="rounded-xl border border-border bg-background/60 backdrop-blur-sm px-4 py-2.5 text-center min-w-[80px]">
+              <p className="font-display text-lg sm:text-xl font-bold text-foreground">{isLoading ? "—" : visibleApps.length}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">No ecossistema</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Plan badge */}
+        {!isLoading && (
+          <div className="mt-4 flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1">
+              <Crown className="h-3 w-3 text-primary" />
+              <span className="text-xs font-medium text-primary">{plan?.plan_name ?? "Sem plano ativo"}</span>
+            </div>
+            {trialApps.length > 0 && (
+              <div className="flex items-center gap-1.5 rounded-full border border-blue-400/20 bg-blue-400/5 px-3 py-1">
+                <Gift className="h-3 w-3 text-blue-400" />
+                <span className="text-xs font-medium text-blue-400">{trialApps.length} em teste</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Stats */}
       {isLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-20 sm:h-24 rounded-xl" />
-          ))}
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-48" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-40 rounded-xl" />)}
+          </div>
         </div>
       ) : appsError ? (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4 sm:p-5 flex items-center gap-3">
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5 flex items-center gap-3">
           <AlertTriangle className="h-5 w-5 text-destructive shrink-0" />
           <div>
-            <p className="text-sm font-medium text-foreground">Erro ao carregar dados</p>
+            <p className="text-sm font-medium text-foreground">Erro ao carregar aplicativos</p>
             <p className="text-xs text-muted-foreground mt-0.5">Tente recarregar a página.</p>
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-          {stats.map((s) => (
-            <div key={s.label} className="rounded-xl border border-border bg-card p-4 sm:p-5 card-glow">
-              <div className="flex items-center justify-between">
-                <p className="text-xs sm:text-sm text-muted-foreground">{s.label}</p>
-                <s.icon className={`h-4 sm:h-5 w-4 sm:w-5 ${s.color}`} />
-              </div>
-              <p className="font-display text-2xl sm:text-3xl font-bold text-foreground mt-1 sm:mt-2">{s.value}</p>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Account Summary */}
-      <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
-        <h2 className="font-display text-base sm:text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
-          <Crown className="h-4 w-4 text-primary" /> Resumo da Conta
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 text-sm">
-          <div>
-            <p className="text-xs text-muted-foreground">Plano</p>
-            <p className="font-medium text-foreground mt-0.5 text-sm">{plan?.plan_name ?? "—"}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Apps com acesso</p>
-            <p className="font-medium text-foreground mt-0.5 text-sm">{accessibleApps.length}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Total de acessos</p>
-            <p className="font-medium text-foreground mt-0.5 text-sm">{recentLogs?.length ?? 0}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">Membro desde</p>
-            <p className="font-medium text-foreground mt-0.5 text-sm">
-              {profile?.created_at ? format(new Date(profile.created_at), "MMM yyyy", { locale: ptBR }) : "—"}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Accessible Apps - Quick Access */}
-      {!isLoading && (
-        <div>
-          <div className="flex items-center justify-between mb-3 sm:mb-4">
-            <h2 className="font-display text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
-              <Star className="h-4 w-4 text-primary" /> Meus Aplicativos
-            </h2>
-            <Link to="/apps" className="text-xs text-primary hover:underline flex items-center gap-1">
-              Ver todos <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
-
-          {accessibleApps.length === 0 ? (
-            <div className="rounded-xl border border-border bg-card p-6 text-center">
-              <Lock className="h-7 w-7 text-muted-foreground mx-auto mb-2 opacity-50" />
-              <p className="text-sm font-medium text-foreground">Nenhum app liberado</p>
-              <p className="text-xs text-muted-foreground mt-1">Assine um plano para começar.</p>
-              <Link to="/subscription" className="inline-block mt-3 text-xs text-primary hover:underline font-medium">
-                Ver planos →
+        <>
+          {/* ─── MEUS APLICATIVOS ─── */}
+          <section>
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <h2 className="font-display text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
+                <Star className="h-4 w-4 text-primary" /> Meus Aplicativos
+                {myApps.length > 0 && (
+                  <Badge variant="secondary" className="text-[10px] px-1.5 py-0 ml-1">{myApps.length}</Badge>
+                )}
+              </h2>
+              <Link to="/apps" className="text-xs text-primary hover:underline flex items-center gap-1">
+                Ver todos <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
-              {accessibleApps.map((app) => (
-                <button
-                  key={app.id}
-                  onClick={() => launchApp(app)}
-                  className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 sm:px-4 py-3 card-glow group hover:border-primary/30 transition-colors text-left active:scale-[0.98]"
-                >
-                  <div className="h-8 sm:h-9 w-8 sm:w-9 rounded-lg bg-secondary/50 flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
-                    {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-4 w-4 text-primary" /> : <AppWindow className="h-4 w-4 text-primary" />; })()}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{app.app_name}</p>
-                    <p className="text-[11px] text-muted-foreground truncate">
-                      {app.access_type === "trial" ? "Teste grátis" : app.access_type === "lifetime" ? "Vitalício" : "Assinante"}
-                    </p>
-                  </div>
-                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
-                </button>
-              ))}
-            </div>
+
+            {myApps.length === 0 && trialApps.length === 0 ? (
+              <div className="rounded-xl border border-border bg-card p-6 sm:p-8 text-center">
+                <Lock className="h-8 w-8 text-muted-foreground mx-auto mb-3 opacity-40" />
+                <p className="text-sm font-medium text-foreground">Nenhum aplicativo liberado</p>
+                <p className="text-xs text-muted-foreground mt-1 max-w-xs mx-auto">
+                  Assine um plano para desbloquear o acesso aos aplicativos do ecossistema.
+                </p>
+                <Link to="/subscription" className="inline-flex items-center gap-1.5 mt-4 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+                  Ver planos <ArrowRight className="h-3 w-3" />
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                {myApps.map((app) => (
+                  <ActiveAppCard
+                    key={app.id}
+                    app={app}
+                    onLaunch={launchApp}
+                    isLaunching={launchingAppKey === app.app_key}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* ─── ACESSO EM TESTE ─── */}
+          {trialApps.length > 0 && (
+            <section>
+              <h2 className="font-display text-base sm:text-lg font-semibold text-foreground flex items-center gap-2 mb-3 sm:mb-4">
+                <Gift className="h-4 w-4 text-blue-400" /> Acesso em Teste
+                <Badge variant="outline" className="text-[10px] px-1.5 py-0 ml-1 border-blue-400/30 text-blue-400">{trialApps.length}</Badge>
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                {trialApps.map((app) => {
+                  const daysLeft = getTrialDaysLeft(app.app_key);
+                  return (
+                    <TrialAppCard
+                      key={app.id}
+                      app={app}
+                      daysLeft={daysLeft}
+                      onLaunch={launchApp}
+                      isLaunching={launchingAppKey === app.app_key}
+                    />
+                  );
+                })}
+              </div>
+            </section>
           )}
-        </div>
+
+          {/* ─── OUTROS APPS ─── */}
+          {upgradeApps.length > 0 && (
+            <section>
+              <h2 className="font-display text-base sm:text-lg font-semibold text-muted-foreground flex items-center gap-2 mb-3 sm:mb-4">
+                <AppWindow className="h-4 w-4" /> Outros Aplicativos do Ecossistema
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                {upgradeApps.map((app) => (
+                  <UpgradeAppCard key={app.id} app={app} />
+                ))}
+              </div>
+            </section>
+          )}
+        </>
       )}
 
+      {/* Activity + Shortcuts */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
-        {/* Recent Activity */}
         <div className="lg:col-span-3 rounded-xl border border-border bg-card p-4 sm:p-5">
           <h2 className="font-display text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 flex items-center gap-2">
             <Clock className="h-4 w-4 text-primary" /> Atividade Recente
           </h2>
           {!recentLogs || recentLogs.length === 0 ? (
-            <EmptyState
-              icon={Activity}
-              title="Nenhuma atividade registrada"
-              description="Acesse um aplicativo para começar."
-            />
+            <EmptyState icon={Activity} title="Nenhuma atividade registrada" description="Acesse um aplicativo para começar." />
           ) : (
             <div className="space-y-2 sm:space-y-3">
               {recentLogs.map((log) => (
@@ -244,6 +280,111 @@ export default function Dashboard() {
           reason={blockedApp.reason}
         />
       )}
+    </div>
+  );
+}
+
+/* ─── Active App Card (paid / lifetime) ─── */
+function ActiveAppCard({ app, onLaunch, isLaunching }: { app: AppWithAccess; onLaunch: (a: AppWithAccess) => void; isLaunching: boolean }) {
+  const Icon = getAppIcon(app.app_key);
+  const isLifetime = app.access_type === "lifetime";
+
+  return (
+    <div className="rounded-xl border border-border bg-card overflow-hidden card-glow group hover:border-primary/30 transition-all">
+      <div className="h-20 sm:h-24 bg-gradient-to-br from-primary/15 via-primary/10 to-transparent flex items-center justify-center relative">
+        {Icon ? <Icon className="h-8 w-8 text-primary/50" strokeWidth={1.5} /> : <AppWindow className="h-8 w-8 text-primary/40" strokeWidth={1.5} />}
+        <div className={`absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium border ${isLifetime ? "text-yellow-500 bg-yellow-500/10 border-yellow-500/20" : "text-primary bg-primary/10 border-primary/20"}`}>
+          {isLifetime ? <Crown className="h-2.5 w-2.5" /> : <CreditCard className="h-2.5 w-2.5" />}
+          {isLifetime ? "Vitalício" : "Assinante"}
+        </div>
+      </div>
+      <div className="p-4 space-y-3">
+        <div>
+          <h3 className="font-display font-semibold text-foreground text-sm sm:text-base">{app.app_name}</h3>
+          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{app.app_description || "Sem descrição."}</p>
+        </div>
+        <button
+          onClick={() => onLaunch(app)}
+          disabled={isLaunching}
+          className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-xs sm:text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)] active:scale-[0.97] disabled:opacity-70"
+        >
+          {isLaunching ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Abrindo...</> : <>Abrir <ExternalLink className="h-3.5 w-3.5" /></>}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Trial App Card ─── */
+function TrialAppCard({ app, daysLeft, onLaunch, isLaunching }: { app: AppWithAccess; daysLeft: number | null; onLaunch: (a: AppWithAccess) => void; isLaunching: boolean }) {
+  const Icon = getAppIcon(app.app_key);
+  const urgent = daysLeft !== null && daysLeft <= 2;
+
+  return (
+    <div className={`rounded-xl border overflow-hidden card-glow group transition-all ${urgent ? "border-orange-400/30 bg-card" : "border-blue-400/20 bg-card"}`}>
+      <div className="h-20 sm:h-24 bg-gradient-to-br from-blue-400/10 via-blue-400/5 to-transparent flex items-center justify-center relative">
+        {Icon ? <Icon className="h-8 w-8 text-blue-400/50" strokeWidth={1.5} /> : <AppWindow className="h-8 w-8 text-blue-400/40" strokeWidth={1.5} />}
+        <div className="absolute top-2.5 right-2.5 flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium border text-blue-400 bg-blue-400/10 border-blue-400/20">
+          <Gift className="h-2.5 w-2.5" />
+          Teste grátis
+        </div>
+      </div>
+      <div className="p-4 space-y-3">
+        <div>
+          <h3 className="font-display font-semibold text-foreground text-sm sm:text-base">{app.app_name}</h3>
+          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{app.app_description || "Sem descrição."}</p>
+        </div>
+        {daysLeft !== null && (
+          <div className={`flex items-center gap-1.5 text-xs font-medium ${urgent ? "text-orange-400" : "text-blue-400"}`}>
+            <Clock className="h-3 w-3" />
+            {daysLeft === 0 ? "Expira hoje" : `${daysLeft} dia${daysLeft !== 1 ? "s" : ""} restante${daysLeft !== 1 ? "s" : ""}`}
+          </div>
+        )}
+        <div className="flex gap-2">
+          <button
+            onClick={() => onLaunch(app)}
+            disabled={isLaunching}
+            className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-4 py-2.5 text-xs sm:text-sm font-medium text-white transition-all hover:bg-blue-600 active:scale-[0.97] disabled:opacity-70"
+          >
+            {isLaunching ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Abrindo...</> : <>Abrir <ExternalLink className="h-3.5 w-3.5" /></>}
+          </button>
+          <Link
+            to="/subscription"
+            className="flex items-center justify-center rounded-lg border border-primary/20 px-3 py-2.5 text-xs font-medium text-primary transition-colors hover:bg-primary/5"
+          >
+            Assinar
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Upgrade App Card ─── */
+function UpgradeAppCard({ app }: { app: AppWithAccess }) {
+  const Icon = getAppIcon(app.app_key);
+
+  return (
+    <div className="rounded-xl border border-border bg-card/50 overflow-hidden opacity-60 hover:opacity-80 transition-opacity">
+      <div className="h-16 sm:h-20 bg-gradient-to-br from-muted/40 to-transparent flex items-center justify-center relative">
+        {Icon ? <Icon className="h-6 w-6 text-muted-foreground/40" strokeWidth={1.5} /> : <AppWindow className="h-6 w-6 text-muted-foreground/30" strokeWidth={1.5} />}
+        <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-medium border text-muted-foreground bg-muted border-border">
+          <Lock className="h-2.5 w-2.5" />
+          Bloqueado
+        </div>
+      </div>
+      <div className="p-4 space-y-3">
+        <div>
+          <h3 className="font-display font-medium text-foreground text-sm">{app.app_name}</h3>
+          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{app.app_description || "Sem descrição."}</p>
+        </div>
+        <Link
+          to="/subscription"
+          className="flex items-center justify-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-xs font-medium text-primary hover:bg-primary/20 transition-colors w-full"
+        >
+          Fazer upgrade <ArrowRight className="h-3 w-3" />
+        </Link>
+      </div>
     </div>
   );
 }
