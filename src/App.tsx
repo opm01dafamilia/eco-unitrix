@@ -5,6 +5,7 @@ import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { DemoProvider } from "@/contexts/DemoContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { DashboardLayout } from "./components/DashboardLayout";
 import LandingPage from "./pages/LandingPage";
