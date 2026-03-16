@@ -377,11 +377,8 @@ export function AdminUserManagement() {
                               {row.isAdmin ? <><ShieldOff className="h-4 w-4 mr-2" />Remover Admin</> : <><Shield className="h-4 w-4 mr-2" />Tornar Admin</>}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleGrantTrial(row, 7)}>
-                              <Gift className="h-4 w-4 mr-2" />Trial 7 dias
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleGrantTrial(row, 15)}>
-                              <Gift className="h-4 w-4 mr-2" />Trial 15 dias
+                            <DropdownMenuItem onClick={() => { setTrialApp(""); setTrialDays("7"); setTrialDialog(row); }}>
+                              <Gift className="h-4 w-4 mr-2" />Liberar Teste Grátis
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => handleGrantLifetime(row)} disabled={row.hasLifetime}>
