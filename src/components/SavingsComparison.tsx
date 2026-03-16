@@ -2,6 +2,7 @@ import { Check, ExternalLink, TrendingDown, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+// Renewal prices for individual apps (what you'd pay separately)
 const apps = [
   { name: "FitPulse", monthly: 19.9, yearly: 197 },
   { name: "FinanceFlow", monthly: 19.9, yearly: 197 },
@@ -12,8 +13,10 @@ const apps = [
 
 const totalMonthly = apps.reduce((s, a) => s + a.monthly, 0);
 const totalYearly = apps.reduce((s, a) => s + a.yearly, 0);
+
+// Ecosystem promo prices (first period) — DO NOT change these
 const ecoMonthly = 67;
-const ecoYearly = 547;
+const ecoYearly = 697;
 const saveMonthly = totalMonthly - ecoMonthly;
 const saveYearly = totalYearly - ecoYearly;
 
@@ -41,7 +44,7 @@ export default function SavingsComparison() {
         totalSeparate={totalMonthly}
         ecoPrice={ecoMonthly}
         saving={saveMonthly}
-        promoNote="Primeiro mês por apenas R$ 47,00"
+        promoNote="Primeiro mês por apenas R$ 67,00 — depois R$ 97,00/mês"
         ctaHref="https://pay.kiwify.com.br/tn6JpCc"
         ctaLabel="Assinar Ecossistema Mensal"
       />
@@ -54,7 +57,7 @@ export default function SavingsComparison() {
         totalSeparate={totalYearly}
         ecoPrice={ecoYearly}
         saving={saveYearly}
-        promoNote="Primeiro ano: 12x de R$ 37,96 ou R$ 397,00 à vista"
+        promoNote="Primeiro ano: 12x de R$ 67,42 ou R$ 697,00 à vista — depois R$ 997,00/ano"
         ctaHref="https://pay.kiwify.com.br/6ShHAbQ"
         ctaLabel="Assinar Ecossistema Anual"
       />
