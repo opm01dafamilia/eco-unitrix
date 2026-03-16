@@ -14,13 +14,13 @@ export interface AppPlanConfig {
 export const appPlansConfig: Record<string, AppPlanConfig> = {
   fitpulse: {
     monthly: {
-      promoPrice: "R$ 17,00",
-      renewalPrice: "R$ 27,00 / mês",
+      promoPrice: "R$ 9,90",
+      renewalPrice: "R$ 19,90 / mês",
     },
     yearly: {
       promoPrice: "R$ 147,00 à vista",
       installment: "12x de R$ 15,20",
-      renewalPrice: "R$ 247,00 / ano",
+      renewalPrice: "R$ 197,00 / ano",
     },
     benefits: [
       "Treino personalizado",

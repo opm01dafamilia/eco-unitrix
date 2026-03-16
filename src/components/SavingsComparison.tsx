@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 const apps = [
-  { name: "FitPulse", monthly: 27, yearly: 247 },
+  { name: "FitPulse", monthly: 19.9, yearly: 197 },
   { name: "FinanceFlow", monthly: 19.9, yearly: 197 },
   { name: "MarketFlow", monthly: 37, yearly: 377 },
   { name: "IA Agenda", monthly: 37, yearly: 297 },
