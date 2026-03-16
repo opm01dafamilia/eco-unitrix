@@ -142,26 +142,38 @@ export function AdminUserManagement() {
     setActionLoading(null);
   };
 
-  const handleGrantTrial = async (row: UserRow, days: number) => {
-    setActionLoading(row.userId);
+  // Trial grant dialog state
+  const [trialDialog, setTrialDialog] = useState<UserRow | null>(null);
+  const [trialApp, setTrialApp] = useState<string>("");
+  const [trialDays, setTrialDays] = useState<string>("7");
+
+  const handleGrantTrial = async () => {
+    if (!trialDialog || !trialApp) return;
+    setActionLoading(trialDialog.userId);
+    const days = parseInt(trialDays);
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + days);
+    const appLabel = APP_LABEL_MAP[trialApp] ?? trialApp;
     const { error } = await supabase.from("free_trials").insert({
-      user_id: row.userId,
-      trial_type: "all_apps",
+      user_id: trialDialog.userId,
+      trial_type: "selected_apps",
+      app_key: trialApp,
       duration_days: days,
       expires_at: expiresAt.toISOString(),
       status: "active",
       granted_by: currentUser?.id ?? null,
     });
     if (!error) {
-      await logAction(`trial_${days}d_granted`, `Teste ${days} dias para ${row.email}`);
-      toast({ title: "Trial liberado", description: `${days} dias para ${row.email}` });
+      await logAction(`trial_${days}d_granted`, `Teste ${days} dias de ${appLabel} para ${trialDialog.email}`);
+      toast({ title: "Trial liberado", description: `${days} dias de ${appLabel} para ${trialDialog.email}` });
     } else {
       toast({ variant: "destructive", title: "Erro", description: error.message });
     }
     invalidateAll();
     setActionLoading(null);
+    setTrialDialog(null);
+    setTrialApp("");
+    setTrialDays("7");
   };
 
   const handleGrantLifetime = async (row: UserRow) => {
@@ -295,7 +307,7 @@ export function AdminUserManagement() {
                   <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status</TableHead>
                   <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Plano</TableHead>
                   <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden md:table-cell">Tipo</TableHead>
-                  <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Expira em</TableHead>
+                  <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Trial</TableHead>
                   <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Role</TableHead>
                   <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden xl:table-cell">Apps</TableHead>
                   <TableHead className="text-xs font-semibold uppercase tracking-wider text-muted-foreground hidden lg:table-cell">Cadastro</TableHead>
@@ -321,7 +333,16 @@ export function AdminUserManagement() {
                         {getAccessType(row)}
                       </TableCell>
                       <TableCell className="hidden lg:table-cell text-xs text-muted-foreground">
-                        {row.activeSub?.expiresAt ? format(new Date(row.activeSub.expiresAt), "dd/MM/yyyy") : row.activeTrial?.expiresAt ? format(new Date(row.activeTrial.expiresAt), "dd/MM/yyyy") : "—"}
+                        {row.activeTrial ? (
+                          <div>
+                            <p className="text-foreground font-medium">
+                              {row.activeTrial.apps.includes("all_apps") ? "Todos" : row.activeTrial.apps.map((k) => APP_LABEL_MAP[k] ?? k).join(", ")}
+                            </p>
+                            <p>Expira: {format(new Date(row.activeTrial.expiresAt), "dd/MM/yyyy")}</p>
+                          </div>
+                        ) : (
+                          "Sem trial"
+                        )}
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {row.isAdmin ? (
@@ -365,11 +386,8 @@ export function AdminUserManagement() {
                               {row.isAdmin ? <><ShieldOff className="h-4 w-4 mr-2" />Remover Admin</> : <><Shield className="h-4 w-4 mr-2" />Tornar Admin</>}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleGrantTrial(row, 7)}>
-                              <Gift className="h-4 w-4 mr-2" />Trial 7 dias
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleGrantTrial(row, 15)}>
-                              <Gift className="h-4 w-4 mr-2" />Trial 15 dias
+                            <DropdownMenuItem onClick={() => { setTrialApp(""); setTrialDays("7"); setTrialDialog(row); }}>
+                              <Gift className="h-4 w-4 mr-2" />Liberar Teste Grátis
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={() => handleGrantLifetime(row)} disabled={row.hasLifetime}>
@@ -509,6 +527,50 @@ export function AdminUserManagement() {
             <Button size="sm" onClick={handleSaveApps} disabled={actionLoading === appDialog?.userId}>
               {actionLoading === appDialog?.userId ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
               Salvar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Trial grant dialog */}
+      <Dialog open={!!trialDialog} onOpenChange={(open) => { if (!open) { setTrialDialog(null); setTrialApp(""); setTrialDays("7"); } }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Liberar Teste Grátis</DialogTitle>
+            <DialogDescription>Selecione o aplicativo e a duração do trial para {trialDialog?.email}.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Aplicativo</label>
+              <Select value={trialApp} onValueChange={setTrialApp}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o app..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {APP_LIST.map((app) => (
+                    <SelectItem key={app.value} value={app.value}>{app.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Duração</label>
+              <Select value={trialDays} onValueChange={setTrialDays}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">7 dias</SelectItem>
+                  <SelectItem value="15">15 dias</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" size="sm" onClick={() => setTrialDialog(null)}>Cancelar</Button>
+            <Button size="sm" onClick={handleGrantTrial} disabled={!trialApp || actionLoading === trialDialog?.userId}>
+              {actionLoading === trialDialog?.userId ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Gift className="h-4 w-4 mr-2" />}
+              Liberar Trial
             </Button>
           </div>
         </DialogContent>
