@@ -2,6 +2,8 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Outlet } from "react-router-dom";
 import { useProfile } from "@/hooks/useProfile";
+import { useDemoMode } from "@/hooks/useDemoMode";
+import { DemoBanner } from "@/components/DemoBanner";
 import { Layers } from "lucide-react";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
