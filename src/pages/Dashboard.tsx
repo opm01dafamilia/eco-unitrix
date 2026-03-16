@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ArrowRight, Crown, Layers, AlertTriangle } from "lucide-react";
+import { AlertTriangle, Crown, Layers } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
@@ -55,32 +55,32 @@ export default function Dashboard() {
   const isDemo = !plan;
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-6 sm:space-y-8">
+    <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-6">
       {/* ─── Top Bar ─── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Layers className="h-5 w-5 text-primary" />
-          <span className="font-display text-base sm:text-lg font-bold text-foreground">
-            IA Apps Ecossistema
+          <span className="font-display text-sm sm:text-base font-bold text-foreground">
+            Ecossistema IA Apps
           </span>
         </div>
         <Link
           to="/subscription"
-          className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-xs sm:text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-foreground/20 bg-foreground/5 px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold text-foreground hover:bg-foreground/10 transition-colors"
         >
-          <Crown className="h-3.5 w-3.5" />
+          <Crown className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
           Assinar Plano Completo
         </Link>
       </div>
 
       {isLoading ? (
         <div className="space-y-4">
-          <Skeleton className="h-40 rounded-2xl" />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 rounded-xl" />)}
+          <Skeleton className="h-36 rounded-2xl" />
+          <div className="grid grid-cols-3 gap-2">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20 rounded-xl" />)}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-48 rounded-xl" />)}
+          <div className="grid grid-cols-2 gap-3">
+            {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-44 rounded-xl" />)}
           </div>
         </div>
       ) : appsError ? (
@@ -93,28 +93,19 @@ export default function Dashboard() {
         </div>
       ) : (
         <>
-          {/* ─── Hero ─── */}
           <HeroCard firstName={firstName} isLoading={isLoading} isDemo={isDemo} />
-
-          {/* ─── Info Cards ─── */}
           <InfoCards
             totalAccessible={totalAccessible}
             totalApps={visibleApps.length}
             planName={plan?.plan_name ?? null}
             isDemo={isDemo}
           />
-
-          {/* ─── App Grid ─── */}
           <DemoAppGrid
             apps={visibleApps}
             onLaunch={launchApp}
             launchingAppKey={launchingAppKey}
           />
-
-          {/* ─── Upgrade Section ─── */}
           <UpgradeSection />
-
-          {/* ─── Footer ─── */}
           <DashboardFooter />
         </>
       )}
