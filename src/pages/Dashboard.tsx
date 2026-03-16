@@ -5,6 +5,7 @@ import { useApps } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
 import { useAllAppAccess } from "@/hooks/useAllAppAccess";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDemoContext } from "@/contexts/DemoContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
@@ -20,6 +21,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const { data: apps, isLoading: appsLoading, isError: appsError } = useApps();
+  const { isDemo } = useDemoContext();
   const { data: accessMap } = useAllAppAccess();
   const { launchApp, launchingAppKey, blockedApp, clearBlockedApp } = useAppLauncher();
 
@@ -52,7 +54,7 @@ export default function Dashboard() {
   );
 
   const totalAccessible = activeApps.length;
-  const isDemo = !plan;
+  // isDemo comes from DemoContext now
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-4 sm:space-y-6">
