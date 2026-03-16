@@ -113,6 +113,8 @@ export function useApps() {
       });
     },
     enabled: !!user,
-    staleTime: 30000,
+    staleTime: 10000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 }

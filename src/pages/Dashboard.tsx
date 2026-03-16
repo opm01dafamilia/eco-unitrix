@@ -36,7 +36,8 @@ export default function Dashboard() {
       return data;
     },
     enabled: !!user,
-    staleTime: 30000,
+    staleTime: 10000,
+    refetchOnWindowFocus: true,
   });
 
   const { data: subscription } = useQuery({
