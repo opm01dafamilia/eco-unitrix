@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export function DashboardFooter() {
   return (
-    <footer className="border-t border-border pt-5 pb-3 mt-2">
+    <footer className="border-t border-border/50 pt-5 pb-3 mt-2">
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-5 text-xs text-muted-foreground">
@@ -14,7 +14,7 @@ export function DashboardFooter() {
             </Link>
           </div>
         </div>
-        <p className="text-[11px] text-muted-foreground/60 text-center">
+        <p className="text-[11px] text-muted-foreground/50 text-center">
           © {new Date().getFullYear()} Ecossistema IA Apps. Todos os direitos reservados.
         </p>
       </div>
