@@ -333,7 +333,17 @@ export function AdminUserManagement() {
                         {getAccessType(row)}
                       </TableCell>
                       <TableCell className="hidden lg:table-cell text-xs text-muted-foreground">
-                        {row.activeSub?.expiresAt ? format(new Date(row.activeSub.expiresAt), "dd/MM/yyyy") : row.activeTrial?.expiresAt ? format(new Date(row.activeTrial.expiresAt), "dd/MM/yyyy") : "—"}
+                        {row.activeTrial ? (
+                          <div>
+                            <p className="text-foreground font-medium">
+                              {row.activeTrial.apps.includes("all_apps") ? "Todos" : row.activeTrial.apps.map((k) => APP_LABEL_MAP[k] ?? k).join(", ")}
+                            </p>
+                            <p>Expira: {format(new Date(row.activeTrial.expiresAt), "dd/MM/yyyy")}</p>
+                          </div>
+                        ) : (
+                          "Sem trial"
+                        )}
+                      </TableCell>
                       </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {row.isAdmin ? (
