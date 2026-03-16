@@ -48,7 +48,7 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
       <h2 className="font-display text-base sm:text-lg font-bold text-foreground mb-4 tracking-tight">
         Acesse Nossos Apps Demo
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[800px] mx-auto">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         {apps.map((app, i) => {
           const Icon = getAppIcon(app.app_key);
           const isLaunching = launchingAppKey === app.app_key;
