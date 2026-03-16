@@ -1,5 +1,3 @@
-import { Sparkles } from "lucide-react";
-
 interface HeroCardProps {
   firstName: string;
   isLoading: boolean;
@@ -8,27 +6,29 @@ interface HeroCardProps {
 
 export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
   return (
-    <div className="rounded-2xl glass-card-strong p-4 sm:p-7 relative overflow-hidden glow-ring">
-      {/* Decorative gradient orbs */}
-      <div className="absolute -top-16 -right-16 w-40 sm:w-56 h-40 sm:h-56 rounded-full bg-gradient-to-br from-primary/10 to-accent/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-12 -left-12 w-32 sm:w-44 h-32 sm:h-44 rounded-full bg-gradient-to-tr from-accent/8 to-primary/5 blur-3xl pointer-events-none" />
+    <div className="rounded-2xl glass-card-strong p-5 sm:p-8 relative overflow-hidden glow-ring animate-fade-in">
+      {/* Subtle layered gradient orbs */}
+      <div className="absolute -top-24 -right-24 w-52 sm:w-72 h-52 sm:h-72 rounded-full opacity-60 pointer-events-none"
+        style={{ background: "radial-gradient(circle, hsl(255 80% 65% / 0.08), transparent 70%)" }} />
+      <div className="absolute -bottom-16 -left-16 w-40 sm:w-56 h-40 sm:h-56 rounded-full opacity-50 pointer-events-none"
+        style={{ background: "radial-gradient(circle, hsl(215 75% 58% / 0.06), transparent 70%)" }} />
 
-      <div className="relative z-10">
-        <h1 className="font-display text-lg sm:text-2xl md:text-3xl font-bold text-foreground leading-tight">
+      <div className="relative z-10 space-y-3">
+        <h1 className="font-display text-xl sm:text-2xl md:text-[2rem] font-bold text-foreground leading-[1.2] tracking-tight">
           Olá! Bem-vindo ao{" "}
           <span className="gradient-text">Ecossistema IA Apps</span>.
         </h1>
 
-        <p className="text-muted-foreground mt-2 text-xs sm:text-sm flex flex-wrap items-center gap-1.5">
+        <p className="text-muted-foreground text-xs sm:text-sm flex flex-wrap items-center gap-1.5 leading-relaxed">
           Você está testando nossos aplicativos em modo
           {isDemo && (
-            <span className="inline-flex items-center gap-1 rounded-md btn-gradient px-2 py-0.5 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider shadow-lg shadow-primary/20">
+            <span className="inline-flex items-center rounded-md btn-gradient px-2.5 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest shadow-md shadow-primary/15">
               Demo
             </span>
           )}
         </p>
 
-        <p className="text-muted-foreground/70 mt-1.5 text-[11px] sm:text-sm max-w-xl leading-relaxed">
+        <p className="text-muted-foreground/60 text-[11px] sm:text-[13px] max-w-lg leading-relaxed">
           Explore nossos aplicativos e descubra como podemos ajudar você antes de fazer sua assinatura.
         </p>
       </div>
