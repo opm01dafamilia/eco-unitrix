@@ -344,7 +344,6 @@ export function AdminUserManagement() {
                           "Sem trial"
                         )}
                       </TableCell>
-                      </TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {row.isAdmin ? (
                           <Badge className="bg-primary/10 text-primary border-primary/20 gap-1 text-[10px]"><Shield className="h-3 w-3" />Admin</Badge>
