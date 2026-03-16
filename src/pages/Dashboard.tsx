@@ -1,4 +1,4 @@
-import { AppWindow, Activity, Zap, ArrowRight, Clock, ExternalLink, Star, AlertTriangle, Crown } from "lucide-react";
+import { AppWindow, Activity, Zap, ArrowRight, Clock, ExternalLink, Star, AlertTriangle, Crown, Lock } from "lucide-react";
 import { getAppIcon } from "@/lib/appIcons";
 import { useProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
@@ -55,17 +55,19 @@ export default function Dashboard() {
 
   const firstName = profile?.full_name?.split(" ")[0] || "Usuário";
   const visibleApps = apps?.filter((a) => a.is_visible) ?? [];
-  const totalApps = visibleApps.length;
-  const activeApps = visibleApps.filter((a) => a.user_access === "active").length;
-  const featuredApps = visibleApps.filter((a) => a.is_featured && a.app_status === "active").slice(0, 4);
-  const allActiveApps = visibleApps.filter((a) => a.app_status === "active");
+  
+  // Only accessible apps
+  const accessibleApps = visibleApps.filter(
+    (a) => a.user_access === "active" && a.access_type !== "inactive" && a.app_status === "active"
+  );
+  const totalApps = visibleApps.filter((a) => a.app_status === "active").length;
   const plan = subscription?.subscription_plans as { plan_name: string } | null;
 
   const isLoading = profileLoading || appsLoading;
 
   const stats = [
     { label: "Apps Disponíveis", value: String(totalApps), icon: AppWindow, color: "text-primary" },
-    { label: "Com Acesso Ativo", value: String(activeApps), icon: Activity, color: "text-primary" },
+    { label: "Com Acesso Ativo", value: String(accessibleApps.length), icon: Activity, color: "text-primary" },
     { label: "Ações Rápidas", value: "12", icon: Zap, color: "text-primary" },
   ];
 
@@ -122,7 +124,7 @@ export default function Dashboard() {
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Apps com acesso</p>
-            <p className="font-medium text-foreground mt-0.5 text-sm">{activeApps}</p>
+            <p className="font-medium text-foreground mt-0.5 text-sm">{accessibleApps.length}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Total de acessos</p>
@@ -137,73 +139,49 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Featured Apps */}
-      {!isLoading && featuredApps.length > 0 && (
+      {/* Accessible Apps - Quick Access */}
+      {!isLoading && (
         <div>
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <h2 className="font-display text-base sm:text-lg font-semibold text-foreground flex items-center gap-2">
-              <Star className="h-4 w-4 text-primary" /> Em Destaque
+              <Star className="h-4 w-4 text-primary" /> Meus Aplicativos
             </h2>
             <Link to="/apps" className="text-xs text-primary hover:underline flex items-center gap-1">
               Ver todos <ArrowRight className="h-3 w-3" />
             </Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-            {featuredApps.map((app) => {
-              const hasAccess = app.user_access === "active";
-              return (
-                <button
-                  key={app.id}
-                  onClick={() => launchApp(app)}
-                  disabled={!hasAccess}
-                  className="rounded-xl border border-primary/20 ring-1 ring-primary/10 bg-card p-3 sm:p-4 card-glow flex flex-col items-center gap-2 sm:gap-3 text-center group hover:border-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
-                >
-                  <div className="h-9 sm:h-10 w-9 sm:w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-4 sm:h-5 w-4 sm:w-5 text-primary" /> : <AppWindow className="h-4 sm:h-5 w-4 sm:w-5 text-primary" />; })()}
-                  </div>
-                  <div>
-                    <p className="text-xs sm:text-sm font-medium text-foreground">{app.app_name}</p>
-                    <p className="text-[10px] sm:text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1 justify-center">
-                      {hasAccess ? <>Abrir <ExternalLink className="h-2.5 w-2.5" /></> : "Sem acesso"}
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
-      {/* All Apps Quick Access */}
-      {!isLoading && allActiveApps.length > 0 && (
-        <div>
-          <h2 className="font-display text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 flex items-center gap-2">
-            <Zap className="h-4 w-4 text-primary" /> Aplicativos
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
-            {allActiveApps.map((app) => {
-              const hasAccess = app.user_access === "active";
-              return (
+          {accessibleApps.length === 0 ? (
+            <div className="rounded-xl border border-border bg-card p-6 text-center">
+              <Lock className="h-7 w-7 text-muted-foreground mx-auto mb-2 opacity-50" />
+              <p className="text-sm font-medium text-foreground">Nenhum app liberado</p>
+              <p className="text-xs text-muted-foreground mt-1">Assine um plano para começar.</p>
+              <Link to="/subscription" className="inline-block mt-3 text-xs text-primary hover:underline font-medium">
+                Ver planos →
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
+              {accessibleApps.map((app) => (
                 <button
                   key={app.id}
                   onClick={() => launchApp(app)}
-                  disabled={!hasAccess}
-                  className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 sm:px-4 py-3 card-glow group hover:border-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-left active:scale-[0.98]"
+                  className="flex items-center gap-3 rounded-xl border border-border bg-card px-3 sm:px-4 py-3 card-glow group hover:border-primary/30 transition-colors text-left active:scale-[0.98]"
                 >
                   <div className="h-8 sm:h-9 w-8 sm:w-9 rounded-lg bg-secondary/50 flex items-center justify-center shrink-0 group-hover:bg-primary/10 transition-colors">
                     {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-4 w-4 text-primary" /> : <AppWindow className="h-4 w-4 text-primary" />; })()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-foreground truncate">{app.app_name}</p>
-                    <p className="text-[11px] text-muted-foreground truncate">{app.app_description}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      {app.access_type === "trial" ? "Teste grátis" : app.access_type === "lifetime" ? "Vitalício" : "Assinante"}
+                    </p>
                   </div>
-                  {hasAccess && (
-                    <ExternalLink className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
-                  )}
+                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                 </button>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
