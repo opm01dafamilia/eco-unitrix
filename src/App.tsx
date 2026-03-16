@@ -21,6 +21,7 @@ import AdminSystemLogs from "./pages/AdminSystemLogs";
 import AdminFreeTrials from "./pages/AdminFreeTrials";
 import AdminUserAccess from "./pages/AdminUserAccess";
 import Login from "./pages/Login";
+import DestinationChooser from "./pages/DestinationChooser";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
@@ -41,7 +42,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/choose-destination" element={<ProtectedRoute><DestinationChooser /></ProtectedRoute>} />
             <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/apps" element={<Apps />} />
