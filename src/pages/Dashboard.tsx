@@ -53,7 +53,7 @@ export default function Dashboard() {
   );
 
   const totalAccessible = activeApps.length;
-  const isDemo = !plan;
+  // isDemo comes from DemoContext now
 
   return (
     <div className="max-w-[1200px] mx-auto space-y-4 sm:space-y-6">
