@@ -32,7 +32,7 @@ export function DashboardLayout() {
 
   return (
     <SidebarProvider>
-      <div className="min-h-screen min-h-[100dvh] flex w-full">
+      <div className="min-h-[100dvh] flex w-full">
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0">
           <header className="h-14 flex items-center border-b border-border px-3 sm:px-4 shrink-0 sticky top-0 z-30 bg-background/80 backdrop-blur-md">
