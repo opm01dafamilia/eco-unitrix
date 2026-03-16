@@ -531,6 +531,50 @@ export function AdminUserManagement() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Trial grant dialog */}
+      <Dialog open={!!trialDialog} onOpenChange={(open) => { if (!open) { setTrialDialog(null); setTrialApp(""); setTrialDays("7"); } }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Liberar Teste Grátis</DialogTitle>
+            <DialogDescription>Selecione o aplicativo e a duração do trial para {trialDialog?.email}.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Aplicativo</label>
+              <Select value={trialApp} onValueChange={setTrialApp}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o app..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {APP_LIST.map((app) => (
+                    <SelectItem key={app.value} value={app.value}>{app.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Duração</label>
+              <Select value={trialDays} onValueChange={setTrialDays}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7">7 dias</SelectItem>
+                  <SelectItem value="15">15 dias</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" size="sm" onClick={() => setTrialDialog(null)}>Cancelar</Button>
+            <Button size="sm" onClick={handleGrantTrial} disabled={!trialApp || actionLoading === trialDialog?.userId}>
+              {actionLoading === trialDialog?.userId ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Gift className="h-4 w-4 mr-2" />}
+              Liberar Trial
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
