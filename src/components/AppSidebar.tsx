@@ -20,10 +20,13 @@ import {
 const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Meus Aplicativos", url: "/apps", icon: Grid3X3 },
-  { title: "Atividade", url: "/activity", icon: Activity },
   { title: "Assinatura", url: "/subscription", icon: CreditCard },
   { title: "Perfil", url: "/profile", icon: User },
   { title: "Configurações", url: "/settings", icon: Settings },
+];
+
+const adminNavItems = [
+  { title: "Atividade", url: "/activity", icon: Activity },
 ];
 
 export function AppSidebar() {
