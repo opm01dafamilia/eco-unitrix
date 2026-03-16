@@ -2,19 +2,19 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Outlet } from "react-router-dom";
 import { useProfile } from "@/hooks/useProfile";
-import { Hexagon } from "lucide-react";
+import { Layers } from "lucide-react";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 function PageFallback() {
   return (
-    <div className="max-w-6xl mx-auto space-y-6 animate-pulse">
-      <Skeleton className="h-9 w-56 rounded-lg" />
-      <Skeleton className="h-32 rounded-xl" />
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Skeleton className="h-24 rounded-xl" />
-        <Skeleton className="h-24 rounded-xl" />
-        <Skeleton className="h-24 rounded-xl" />
+    <div className="max-w-6xl mx-auto space-y-4 animate-pulse px-1">
+      <Skeleton className="h-9 w-48 rounded-xl" />
+      <Skeleton className="h-28 rounded-2xl" />
+      <div className="grid grid-cols-3 gap-2">
+        <Skeleton className="h-20 rounded-2xl" />
+        <Skeleton className="h-20 rounded-2xl" />
+        <Skeleton className="h-20 rounded-2xl" />
       </div>
     </div>
   );
@@ -32,35 +32,42 @@ export function DashboardLayout() {
 
   return (
     <SidebarProvider>
-      <div className="min-h-[100dvh] flex w-full">
+      <div className="min-h-[100dvh] flex w-full overflow-x-hidden">
         <AppSidebar />
-        <div className="flex-1 flex flex-col min-w-0">
-          <header className="h-14 flex items-center border-b border-border px-3 sm:px-4 shrink-0 sticky top-0 z-30 bg-background/80 backdrop-blur-md">
-            <SidebarTrigger className="mr-3" />
+        <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
+          {/* Compact mobile header */}
+          <header className="h-12 sm:h-14 flex items-center border-b border-border/50 px-3 sm:px-4 shrink-0 sticky top-0 z-30 bg-background/80 backdrop-blur-xl">
+            <SidebarTrigger className="mr-2 sm:mr-3" />
             <div className="flex items-center gap-1.5 mr-auto">
-              <Hexagon className="h-4 w-4 text-primary sm:hidden" />
-              <span className="text-xs text-muted-foreground font-medium sm:hidden">Platform Hub</span>
+              <div className="rounded-md bg-gradient-to-br from-primary to-accent p-1 sm:hidden">
+                <Layers className="h-3 w-3 text-white" />
+              </div>
+              <span className="text-[11px] text-muted-foreground font-semibold sm:hidden">IA Apps</span>
             </div>
             <div className="flex items-center gap-2">
               {profile?.avatar_url ? (
-                <img src={profile.avatar_url} alt="" className="h-8 w-8 rounded-full object-cover border border-border" />
+                <img src={profile.avatar_url} alt="" className="h-7 w-7 sm:h-8 sm:w-8 rounded-full object-cover border border-border" />
               ) : (
-                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-medium text-primary">
+                <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center text-[11px] sm:text-sm font-semibold text-primary">
                   {initials}
                 </div>
               )}
               <span className="text-sm text-muted-foreground hidden sm:inline">{profile?.full_name || "..."}</span>
             </div>
           </header>
-          <main className="flex-1 overflow-auto p-3 sm:p-4 md:p-6 lg:p-8">
+
+          <main className="flex-1 overflow-x-hidden overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8 safe-bottom">
             <Suspense fallback={<PageFallback />}>
               <Outlet />
             </Suspense>
           </main>
-          <footer className="border-t border-border px-4 py-3 flex items-center justify-center gap-2 shrink-0">
-            <Hexagon className="h-3.5 w-3.5 text-primary/60" />
-            <span className="text-[11px] text-muted-foreground">
-              Platform Hub — Central do Ecossistema
+
+          <footer className="border-t border-border/30 px-3 py-2.5 sm:py-3 flex items-center justify-center gap-2 shrink-0">
+            <div className="rounded-md bg-gradient-to-br from-primary/40 to-accent/30 p-0.5">
+              <Layers className="h-3 w-3 text-white/70" />
+            </div>
+            <span className="text-[10px] sm:text-[11px] text-muted-foreground/60">
+              Ecossistema IA Apps
             </span>
           </footer>
         </div>

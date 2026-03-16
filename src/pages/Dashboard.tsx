@@ -55,38 +55,39 @@ export default function Dashboard() {
   const isDemo = !plan;
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-6">
-      {/* ─── Top Bar ─── */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="rounded-lg bg-gradient-to-br from-primary to-accent p-1.5 shadow-md shadow-primary/20">
-            <Layers className="h-4 w-4 text-white" />
+    <div className="max-w-[1200px] mx-auto space-y-4 sm:space-y-6">
+      {/* ─── Top Bar - compact on mobile ─── */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="rounded-lg bg-gradient-to-br from-primary to-accent p-1.5 shadow-md shadow-primary/20 shrink-0">
+            <Layers className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-white" />
           </div>
-          <span className="font-display text-sm sm:text-base font-bold text-foreground">
+          <span className="font-display text-xs sm:text-base font-bold text-foreground truncate">
             Ecossistema IA Apps
           </span>
         </div>
         <Link
           to="/subscription"
-          className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold text-foreground hover:bg-white/10 transition-all"
+          className="inline-flex items-center gap-1 sm:gap-1.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm px-2.5 sm:px-4 py-1.5 sm:py-2 text-[10px] sm:text-xs font-semibold text-foreground hover:bg-white/10 transition-all shrink-0 min-h-[36px]"
         >
-          <Crown className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-primary" />
-          Assinar Plano Completo
+          <Crown className="h-3 w-3 text-primary" />
+          <span className="hidden sm:inline">Assinar Plano Completo</span>
+          <span className="sm:hidden">Assinar</span>
         </Link>
       </div>
 
       {isLoading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-36 rounded-2xl" />
-          <div className="grid grid-cols-3 gap-2">
-            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}
+        <div className="space-y-3 sm:space-y-4">
+          <Skeleton className="h-28 sm:h-36 rounded-2xl" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-16 sm:h-20 rounded-2xl" />)}
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-48 rounded-2xl" />)}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-44 sm:h-48 rounded-2xl" />)}
           </div>
         </div>
       ) : appsError ? (
-        <div className="rounded-2xl glass-card p-5 flex items-center gap-3">
+        <div className="rounded-2xl glass-card p-4 sm:p-5 flex items-center gap-3">
           <AlertTriangle className="h-5 w-5 text-destructive shrink-0" />
           <div>
             <p className="text-sm font-medium text-foreground">Erro ao carregar aplicativos</p>
