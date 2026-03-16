@@ -21,6 +21,7 @@ import AdminSystemLogs from "./pages/AdminSystemLogs";
 import AdminFreeTrials from "./pages/AdminFreeTrials";
 import AdminUserAccess from "./pages/AdminUserAccess";
 import Login from "./pages/Login";
+import DestinationChooser from "./pages/DestinationChooser";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";

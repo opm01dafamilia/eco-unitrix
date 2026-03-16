@@ -175,14 +175,13 @@ export default function DestinationChooser() {
         </p>
       </div>
 
-      {blockedApp && (
-        <AccessBlockedModal
-          appName={blockedApp.appName}
-          appKey={blockedApp.appKey}
-          reason={blockedApp.reason}
-          onClose={clearBlockedApp}
-        />
-      )}
+      <AccessBlockedModal
+        open={!!blockedApp}
+        onOpenChange={(open) => { if (!open) clearBlockedApp(); }}
+        appName={blockedApp?.appName ?? ""}
+        appKey={blockedApp?.appKey ?? ""}
+        reason={blockedApp?.reason ?? "no_subscription"}
+      />
     </div>
   );
 }
