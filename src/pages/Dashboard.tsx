@@ -20,6 +20,7 @@ import { DashboardFooter } from "@/components/dashboard/DashboardFooter";
 export default function Dashboard() {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
+  const { data: apps, isLoading: appsLoading, isError: appsError } = useApps();
   const { isDemo } = useDemoContext();
   const { data: accessMap } = useAllAppAccess();
   const { launchApp, launchingAppKey, blockedApp, clearBlockedApp } = useAppLauncher();
