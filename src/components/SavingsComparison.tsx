@@ -2,6 +2,7 @@ import { Check, ExternalLink, TrendingDown, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
+// Renewal prices for individual apps (what you'd pay separately)
 const apps = [
   { name: "FitPulse", monthly: 19.9, yearly: 197 },
   { name: "FinanceFlow", monthly: 19.9, yearly: 197 },
@@ -12,8 +13,10 @@ const apps = [
 
 const totalMonthly = apps.reduce((s, a) => s + a.monthly, 0);
 const totalYearly = apps.reduce((s, a) => s + a.yearly, 0);
+
+// Ecosystem promo prices (first period) — DO NOT change these
 const ecoMonthly = 67;
-const ecoYearly = 547;
+const ecoYearly = 697;
 const saveMonthly = totalMonthly - ecoMonthly;
 const saveYearly = totalYearly - ecoYearly;
 
