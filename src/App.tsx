@@ -33,35 +33,37 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <PWAInstallPrompt />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/choose-destination" element={<ProtectedRoute><DestinationChooser /></ProtectedRoute>} />
-            <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/apps" element={<Apps />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/activity" element={<ActivityPage />} />
-              <Route path="/subscription" element={<SubscriptionPage />} />
-              <Route path="/admin" element={<AdminPage />} />
-              <Route path="/admin/webhook-logs" element={<AdminWebhookLogs />} />
-              <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
-              <Route path="/admin/system-logs" element={<AdminSystemLogs />} />
-              <Route path="/admin/free-trials" element={<AdminFreeTrials />} />
-              <Route path="/admin/user-access" element={<AdminUserAccess />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <DemoProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <PWAInstallPrompt />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/choose-destination" element={<ProtectedRoute><DestinationChooser /></ProtectedRoute>} />
+              <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/apps" element={<Apps />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/activity" element={<ActivityPage />} />
+                <Route path="/subscription" element={<SubscriptionPage />} />
+                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/admin/webhook-logs" element={<AdminWebhookLogs />} />
+                <Route path="/admin/subscriptions" element={<AdminSubscriptions />} />
+                <Route path="/admin/system-logs" element={<AdminSystemLogs />} />
+                <Route path="/admin/free-trials" element={<AdminFreeTrials />} />
+                <Route path="/admin/user-access" element={<AdminUserAccess />} />
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </DemoProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
