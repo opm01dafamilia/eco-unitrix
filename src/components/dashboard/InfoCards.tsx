@@ -1,4 +1,4 @@
-import { UserCircle, ShieldAlert, Crown } from "lucide-react";
+import { UserCircle, Lock, Crown } from "lucide-react";
 
 interface InfoCardsProps {
   totalAccessible: number;
@@ -8,53 +8,54 @@ interface InfoCardsProps {
 }
 
 export function InfoCards({ totalAccessible, totalApps, planName, isDemo }: InfoCardsProps) {
-  const cards = [
-    {
-      icon: UserCircle,
-      title: "Conta Demo",
-      value: isDemo ? "Ativa" : "Completa",
-      description: isDemo ? "Acesso limitado aos apps" : "Acesso total liberado",
-      color: "text-amber-500",
-      bg: "bg-amber-500/10",
-      borderColor: "border-amber-500/20",
-    },
-    {
-      icon: ShieldAlert,
-      title: "Acesso Limitado",
-      value: `${totalAccessible}/${totalApps}`,
-      description: "Apps disponíveis",
-      color: "text-blue-400",
-      bg: "bg-blue-400/10",
-      borderColor: "border-blue-400/20",
-    },
-    {
-      icon: Crown,
-      title: "Plano Atual",
-      value: planName ?? "Nenhum",
-      description: planName ? "Assinatura ativa" : "Sem plano ativo",
-      color: "text-primary",
-      bg: "bg-primary/10",
-      borderColor: "border-primary/20",
-    },
-  ];
-
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-      {cards.map((card) => (
-        <div
-          key={card.title}
-          className={`rounded-xl border ${card.borderColor} bg-card p-4 sm:p-5 flex items-start gap-3 transition-all hover:shadow-md`}
-        >
-          <div className={`rounded-lg ${card.bg} p-2.5 shrink-0`}>
-            <card.icon className={`h-5 w-5 ${card.color}`} />
+    <div className="grid grid-cols-3 gap-2 sm:gap-3">
+      {/* Conta Demo */}
+      <div className="rounded-xl border border-border bg-card p-3 sm:p-4 flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <div className="rounded-lg bg-orange-500/15 p-1.5 sm:p-2 shrink-0">
+            <UserCircle className="h-4 w-4 sm:h-5 sm:w-5 text-orange-400" />
           </div>
-          <div className="min-w-0">
-            <p className="text-xs text-muted-foreground">{card.title}</p>
-            <p className="font-display font-bold text-foreground text-lg leading-tight truncate">{card.value}</p>
-            <p className="text-[11px] text-muted-foreground mt-0.5">{card.description}</p>
-          </div>
+          <span className="font-display font-semibold text-foreground text-xs sm:text-sm truncate">
+            Conta Demo
+          </span>
         </div>
-      ))}
+        <p className="text-[10px] sm:text-xs text-muted-foreground leading-snug">
+          Somente explorar as experiências. Escopo limitado.
+        </p>
+      </div>
+
+      {/* Acesso Limitado */}
+      <div className="rounded-xl border border-border bg-card p-3 sm:p-4 flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <div className="rounded-lg bg-purple-500/15 p-1.5 sm:p-2 shrink-0">
+            <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-purple-400" />
+          </div>
+          <span className="font-display font-semibold text-foreground text-xs sm:text-sm truncate">
+            Acesso Limitado
+          </span>
+        </div>
+        <p className="text-[10px] sm:text-xs text-muted-foreground leading-snug">
+          Conteúdo restrito até assinar o plano completo.
+        </p>
+      </div>
+
+      {/* Plano Atual */}
+      <div className="rounded-xl border border-border bg-card p-3 sm:p-4 flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <span className="font-display font-semibold text-foreground text-xs sm:text-sm">
+            Plano Atual
+          </span>
+          {isDemo && (
+            <span className="rounded bg-primary px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-primary-foreground uppercase">
+              Demo
+            </span>
+          )}
+        </div>
+        <p className="font-display font-bold text-foreground text-sm sm:text-lg leading-tight">
+          {planName ?? "Conta Demo"}
+        </p>
+      </div>
     </div>
   );
 }
