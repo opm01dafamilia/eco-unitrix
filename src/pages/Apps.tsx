@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Search, Filter, ExternalLink, Star, Wrench, AlertTriangle, AppWindow, Crown, CreditCard, Gift, XCircle, Clock, Loader2, Eye } from "lucide-react";
+import { Search, Filter, ExternalLink, Star, Wrench, AlertTriangle, AppWindow, Crown, CreditCard, Gift, XCircle, Clock, Loader2, Eye, Lock, ArrowRight } from "lucide-react";
 import { getAppIcon } from "@/lib/appIcons";
 import { useApps, AppWithAccess } from "@/hooks/useApps";
 import { useAppLauncher } from "@/hooks/useAppLauncher";
@@ -32,38 +32,37 @@ const accessTypeConfig = {
   inactive: { label: "Sem acesso", icon: XCircle, color: "text-muted-foreground bg-muted border-border" },
 } as const;
 
-type FilterType = "all" | "active" | "accessible" | "featured";
-
 export default function Apps() {
   const { data: apps, isLoading, isError, refetch } = useApps();
   const { launchApp, launchingAppKey, blockedApp, clearBlockedApp } = useAppLauncher();
   const { data: accessMap } = useAllAppAccess();
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<FilterType>("all");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [selectedApp, setSelectedApp] = useState<AppWithAccess | null>(null);
 
   const visibleApps = useMemo(() => apps?.filter((a) => a.is_visible) ?? [], [apps]);
 
-  const categories = useMemo(() => {
-    const cats = new Set(visibleApps.map((a) => a.app_category));
-    return Array.from(cats).sort();
-  }, [visibleApps]);
-
-  const filteredApps = useMemo(() => {
-    let result = visibleApps;
+  // Split into accessible and upgrade sections
+  const myApps = useMemo(() => {
+    let result = visibleApps.filter(
+      (a) => a.user_access === "active" && a.access_type !== "inactive" && a.app_status === "active"
+    );
     if (search) {
       const q = search.toLowerCase();
       result = result.filter((a) => a.app_name.toLowerCase().includes(q) || a.app_description?.toLowerCase().includes(q));
     }
-    if (filter === "active") result = result.filter((a) => a.app_status === "active");
-    else if (filter === "accessible") result = result.filter((a) => a.user_access === "active");
-    else if (filter === "featured") result = result.filter((a) => a.is_featured);
-    if (categoryFilter !== "all") result = result.filter((a) => a.app_category === categoryFilter);
     return result;
-  }, [visibleApps, search, filter, categoryFilter]);
+  }, [visibleApps, search]);
 
-  const featuredApps = useMemo(() => filteredApps.filter((a) => a.is_featured), [filteredApps]);
+  const upgradeApps = useMemo(() => {
+    let result = visibleApps.filter(
+      (a) => !(a.user_access === "active" && a.access_type !== "inactive") && a.app_status === "active"
+    );
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter((a) => a.app_name.toLowerCase().includes(q) || a.app_description?.toLowerCase().includes(q));
+    }
+    return result;
+  }, [visibleApps, search]);
 
   const trialApps = useMemo(() => {
     if (!accessMap) return [];
@@ -78,19 +77,12 @@ export default function Apps() {
 
   const trialDaysLeft = nearestTrialExpiry ? differenceInDays(new Date(nearestTrialExpiry.expiresAt!), new Date()) : 0;
 
-  const filters: { key: FilterType; label: string }[] = [
-    { key: "all", label: "Todos" },
-    { key: "active", label: "Ativos" },
-    { key: "accessible", label: "Com acesso" },
-    { key: "featured", label: "Destaques" },
-  ];
-
   return (
     <div className="max-w-6xl mx-auto space-y-5 sm:space-y-6">
       <div className="flex items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground">Meus Aplicativos</h1>
-          <p className="text-muted-foreground text-sm mt-1 hidden sm:block">Acesse todos os aplicativos da plataforma.</p>
+          <p className="text-muted-foreground text-sm mt-1 hidden sm:block">Acesse seus aplicativos liberados.</p>
         </div>
         <EcosystemBadge className="hidden sm:inline-flex" />
       </div>
@@ -104,9 +96,7 @@ export default function Apps() {
               <p className="text-sm font-medium text-foreground">
                 Seu teste grátis termina em {trialDaysLeft} dia{trialDaysLeft !== 1 ? "s" : ""}.
               </p>
-              <p className="text-xs text-muted-foreground">
-                Assine agora para manter o acesso.
-              </p>
+              <p className="text-xs text-muted-foreground">Assine agora para manter o acesso.</p>
             </div>
           </div>
           <Link to="/subscription">
@@ -115,45 +105,11 @@ export default function Apps() {
         </div>
       )}
 
-      {/* Search and Filters */}
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Buscar aplicativo..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
-          </div>
-          <div className="flex items-center gap-1 rounded-lg border border-border bg-card p-1 overflow-x-auto">
-            <Filter className="h-4 w-4 text-muted-foreground ml-2 mr-1 shrink-0" />
-            {filters.map((f) => (
-              <button key={f.key} onClick={() => setFilter(f.key)} className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-colors whitespace-nowrap ${filter === f.key ? "bg-primary/10 text-primary" : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"}`}>
-                {f.label}
-              </button>
-            ))}
-          </div>
-        </div>
-        {categories.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-muted-foreground">Categoria:</span>
-            <button onClick={() => setCategoryFilter("all")} className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${categoryFilter === "all" ? "bg-primary/10 text-primary border-primary/20" : "text-muted-foreground border-border hover:text-foreground hover:border-primary/20"}`}>
-              Todas
-            </button>
-            {categories.map((cat) => (
-              <button key={cat} onClick={() => setCategoryFilter(cat)} className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${categoryFilter === cat ? "bg-primary/10 text-primary border-primary/20" : "text-muted-foreground border-border hover:text-foreground hover:border-primary/20"}`}>
-                {categoryLabels[cat] ?? cat}
-              </button>
-            ))}
-          </div>
-        )}
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input placeholder="Buscar aplicativo..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-10" />
       </div>
-
-      {/* Summary */}
-      {!isLoading && !isError && (
-        <div className="flex items-center gap-4 text-xs sm:text-sm text-muted-foreground">
-          <span>{filteredApps.length} aplicativo{filteredApps.length !== 1 ? "s" : ""}</span>
-          <span className="h-1 w-1 rounded-full bg-border" />
-          <span>{visibleApps.filter((a) => a.user_access === "active").length} com acesso ativo</span>
-        </div>
-      )}
 
       {isError && (
         <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
@@ -164,43 +120,72 @@ export default function Apps() {
         </div>
       )}
 
-      {/* Featured section */}
-      {!isError && filter !== "featured" && featuredApps.length > 0 && categoryFilter === "all" && !search && (
-        <div>
-          <h2 className="font-display text-base sm:text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
-            <Star className="h-4 w-4 text-primary" /> Em Destaque
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
-            {featuredApps.map((app, i) => (
-              <AppCard key={app.id} app={app} index={i} featured accessInfo={accessMap?.[app.app_key]} onSelect={setSelectedApp} onLaunch={launchApp} launchingAppKey={launchingAppKey} />
-            ))}
+      {/* My Apps Section */}
+      {isLoading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-40" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-64 sm:h-72 rounded-xl" />)}
           </div>
         </div>
-      )}
+      ) : !isError && (
+        <>
+          {/* My accessible apps */}
+          <div>
+            <div className="flex items-center gap-2 mb-3 sm:mb-4">
+              <Star className="h-4 w-4 text-primary" />
+              <h2 className="font-display text-base sm:text-lg font-semibold text-foreground">
+                Meus Apps
+              </h2>
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">{myApps.length}</Badge>
+            </div>
 
-      {/* Grid */}
-      {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
-          {[1, 2, 3, 4, 5].map((i) => <Skeleton key={i} className="h-64 sm:h-72 rounded-xl" />)}
-        </div>
-      ) : !isError && filteredApps.length === 0 ? (
-        <EmptyState
-          icon={Search}
-          title="Nenhum aplicativo encontrado"
-          description="Tente ajustar os filtros ou a busca."
-        />
-      ) : !isError ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
-          {filteredApps
-            .filter((app) => {
-              const featuredSectionVisible = filter !== "featured" && featuredApps.length > 0 && categoryFilter === "all" && !search;
-              return !featuredSectionVisible || !app.is_featured;
-            })
-            .map((app, i) => (
-              <AppCard key={app.id} app={app} index={i} accessInfo={accessMap?.[app.app_key]} onSelect={setSelectedApp} onLaunch={launchApp} launchingAppKey={launchingAppKey} />
-            ))}
-        </div>
-      ) : null}
+            {myApps.length === 0 ? (
+              <div className="rounded-xl border border-border bg-card p-6 sm:p-8 text-center">
+                <Lock className="h-8 w-8 text-muted-foreground mx-auto mb-3 opacity-50" />
+                <p className="text-sm font-medium text-foreground">Nenhum aplicativo liberado</p>
+                <p className="text-xs text-muted-foreground mt-1">Assine um plano para ter acesso aos aplicativos.</p>
+                <Link to="/subscription">
+                  <Button size="sm" className="mt-4">Ver planos</Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
+                {myApps.map((app, i) => (
+                  <AppCard
+                    key={app.id}
+                    app={app}
+                    index={i}
+                    featured={app.is_featured}
+                    accessInfo={accessMap?.[app.app_key]}
+                    onSelect={setSelectedApp}
+                    onLaunch={launchApp}
+                    launchingAppKey={launchingAppKey}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Upgrade section */}
+          {upgradeApps.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2 mb-3 sm:mb-4">
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                <h2 className="font-display text-base sm:text-lg font-semibold text-muted-foreground">
+                  Outros Apps Disponíveis
+                </h2>
+                <Badge variant="outline" className="text-[10px] px-1.5 py-0">{upgradeApps.length}</Badge>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
+                {upgradeApps.map((app, i) => (
+                  <UpgradeCard key={app.id} app={app} index={i} onSelect={setSelectedApp} />
+                ))}
+              </div>
+            </div>
+          )}
+        </>
+      )}
 
       <AppDetailModal app={selectedApp} open={!!selectedApp} onOpenChange={(open) => !open && setSelectedApp(null)} />
       {blockedApp && (
@@ -228,21 +213,8 @@ function AppCard({
   launchingAppKey: string | null;
 }) {
   const atCfg = accessTypeConfig[app.access_type] ?? accessTypeConfig.inactive;
-  const isActive = app.user_access === "active" && app.access_type !== "inactive";
   const isTrial = app.access_type === "trial";
-  const isInactive = app.access_type === "inactive";
   const isLaunching = launchingAppKey === app.app_key;
-
-  const getAppStatusLabel = () => {
-    if (app.app_status === "inactive") return "Indisponível";
-    if (app.app_status === "maintenance") return "Em manutenção";
-    if (app.app_status === "coming_soon") return "Em breve";
-    if (app.app_status === "disabled") return "Desativado";
-    return null;
-  };
-
-  const appStatusLabel = getAppStatusLabel();
-  const isAppUnavailable = !!appStatusLabel;
 
   return (
     <div
@@ -261,7 +233,6 @@ function AppCard({
             <Star className="h-4 w-4 text-primary fill-primary" />
           </div>
         )}
-        {/* Secondary "Ver detalhes" button on hover */}
         <button
           onClick={(e) => { e.stopPropagation(); onSelect(app); }}
           className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-1 rounded-md bg-background/80 backdrop-blur-sm text-[10px] font-medium text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:text-foreground"
@@ -280,63 +251,77 @@ function AppCard({
           <Badge variant="outline" className="text-[10px] border-border text-muted-foreground">
             {categoryLabels[app.app_category] ?? app.app_category}
           </Badge>
-
-          {isAppUnavailable ? (
-            <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-              <Wrench className="h-3 w-3" /> {appStatusLabel}
+          <div className="text-xs text-muted-foreground space-y-0.5">
+            <p className="flex items-center gap-1.5">
+              <atCfg.icon className="h-3 w-3" />
+              Acesso via {atCfg.label.toLowerCase()}
             </p>
-          ) : (
-            <div className="text-xs text-muted-foreground space-y-0.5">
+            {accessInfo?.expiresAt && (
               <p className="flex items-center gap-1.5">
-                <atCfg.icon className="h-3 w-3" />
-                {isActive ? `Acesso via ${atCfg.label.toLowerCase()}` : "Acesso não liberado"}
+                <Clock className="h-3 w-3" />
+                Expira: {format(new Date(accessInfo.expiresAt), "dd/MM/yyyy", { locale: ptBR })}
               </p>
-              {accessInfo?.expiresAt && isActive && (
-                <p className="flex items-center gap-1.5">
-                  <Clock className="h-3 w-3" />
-                  Expira: {format(new Date(accessInfo.expiresAt), "dd/MM/yyyy", { locale: ptBR })}
-                </p>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
-        {/* Action buttons */}
         <div className="flex gap-2">
-          {!isAppUnavailable && isActive && (
-            <button
-              disabled={isLaunching}
-              onClick={(e) => { e.stopPropagation(); onLaunch(app); }}
-              className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)] active:scale-[0.97] disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isLaunching ? (
-                <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  Abrindo...
-                </>
-              ) : (
-                <>
-                  Acessar aplicativo <ExternalLink className="h-3.5 w-3.5" />
-                </>
-              )}
-            </button>
-          )}
-          {!isAppUnavailable && isTrial && (
+          <button
+            disabled={isLaunching}
+            onClick={(e) => { e.stopPropagation(); onLaunch(app); }}
+            className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 hover:shadow-[0_0_15px_hsl(var(--primary)/0.3)] active:scale-[0.97] disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            {isLaunching ? (
+              <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Abrindo...</>
+            ) : (
+              <>Acessar aplicativo <ExternalLink className="h-3.5 w-3.5" /></>
+            )}
+          </button>
+          {isTrial && (
             <Link to="/subscription" onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-1 rounded-lg border border-primary/20 px-2.5 sm:px-3 py-2.5 sm:py-3 text-[11px] sm:text-xs font-medium text-primary transition-colors hover:bg-primary/5 active:scale-[0.97]">
               Assinar
             </Link>
           )}
-          {!isAppUnavailable && isInactive && (
-            <Link to="/subscription" onClick={(e) => e.stopPropagation()} className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-primary/10 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-primary transition-colors hover:bg-primary/20 active:scale-[0.97]">
-              Assinar plano
-            </Link>
-          )}
-          {isAppUnavailable && (
-            <button disabled className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-muted px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-medium text-muted-foreground opacity-40 cursor-not-allowed">
-              {appStatusLabel}
-            </button>
-          )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function UpgradeCard({
+  app,
+  index,
+  onSelect,
+}: {
+  app: AppWithAccess;
+  index: number;
+  onSelect: (app: AppWithAccess) => void;
+}) {
+  return (
+    <div
+      className="group rounded-xl border border-border bg-card/50 overflow-hidden animate-fade-in cursor-pointer opacity-70 hover:opacity-90 transition-opacity"
+      style={{ animationDelay: `${index * 60}ms` }}
+      onClick={() => onSelect(app)}
+    >
+      <div className="h-20 sm:h-24 bg-gradient-to-br from-muted/50 to-muted/30 flex items-center justify-center relative">
+        {(() => { const Icon = getAppIcon(app.app_key); return Icon ? <Icon className="h-7 sm:h-8 w-7 sm:w-8 text-muted-foreground/40" strokeWidth={1.5} /> : <AppWindow className="h-7 sm:h-8 w-7 sm:w-8 text-muted-foreground/40" strokeWidth={1.5} />; })()}
+        <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-medium border text-muted-foreground bg-muted border-border">
+          <Lock className="h-2.5 w-2.5" />
+          Bloqueado
+        </div>
+      </div>
+      <div className="p-4 space-y-3">
+        <div>
+          <h3 className="font-display font-medium text-foreground text-sm sm:text-base">{app.app_name}</h3>
+          <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{app.app_description || "Sem descrição disponível."}</p>
+        </div>
+        <Link
+          to="/subscription"
+          onClick={(e) => e.stopPropagation()}
+          className="flex items-center justify-center gap-2 rounded-lg bg-primary/10 px-3 py-2.5 text-xs font-medium text-primary transition-colors hover:bg-primary/20 active:scale-[0.97] w-full"
+        >
+          Assinar plano <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
     </div>
   );
