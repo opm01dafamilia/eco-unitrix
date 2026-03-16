@@ -142,26 +142,38 @@ export function AdminUserManagement() {
     setActionLoading(null);
   };
 
-  const handleGrantTrial = async (row: UserRow, days: number) => {
-    setActionLoading(row.userId);
+  // Trial grant dialog state
+  const [trialDialog, setTrialDialog] = useState<UserRow | null>(null);
+  const [trialApp, setTrialApp] = useState<string>("");
+  const [trialDays, setTrialDays] = useState<string>("7");
+
+  const handleGrantTrial = async () => {
+    if (!trialDialog || !trialApp) return;
+    setActionLoading(trialDialog.userId);
+    const days = parseInt(trialDays);
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + days);
+    const appLabel = APP_LABEL_MAP[trialApp] ?? trialApp;
     const { error } = await supabase.from("free_trials").insert({
-      user_id: row.userId,
-      trial_type: "all_apps",
+      user_id: trialDialog.userId,
+      trial_type: "selected_apps",
+      app_key: trialApp,
       duration_days: days,
       expires_at: expiresAt.toISOString(),
       status: "active",
       granted_by: currentUser?.id ?? null,
     });
     if (!error) {
-      await logAction(`trial_${days}d_granted`, `Teste ${days} dias para ${row.email}`);
-      toast({ title: "Trial liberado", description: `${days} dias para ${row.email}` });
+      await logAction(`trial_${days}d_granted`, `Teste ${days} dias de ${appLabel} para ${trialDialog.email}`);
+      toast({ title: "Trial liberado", description: `${days} dias de ${appLabel} para ${trialDialog.email}` });
     } else {
       toast({ variant: "destructive", title: "Erro", description: error.message });
     }
     invalidateAll();
     setActionLoading(null);
+    setTrialDialog(null);
+    setTrialApp("");
+    setTrialDays("7");
   };
 
   const handleGrantLifetime = async (row: UserRow) => {
