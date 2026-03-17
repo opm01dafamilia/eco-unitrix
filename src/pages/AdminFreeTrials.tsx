@@ -50,6 +50,7 @@ export default function AdminFreeTrials() {
   const [granting, setGranting] = useState(false);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [conversionFilter, setConversionFilter] = useState<string>("all");
 
   const allSelected = selectedApps.length === INDIVIDUAL_APPS.length;
 
