@@ -88,6 +88,22 @@ export default function AdminFreeTrials() {
     enabled: !!isAdmin,
   });
 
+  // Fetch active subscriptions to check if trial users converted
+  const { data: subscriptions } = useQuery({
+    queryKey: ["admin-subscriptions-status"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("user_subscriptions")
+        .select("user_id, subscription_status")
+        .eq("subscription_status", "active");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!isAdmin,
+  });
+
+  const subscriberSet = new Set((subscriptions ?? []).map((s) => s.user_id));
+
   if (adminLoading) {
     return (
       <div className="flex items-center justify-center py-20">
