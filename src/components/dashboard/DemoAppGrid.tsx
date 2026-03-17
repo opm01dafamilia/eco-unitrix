@@ -46,7 +46,7 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
   return (
     <section className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
       <h2 className="font-display text-base sm:text-lg font-bold text-foreground mb-4 tracking-tight">
-        Acesse Nossos Apps Demo
+        Seus Aplicativos
       </h2>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
         {apps.map((app, i) => {
@@ -66,7 +66,7 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
               <div className="p-4 sm:p-5 flex flex-col">
                 {/* Badge */}
                 <span className={`self-start rounded-md bg-gradient-to-r ${accent.badge} px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white mb-4 shadow-sm ${accent.shadow}`}>
-                  Conta Demo
+                  Teste Grátis
                 </span>
 
                 {/* Icon + Name */}
@@ -99,7 +99,7 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
                       <Loader2 className="h-3.5 w-3.5 animate-spin" /> Abrindo...
                     </>
                   ) : (
-                    "Explorar Demo"
+                    "Abrir App"
                   )}
                 </button>
               </div>
