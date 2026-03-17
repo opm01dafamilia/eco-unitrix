@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AccessBlockedModal } from "@/components/AccessBlockedModal";
+import { TrialExpiredScreen } from "@/components/dashboard/TrialExpiredScreen";
 import { HeroCard } from "@/components/dashboard/HeroCard";
 import { TrialCountdown } from "@/components/dashboard/TrialCountdown";
 import { InfoCards } from "@/components/dashboard/InfoCards";

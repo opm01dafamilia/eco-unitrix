@@ -50,7 +50,7 @@ export function DemoUpgradeModal({ open, onOpenChange, featureName }: DemoUpgrad
             onClick={() => onOpenChange(false)}
             className="w-full text-xs text-muted-foreground hover:text-foreground transition-colors py-2"
           >
-            Continuar explorando no modo Demo
+            Continuar explorando
           </button>
         </div>
       </DialogContent>
