@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AccessBlockedModal } from "@/components/AccessBlockedModal";
 import { HeroCard } from "@/components/dashboard/HeroCard";
+import { TrialCountdown } from "@/components/dashboard/TrialCountdown";
 import { InfoCards } from "@/components/dashboard/InfoCards";
 import { DemoAppGrid } from "@/components/dashboard/DemoAppGrid";
 import { UpgradeSection } from "@/components/dashboard/UpgradeSection";
@@ -98,6 +99,7 @@ export default function Dashboard() {
       ) : (
         <>
           <HeroCard firstName={firstName} isLoading={isLoading} isDemo={isDemo} />
+          <TrialCountdown />
           <InfoCards
             totalAccessible={totalAccessible}
             totalApps={visibleApps.length}
