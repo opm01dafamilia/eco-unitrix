@@ -1,3 +1,5 @@
+import { useDemoContext } from "@/contexts/DemoContext";
+
 interface HeroCardProps {
   firstName: string;
   isLoading: boolean;
@@ -5,6 +7,10 @@ interface HeroCardProps {
 }
 
 export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
+  const { access } = useDemoContext();
+  const days = access.daysRemaining;
+  const isTrial = access.accessType === "trial";
+
   return (
     <div className="rounded-2xl glass-card-strong p-5 sm:p-8 relative overflow-hidden glow-ring animate-fade-in">
       {/* Subtle layered gradient orbs */}
@@ -15,21 +21,34 @@ export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
 
       <div className="relative z-10 space-y-3">
         <h1 className="font-display text-xl sm:text-2xl md:text-[2rem] font-bold text-foreground leading-[1.2] tracking-tight">
-          Olá! Bem-vindo ao{" "}
+          Olá, {firstName}! Bem-vindo ao{" "}
           <span className="gradient-text">Ecossistema IA Apps</span>.
         </h1>
 
-        <p className="text-muted-foreground text-xs sm:text-sm flex flex-wrap items-center gap-1.5 leading-relaxed">
-          Você está testando nossos aplicativos em modo
-          {isDemo && (
+        {isTrial && days !== null ? (
+          <p className="text-muted-foreground text-xs sm:text-sm flex flex-wrap items-center gap-1.5 leading-relaxed">
+            Seu
             <span className="inline-flex items-center rounded-md btn-gradient px-2.5 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-widest shadow-md shadow-primary/15">
-              Demo
+              Teste Grátis
             </span>
-          )}
-        </p>
+            está ativo — {days} dia{days !== 1 ? "s" : ""} restante{days !== 1 ? "s" : ""}
+          </p>
+        ) : isDemo ? (
+          <p className="text-muted-foreground text-xs sm:text-sm flex flex-wrap items-center gap-1.5 leading-relaxed">
+            Assine para desbloquear todo o ecossistema
+          </p>
+        ) : (
+          <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
+            Você tem acesso completo ao ecossistema.
+          </p>
+        )}
 
         <p className="text-muted-foreground/60 text-[11px] sm:text-[13px] max-w-lg leading-relaxed">
-          Explore nossos aplicativos e descubra como podemos ajudar você antes de fazer sua assinatura.
+          {isTrial
+            ? "Aproveite seu acesso gratuito por tempo limitado. Explore todos os aplicativos e descubra o poder do ecossistema."
+            : isDemo
+              ? "Assine um plano para liberar o acesso completo a todos os aplicativos."
+              : "Explore nossos aplicativos e aproveite ao máximo o seu acesso."}
         </p>
       </div>
     </div>
