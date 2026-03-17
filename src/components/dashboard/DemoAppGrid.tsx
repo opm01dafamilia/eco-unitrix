@@ -66,7 +66,7 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
               <div className="p-4 sm:p-5 flex flex-col">
                 {/* Badge */}
                 <span className={`self-start rounded-md bg-gradient-to-r ${accent.badge} px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white mb-4 shadow-sm ${accent.shadow}`}>
-                  Conta Demo
+                  Teste Grátis
                 </span>
 
                 {/* Icon + Name */}
