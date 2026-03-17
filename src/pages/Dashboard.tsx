@@ -99,6 +99,7 @@ export default function Dashboard() {
       ) : (
         <>
           <HeroCard firstName={firstName} isLoading={isLoading} isDemo={isDemo} />
+          <TrialCountdown />
           <InfoCards
             totalAccessible={totalAccessible}
             totalApps={visibleApps.length}
