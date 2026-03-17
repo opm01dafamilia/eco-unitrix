@@ -24,7 +24,7 @@ function PageFallback() {
 
 export function DashboardLayout() {
   const { data: profile } = useProfile();
-  const { isDemo } = useDemoMode();
+  const { isDemo, isTrial } = useDemoMode();
 
   const initials = profile?.full_name
     ?.split(" ")
