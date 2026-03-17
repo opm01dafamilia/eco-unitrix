@@ -209,8 +209,15 @@ export default function AdminFreeTrials() {
       !search ||
       profile?.email?.toLowerCase().includes(search.toLowerCase()) ||
       profile?.full_name?.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === "all" || t.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const isExpired = t.status === "active" && new Date(t.expires_at) < new Date();
+    const effectiveStatus = isExpired ? "expired" : t.status;
+    const matchesStatus = statusFilter === "all" || effectiveStatus === statusFilter;
+    const isSubscriber = subscriberSet.has(t.user_id);
+    const matchesConversion =
+      conversionFilter === "all" ||
+      (conversionFilter === "subscriber" && isSubscriber) ||
+      (conversionFilter === "not_subscriber" && !isSubscriber);
+    return matchesSearch && matchesStatus && matchesConversion;
   });
 
   // Group consecutive trials by user_id + expires_at + status for display
