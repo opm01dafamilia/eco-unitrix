@@ -391,10 +391,11 @@ export default function AdminFreeTrials() {
               <TableRow>
                 <TableHead>Usuário</TableHead>
                 <TableHead>Aplicativos</TableHead>
-                <TableHead>Duração</TableHead>
                 <TableHead>Início</TableHead>
                 <TableHead>Expiração</TableHead>
+                <TableHead>Dias restantes</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Converteu</TableHead>
                 <TableHead>Ação</TableHead>
               </TableRow>
             </TableHeader>
@@ -403,10 +404,8 @@ export default function AdminFreeTrials() {
                 const profile = profileMap.get(group.user_id);
                 const cfg = statusConfig[group.status as keyof typeof statusConfig] ?? statusConfig.expired;
                 const isExpired = group.status === "active" && new Date(group.expires_at) < new Date();
-
-                const appsDisplay = group.apps.includes("all_apps")
-                  ? "Todos"
-                  : group.apps.map((k) => APP_LABEL_MAP[k] ?? k).join(", ");
+                const daysRemaining = Math.ceil((new Date(group.expires_at).getTime() - Date.now()) / 86400000);
+                const isSubscriber = subscriberSet.has(group.user_id);
 
                 return (
                   <TableRow key={idx}>
@@ -434,9 +433,6 @@ export default function AdminFreeTrials() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <span className="text-sm">{group.duration_days} dias</span>
-                    </TableCell>
-                    <TableCell>
                       <span className="text-sm text-muted-foreground">
                         {format(new Date(group.started_at), "dd/MM/yyyy")}
                       </span>
@@ -447,10 +443,28 @@ export default function AdminFreeTrials() {
                       </span>
                     </TableCell>
                     <TableCell>
+                      {isExpired || group.status !== "active" ? (
+                        <span className="text-sm text-muted-foreground">—</span>
+                      ) : (
+                        <span className={`text-sm font-medium ${daysRemaining <= 1 ? "text-destructive" : daysRemaining <= 3 ? "text-yellow-500" : "text-primary"}`}>
+                          {daysRemaining}d
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       <Badge variant="outline" className={`${isExpired ? "text-muted-foreground" : cfg.color} border-current/20 gap-1`}>
                         <cfg.icon className="h-3 w-3" />
                         {isExpired ? "Expirado" : cfg.label}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {isSubscriber ? (
+                        <Badge className="bg-primary/20 text-primary border-primary/30 text-xs gap-1">
+                          <CheckCircle2 className="h-3 w-3" /> Sim
+                        </Badge>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">Não</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       {group.status === "active" && !isExpired && (
