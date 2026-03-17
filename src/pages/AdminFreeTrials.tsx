@@ -363,6 +363,16 @@ export default function AdminFreeTrials() {
             <SelectItem value="cancelled">Cancelados</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={conversionFilter} onValueChange={setConversionFilter}>
+          <SelectTrigger className="w-44">
+            <SelectValue placeholder="Conversão" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="subscriber">Virou assinante</SelectItem>
+            <SelectItem value="not_subscriber">Não assinou</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Trials table */}
