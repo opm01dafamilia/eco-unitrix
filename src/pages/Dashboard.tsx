@@ -97,28 +97,26 @@ export default function Dashboard() {
             <p className="text-xs text-muted-foreground mt-0.5">Tente recarregar a página.</p>
           </div>
         </div>
+      ) : access.trialExpired && !access.hasAccess ? (
+        <TrialExpiredScreen />
       ) : (
-        {access.trialExpired && !access.hasAccess ? (
-          <TrialExpiredScreen />
-        ) : (
-          <>
-            <HeroCard firstName={firstName} isLoading={isLoading} isDemo={isDemo} />
-            <TrialCountdown />
-            <InfoCards
-              totalAccessible={totalAccessible}
-              totalApps={visibleApps.length}
-              planName={plan?.plan_name ?? null}
-              isDemo={isDemo}
-            />
-            <DemoAppGrid
-              apps={visibleApps}
-              onLaunch={launchApp}
-              launchingAppKey={launchingAppKey}
-            />
-            <UpgradeSection />
-            <DashboardFooter />
-          </>
-        )}
+        <>
+          <HeroCard firstName={firstName} isLoading={isLoading} isDemo={isDemo} />
+          <TrialCountdown />
+          <InfoCards
+            totalAccessible={totalAccessible}
+            totalApps={visibleApps.length}
+            planName={plan?.plan_name ?? null}
+            isDemo={isDemo}
+          />
+          <DemoAppGrid
+            apps={visibleApps}
+            onLaunch={launchApp}
+            launchingAppKey={launchingAppKey}
+          />
+          <UpgradeSection />
+          <DashboardFooter />
+        </>
       )}
 
       {blockedApp && (
