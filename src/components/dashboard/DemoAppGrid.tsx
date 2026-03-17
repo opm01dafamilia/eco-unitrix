@@ -99,7 +99,7 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
                       <Loader2 className="h-3.5 w-3.5 animate-spin" /> Abrindo...
                     </>
                   ) : (
-                    "Explorar Demo"
+                    "Abrir App"
                   )}
                 </button>
               </div>

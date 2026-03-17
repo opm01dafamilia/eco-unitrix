@@ -50,7 +50,7 @@ export function InfoCards({ totalAccessible, totalApps, planName, isDemo }: Info
             {totalApps} Apps Disponíveis
           </span>
           <p className="text-[11px] text-muted-foreground/70 leading-snug mt-0.5">
-            {isTrial ? "Acesso liberado durante o trial" : isDemo ? "Conteúdo restrito até assinar" : "Acesso completo"}
+            {isTrial ? "Acesso completo durante o teste" : isDemo ? "Assine para desbloquear" : "Acesso completo"}
           </p>
         </div>
       </div>
