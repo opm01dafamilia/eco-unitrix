@@ -98,23 +98,27 @@ export default function Dashboard() {
           </div>
         </div>
       ) : (
-        <>
-          <HeroCard firstName={firstName} isLoading={isLoading} isDemo={isDemo} />
-          <TrialCountdown />
-          <InfoCards
-            totalAccessible={totalAccessible}
-            totalApps={visibleApps.length}
-            planName={plan?.plan_name ?? null}
-            isDemo={isDemo}
-          />
-          <DemoAppGrid
-            apps={visibleApps}
-            onLaunch={launchApp}
-            launchingAppKey={launchingAppKey}
-          />
-          <UpgradeSection />
-          <DashboardFooter />
-        </>
+        {access.trialExpired && !access.hasAccess ? (
+          <TrialExpiredScreen />
+        ) : (
+          <>
+            <HeroCard firstName={firstName} isLoading={isLoading} isDemo={isDemo} />
+            <TrialCountdown />
+            <InfoCards
+              totalAccessible={totalAccessible}
+              totalApps={visibleApps.length}
+              planName={plan?.plan_name ?? null}
+              isDemo={isDemo}
+            />
+            <DemoAppGrid
+              apps={visibleApps}
+              onLaunch={launchApp}
+              launchingAppKey={launchingAppKey}
+            />
+            <UpgradeSection />
+            <DashboardFooter />
+          </>
+        )}
       )}
 
       {blockedApp && (
