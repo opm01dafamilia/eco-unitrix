@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AccessBlockedModal } from "@/components/AccessBlockedModal";
+import { TrialExpiredScreen } from "@/components/dashboard/TrialExpiredScreen";
 import { HeroCard } from "@/components/dashboard/HeroCard";
 import { TrialCountdown } from "@/components/dashboard/TrialCountdown";
 import { InfoCards } from "@/components/dashboard/InfoCards";
@@ -22,7 +23,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { data: profile, isLoading: profileLoading } = useProfile();
   const { data: apps, isLoading: appsLoading, isError: appsError } = useApps();
-  const { isDemo } = useDemoContext();
+  const { isDemo, access } = useDemoContext();
   const { data: accessMap } = useAllAppAccess();
   const { launchApp, launchingAppKey, blockedApp, clearBlockedApp } = useAppLauncher();
 
@@ -96,6 +97,8 @@ export default function Dashboard() {
             <p className="text-xs text-muted-foreground mt-0.5">Tente recarregar a página.</p>
           </div>
         </div>
+      ) : access.trialExpired && !access.hasAccess ? (
+        <TrialExpiredScreen />
       ) : (
         <>
           <HeroCard firstName={firstName} isLoading={isLoading} isDemo={isDemo} />
