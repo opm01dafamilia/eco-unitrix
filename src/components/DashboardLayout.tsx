@@ -24,7 +24,7 @@ function PageFallback() {
 
 export function DashboardLayout() {
   const { data: profile } = useProfile();
-  const { isDemo } = useDemoMode();
+  const { isDemo, isTrial } = useDemoMode();
 
   const initials = profile?.full_name
     ?.split(" ")
@@ -39,7 +39,7 @@ export function DashboardLayout() {
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
           {/* Demo banner */}
-          {isDemo && <DemoBanner />}
+          {(isDemo || isTrial) && <DemoBanner />}
           {/* Compact mobile header */}
           <header className="h-12 sm:h-14 flex items-center border-b border-border/50 px-3 sm:px-4 shrink-0 sticky top-0 z-30 bg-background/80 backdrop-blur-xl">
             <SidebarTrigger className="mr-2 sm:mr-3" />

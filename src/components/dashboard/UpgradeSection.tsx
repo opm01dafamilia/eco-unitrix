@@ -22,7 +22,7 @@ export function UpgradeSection() {
           Sem Limites no <span className="gradient-text">Plano Completo</span>
         </h2>
         <p className="text-xs sm:text-sm text-muted-foreground/70 mb-6 sm:mb-8 max-w-md">
-          Assine o plano completo e desbloqueie todos os aplicativos sem limites!
+          Após o período gratuito, assine para manter acesso completo a todos os aplicativos!
         </p>
 
         {/* Benefits grid */}
