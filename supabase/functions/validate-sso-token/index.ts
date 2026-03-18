@@ -70,10 +70,64 @@ Deno.serve(async (req) => {
       .update({ used: true, used_at: new Date().toISOString() })
       .eq("id", tokenRow.id);
 
+    // Fetch user profile for richer session data
+    const { data: profile } = await adminClient
+      .from("profiles")
+      .select("full_name, avatar_url")
+      .eq("user_id", tokenRow.user_id)
+      .maybeSingle();
+
+    // Determine current access type
+    let accessType = "unknown";
+    const now = new Date().toISOString();
+
+    const { data: lifetime } = await adminClient
+      .from("lifetime_access")
+      .select("id")
+      .eq("user_id", tokenRow.user_id)
+      .maybeSingle();
+
+    if (lifetime) {
+      accessType = "lifetime";
+    } else {
+      const { data: trials } = await adminClient
+        .from("free_trials")
+        .select("trial_type, app_key, expires_at")
+        .eq("user_id", tokenRow.user_id)
+        .eq("status", "active")
+        .gte("expires_at", now);
+
+      const trialMatch = trials?.some(
+        (t) => t.trial_type === "all_apps" || t.app_key === app_key
+      );
+
+      if (trialMatch) {
+        const trial = trials!.find(
+          (t) => t.trial_type === "all_apps" || t.app_key === app_key
+        );
+        accessType = "trial";
+      } else {
+        const { data: subs } = await adminClient
+          .from("user_subscriptions")
+          .select("subscription_status, status, expires_at, app_key")
+          .eq("user_id", tokenRow.user_id)
+          .in("app_key", [app_key, "ecosystem"]);
+
+        const activeSub = subs?.find((s) => {
+          const st = s.subscription_status || s.status;
+          return st === "active" && (!s.expires_at || new Date(s.expires_at) >= new Date());
+        });
+
+        if (activeSub) {
+          accessType = "paid";
+        }
+      }
+    }
+
     // Log success
     await adminClient.from("system_logs").insert({
       event_type: "sso_login_success",
-      description: `Login SSO bem-sucedido: ${tokenRow.user_email} -> ${app_key}`,
+      description: `Login SSO bem-sucedido: ${tokenRow.user_email} -> ${app_key} (${accessType})`,
     });
 
     return new Response(
@@ -81,7 +135,10 @@ Deno.serve(async (req) => {
         valid: true,
         user_id: tokenRow.user_id,
         user_email: tokenRow.user_email,
+        user_name: profile?.full_name || null,
+        user_avatar: profile?.avatar_url || null,
         app_key: tokenRow.app_key,
+        access_type: accessType,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
