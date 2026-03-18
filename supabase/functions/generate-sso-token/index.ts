@@ -20,23 +20,25 @@ Deno.serve(async (req) => {
       });
     }
 
-    const supabase = createClient(
+    // Use service role to get user from token
+    const adminClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } }
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
     const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabase.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    const { data: userData, error: userError } = await adminClient.auth.getUser(token);
+    
+    if (userError || !userData?.user) {
+      console.error("Auth error:", userError);
       return new Response(JSON.stringify({ error: "Invalid token" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const userId = claimsData.claims.sub as string;
-    const userEmail = claimsData.claims.email as string;
+    const userId = userData.user.id;
+    const userEmail = userData.user.email || "";
 
     const { app_key } = await req.json();
     if (!app_key) {
@@ -46,14 +48,11 @@ Deno.serve(async (req) => {
       });
     }
 
-    const adminClient = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    console.log(`SSO request: user=${userEmail}, app=${app_key}`);
 
-    // ── Check access using ALL methods (same logic as frontend) ──
+    // ── Check access using ALL methods ──
 
-    // 1. Lifetime access → full access to everything
+    // 1. Lifetime access
     const { data: lifetime } = await adminClient
       .from("lifetime_access")
       .select("id")
@@ -105,6 +104,7 @@ Deno.serve(async (req) => {
     }
 
     if (!hasAccess) {
+      console.log(`Access denied: ${userEmail} -> ${app_key}`);
       await adminClient.from("system_logs").insert({
         event_type: "sso_access_denied",
         description: `Acesso negado ao SSO: ${userEmail} -> ${app_key} (sem acesso ativo)`,
@@ -142,7 +142,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Log success
+    console.log(`SSO token generated: ${userEmail} -> ${app_key} (${accessType})`);
+
     await adminClient.from("system_logs").insert({
       event_type: "sso_token_generated",
       description: `SSO token gerado para ${userEmail} -> ${app_key} (acesso: ${accessType})`,
