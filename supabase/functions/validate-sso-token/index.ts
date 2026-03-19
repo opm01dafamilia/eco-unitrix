@@ -15,19 +15,22 @@ Deno.serve(async (req) => {
     const { sso_token, app_key } = await req.json();
 
     if (!sso_token || !app_key) {
+      console.error("Missing params:", { sso_token: !!sso_token, app_key: !!app_key });
       return new Response(
         JSON.stringify({ valid: false, error: "sso_token and app_key required" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
+    console.log(`Validate SSO: app=${app_key}, token=${sso_token.substring(0, 8)}...`);
+
     const adminClient = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Find token
-    const { data: tokenRow, error } = await adminClient
+    // First try: find unused token
+    let { data: tokenRow, error } = await adminClient
       .from("sso_tokens")
       .select("*")
       .eq("token", sso_token)
@@ -35,10 +38,30 @@ Deno.serve(async (req) => {
       .eq("used", false)
       .maybeSingle();
 
+    // Grace period: if no unused token found, check for recently-used token (within 60s)
+    if (!tokenRow) {
+      const graceTime = new Date(Date.now() - 60 * 1000).toISOString();
+      const { data: recentlyUsed } = await adminClient
+        .from("sso_tokens")
+        .select("*")
+        .eq("token", sso_token)
+        .eq("app_key", app_key)
+        .eq("used", true)
+        .gte("used_at", graceTime)
+        .maybeSingle();
+
+      if (recentlyUsed) {
+        console.log(`Grace period hit: token was used ${recentlyUsed.used_at}, still valid`);
+        tokenRow = recentlyUsed;
+        // Skip marking as used again since it already is
+      }
+    }
+
     if (error || !tokenRow) {
+      console.error(`Token not found: app=${app_key}, token=${sso_token.substring(0, 8)}..., error=${error?.message}`);
       await adminClient.from("system_logs").insert({
         event_type: "sso_validation_failed",
-        description: `Token SSO inválido ou já usado para app ${app_key}`,
+        description: `Token SSO inválido ou já usado para app ${app_key} (token: ${sso_token.substring(0, 8)}...)`,
       });
       return new Response(
         JSON.stringify({ valid: false, error: "Invalid or expired token" }),
@@ -48,10 +71,13 @@ Deno.serve(async (req) => {
 
     // Check expiration
     if (new Date(tokenRow.expires_at) < new Date()) {
-      await adminClient
-        .from("sso_tokens")
-        .update({ used: true, used_at: new Date().toISOString() })
-        .eq("id", tokenRow.id);
+      console.error(`Token expired: expires_at=${tokenRow.expires_at}, now=${new Date().toISOString()}`);
+      if (!tokenRow.used) {
+        await adminClient
+          .from("sso_tokens")
+          .update({ used: true, used_at: new Date().toISOString() })
+          .eq("id", tokenRow.id);
+      }
 
       await adminClient.from("system_logs").insert({
         event_type: "sso_token_expired",
@@ -64,11 +90,13 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Mark as used
-    await adminClient
-      .from("sso_tokens")
-      .update({ used: true, used_at: new Date().toISOString() })
-      .eq("id", tokenRow.id);
+    // Mark as used (only if not already used)
+    if (!tokenRow.used) {
+      await adminClient
+        .from("sso_tokens")
+        .update({ used: true, used_at: new Date().toISOString() })
+        .eq("id", tokenRow.id);
+    }
 
     // Fetch user profile for richer session data
     const { data: profile } = await adminClient
@@ -102,9 +130,6 @@ Deno.serve(async (req) => {
       );
 
       if (trialMatch) {
-        const trial = trials!.find(
-          (t) => t.trial_type === "all_apps" || t.app_key === app_key
-        );
         accessType = "trial";
       } else {
         const { data: subs } = await adminClient
@@ -125,6 +150,7 @@ Deno.serve(async (req) => {
     }
 
     // Log success
+    console.log(`SSO validated: ${tokenRow.user_email} -> ${app_key} (${accessType})`);
     await adminClient.from("system_logs").insert({
       event_type: "sso_login_success",
       description: `Login SSO bem-sucedido: ${tokenRow.user_email} -> ${app_key} (${accessType})`,
