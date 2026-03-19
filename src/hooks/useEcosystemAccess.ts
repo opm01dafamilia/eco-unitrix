@@ -134,7 +134,9 @@ export function useEcosystemAccess(): EcosystemAccess {
       return noAccess;
     },
     enabled: !!user,
-    staleTime: 30000,
+    staleTime: 10000,
+    refetchOnWindowFocus: true,
+    refetchInterval: 60000,
   });
 
   const defaults: Omit<EcosystemAccess, "isLoading"> = {
