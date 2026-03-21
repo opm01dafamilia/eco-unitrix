@@ -35,13 +35,13 @@ export function DashboardLayout() {
 
   return (
     <SidebarProvider>
-      <div className="min-h-[100dvh] flex w-full overflow-x-hidden">
+      <div className="h-screen-safe flex w-full overflow-x-hidden safe-left safe-right">
         <AppSidebar />
         <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
           {/* Demo banner */}
           {(isDemo || isTrial) && <DemoBanner />}
-          {/* Compact mobile header */}
-          <header className="h-12 sm:h-14 flex items-center border-b border-border/50 px-3 sm:px-4 shrink-0 sticky top-0 z-30 bg-background/80 backdrop-blur-xl">
+          {/* Compact mobile header with safe-area-top for iOS PWA */}
+          <header className="flex items-center border-b border-border/50 px-3 sm:px-4 shrink-0 sticky top-0 z-30 bg-background/80 backdrop-blur-xl safe-top" style={{ minHeight: 'calc(env(safe-area-inset-top, 0px) + 3rem)' }}>
             <SidebarTrigger className="mr-2 sm:mr-3" />
             <div className="flex items-center gap-1.5 mr-auto">
               <div className="rounded-md bg-gradient-to-br from-primary to-accent p-1 sm:hidden">
@@ -61,13 +61,13 @@ export function DashboardLayout() {
             </div>
           </header>
 
-          <main className="flex-1 overflow-x-hidden overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8 safe-bottom">
+          <main className="flex-1 overflow-x-hidden overflow-y-auto p-3 sm:p-4 md:p-6 lg:p-8">
             <Suspense fallback={<PageFallback />}>
               <Outlet />
             </Suspense>
           </main>
 
-          <footer className="border-t border-border/30 px-3 py-2.5 sm:py-3 flex items-center justify-center gap-2 shrink-0">
+          <footer className="border-t border-border/30 px-3 flex items-center justify-center gap-2 shrink-0 safe-bottom" style={{ minHeight: 'calc(env(safe-area-inset-bottom, 0px) + 2.5rem)' }}>
             <div className="rounded-md bg-gradient-to-br from-primary/40 to-accent/30 p-0.5">
               <Layers className="h-3 w-3 text-white/70" />
             </div>
