@@ -78,11 +78,14 @@
   }
   html {
     overflow-x: hidden;
+    height: 100%;
   }
   body {
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    min-height: 100dvh;
+    min-height: -webkit-fill-available;
   }
   body {
     @apply bg-background text-foreground;
