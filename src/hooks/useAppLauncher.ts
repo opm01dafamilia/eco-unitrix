@@ -9,6 +9,7 @@ export function useAppLauncher() {
   const { user } = useAuth();
   const [launchingAppKey, setLaunchingAppKey] = useState<string | null>(null);
   const cooldownRef = useRef<Set<string>>(new Set());
+  const ssoRequiredApps = useRef(new Set(["financeflow"]));
   const [blockedApp, setBlockedApp] = useState<{
     appName: string;
     appKey: string;
@@ -54,26 +55,56 @@ export function useAppLauncher() {
 
         // Generate SSO token
         let finalUrl = app.app_url;
+        let hasValidSsoToken = false;
+        const requiresSso = ssoRequiredApps.current.has(app.app_key);
+
         try {
           const { data, error } = await supabase.functions.invoke("generate-sso-token", {
             body: { app_key: app.app_key },
           });
 
-          if (!error && data?.sso_token) {
+          const ssoToken = typeof data?.sso_token === "string" ? data.sso_token.trim() : "";
+
+          if (!error && ssoToken) {
             const url = new URL(app.app_url);
-            url.searchParams.set("sso_token", data.sso_token);
+            url.searchParams.set("sso_token", ssoToken);
+            url.searchParams.set("app_key", app.app_key);
             url.searchParams.set("sso_app", app.app_key);
             finalUrl = url.toString();
+            hasValidSsoToken = true;
+
+            console.info("[SSO] URL final gerada antes do redirecionamento", {
+              appKey: app.app_key,
+              finalUrl,
+            });
 
             await logAccessEvent("sso_token_generated", `Token SSO gerado para ${app.app_name} (usuário: ${user.email})`);
           } else {
-            // SSO failed, fallback to normal open
-            console.warn("SSO token generation failed, opening normally:", error);
+            console.warn("SSO token generation failed:", {
+              appKey: app.app_key,
+              error,
+              hasToken: !!ssoToken,
+            });
             await logAccessEvent("sso_fallback", `Fallback sem SSO para ${app.app_name} (usuário: ${user.email})`);
+
+            if (requiresSso) {
+              toast.error("Não foi possível abrir o aplicativo sem autenticação válida.", { id: "sso-launch" });
+              return;
+            }
           }
         } catch (ssoErr) {
           console.warn("SSO error, falling back:", ssoErr);
           await logAccessEvent("sso_fallback", `Fallback sem SSO para ${app.app_name} (erro: ${ssoErr})`);
+
+          if (requiresSso) {
+            toast.error("Não foi possível abrir o aplicativo sem autenticação válida.", { id: "sso-launch" });
+            return;
+          }
+        }
+
+        if (requiresSso && !hasValidSsoToken) {
+          toast.error("Token SSO inválido para abrir o aplicativo.", { id: "sso-launch" });
+          return;
         }
 
         toast.success("Aplicativo aberto!", { id: "sso-launch" });
