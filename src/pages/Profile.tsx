@@ -1,8 +1,7 @@
-import { Mail, Calendar, AppWindow, Activity, Pencil, Check, X, Camera, Crown, CreditCard, Gift, XCircle } from "lucide-react";
+import { Mail, Calendar, AppWindow, Pencil, Check, X, Camera, Crown, CreditCard, Gift, XCircle } from "lucide-react";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
