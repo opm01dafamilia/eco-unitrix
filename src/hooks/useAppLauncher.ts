@@ -5,6 +5,22 @@ import { toast } from "sonner";
 import { logAccessEvent } from "@/hooks/useAppAccess";
 import type { AppWithAccess } from "@/hooks/useApps";
 
+/** Detect iOS (iPhone/iPad/iPod) */
+function isIOS(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+/** Detect standalone PWA mode */
+function isStandalonePWA(): boolean {
+  if (typeof window === "undefined") return false;
+  return (
+    ("standalone" in window.navigator && (window.navigator as any).standalone === true) ||
+    window.matchMedia("(display-mode: standalone)").matches
+  );
+}
+
 export function useAppLauncher() {
   const { user } = useAuth();
   const [launchingAppKey, setLaunchingAppKey] = useState<string | null>(null);
@@ -17,7 +33,6 @@ export function useAppLauncher() {
   } | null>(null);
 
   const launchApp = useCallback(async (app: AppWithAccess) => {
-    // Prevent duplicate clicks
     if (cooldownRef.current.has(app.app_key)) return;
 
     if (app.app_status === "coming_soon") {
@@ -37,7 +52,6 @@ export function useAppLauncher() {
       return;
     }
 
-    // Start loading & cooldown
     setLaunchingAppKey(app.app_key);
     cooldownRef.current.add(app.app_key);
 
@@ -73,18 +87,11 @@ export function useAppLauncher() {
             finalUrl = url.toString();
             hasValidSsoToken = true;
 
-            console.info("[SSO] URL final gerada antes do redirecionamento", {
-              appKey: app.app_key,
-              finalUrl,
-            });
+            console.info("[SSO] URL final gerada", { appKey: app.app_key, finalUrl, isIOS: isIOS(), isPWA: isStandalonePWA() });
 
             await logAccessEvent("sso_token_generated", `Token SSO gerado para ${app.app_name} (usuário: ${user.email})`);
           } else {
-            console.warn("SSO token generation failed:", {
-              appKey: app.app_key,
-              error,
-              hasToken: !!ssoToken,
-            });
+            console.warn("SSO token generation failed:", { appKey: app.app_key, error, hasToken: !!ssoToken });
             await logAccessEvent("sso_fallback", `Fallback sem SSO para ${app.app_name} (usuário: ${user.email})`);
 
             if (requiresSso) {
@@ -108,6 +115,35 @@ export function useAppLauncher() {
         }
 
         toast.success("Aplicativo aberto!", { id: "sso-launch" });
+
+        // iOS Safari & PWA: window.open with _blank is unreliable.
+        // Use location.href to navigate in the same context on iOS PWA,
+        // and a real <a> click fallback on iOS Safari.
+        const isiOS = isIOS();
+        const isPWA = isStandalonePWA();
+
+        console.info("[Navigation] Dispatching", { isiOS, isPWA, finalUrl });
+
+        if (isiOS && isPWA) {
+          // In iOS standalone PWA, window.open is blocked. Navigate directly.
+          window.location.href = finalUrl;
+          return;
+        }
+
+        if (isiOS) {
+          // iOS Safari: use a temporary <a> element with target to ensure navigation
+          const link = document.createElement("a");
+          link.href = finalUrl;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          document.body.appendChild(link);
+          link.click();
+          // Clean up after a tick
+          setTimeout(() => document.body.removeChild(link), 100);
+          return;
+        }
+
+        // Desktop / Android: standard window.open
         window.open(finalUrl, "_blank", "noopener,noreferrer");
         return;
       }
