@@ -187,21 +187,12 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="rounded-xl border border-border bg-card p-5 card-glow">
-          <div className="flex items-center gap-3 mb-2">
-            <AppWindow className="h-5 w-5 text-primary" />
-            <span className="text-sm text-muted-foreground">Apps com acesso</span>
-          </div>
-          <p className="font-display text-3xl font-bold text-foreground">{activeApps}</p>
+      <div className="rounded-xl border border-border bg-card p-5 card-glow max-w-xs">
+        <div className="flex items-center gap-3 mb-2">
+          <AppWindow className="h-5 w-5 text-primary" />
+          <span className="text-sm text-muted-foreground">Apps com acesso</span>
         </div>
-        <div className="rounded-xl border border-border bg-card p-5 card-glow">
-          <div className="flex items-center gap-3 mb-2">
-            <Activity className="h-5 w-5 text-primary" />
-            <span className="text-sm text-muted-foreground">Total de acessos</span>
-          </div>
-          <p className="font-display text-3xl font-bold text-foreground">{logCount ?? 0}</p>
-        </div>
+        <p className="font-display text-3xl font-bold text-foreground">{activeApps}</p>
       </div>
 
       {/* App access details */}
