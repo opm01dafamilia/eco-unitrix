@@ -1,8 +1,7 @@
-import { Mail, Calendar, AppWindow, Activity, Pencil, Check, X, Camera, Crown, CreditCard, Gift, XCircle } from "lucide-react";
+import { Mail, Calendar, AppWindow, Pencil, Check, X, Camera, Crown, CreditCard, Gift, XCircle } from "lucide-react";
 import { useProfile, useUpdateProfile } from "@/hooks/useProfile";
 import { useApps } from "@/hooks/useApps";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
@@ -32,18 +31,8 @@ export default function Profile() {
   const [avatarLoading, setAvatarLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { data: logCount } = useQuery({
-    queryKey: ["profile-log-count", user?.id],
-    queryFn: async () => {
-      const { count, error } = await supabase
-        .from("app_usage_logs")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user!.id);
-      if (error) throw error;
-      return count ?? 0;
-    },
-    enabled: !!user,
-  });
+
+
 
   const activeApps = apps?.filter((a) => a.user_access === "active").length ?? 0;
   const initials = profile?.full_name
@@ -197,21 +186,12 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="rounded-xl border border-border bg-card p-5 card-glow">
-          <div className="flex items-center gap-3 mb-2">
-            <AppWindow className="h-5 w-5 text-primary" />
-            <span className="text-sm text-muted-foreground">Apps com acesso</span>
-          </div>
-          <p className="font-display text-3xl font-bold text-foreground">{activeApps}</p>
+      <div className="rounded-xl border border-border bg-card p-5 card-glow max-w-xs">
+        <div className="flex items-center gap-3 mb-2">
+          <AppWindow className="h-5 w-5 text-primary" />
+          <span className="text-sm text-muted-foreground">Apps com acesso</span>
         </div>
-        <div className="rounded-xl border border-border bg-card p-5 card-glow">
-          <div className="flex items-center gap-3 mb-2">
-            <Activity className="h-5 w-5 text-primary" />
-            <span className="text-sm text-muted-foreground">Total de acessos</span>
-          </div>
-          <p className="font-display text-3xl font-bold text-foreground">{logCount ?? 0}</p>
-        </div>
+        <p className="font-display text-3xl font-bold text-foreground">{activeApps}</p>
       </div>
 
       {/* App access details */}
