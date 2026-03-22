@@ -32,18 +32,8 @@ export default function Profile() {
   const [avatarLoading, setAvatarLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { data: logCount } = useQuery({
-    queryKey: ["profile-log-count", user?.id],
-    queryFn: async () => {
-      const { count, error } = await supabase
-        .from("app_usage_logs")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", user!.id);
-      if (error) throw error;
-      return count ?? 0;
-    },
-    enabled: !!user,
-  });
+
+
 
   const activeApps = apps?.filter((a) => a.user_access === "active").length ?? 0;
   const initials = profile?.full_name
