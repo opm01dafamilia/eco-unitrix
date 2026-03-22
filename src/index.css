@@ -208,6 +208,12 @@
   }
   .glow-ring {
     box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.1),
+      0 0 40px -12px hsl(var(--primary) / 0.08),
+      0 8px 32px -8px hsl(var(--foreground) / 0.06);
+  }
+  .dark .glow-ring {
+    box-shadow:
       0 0 0 1px hsl(255 80% 65% / 0.1),
       0 0 40px -12px hsl(255 80% 65% / 0.15),
       0 8px 32px -8px hsl(232 40% 3% / 0.5);
