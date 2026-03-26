@@ -20,7 +20,7 @@ export default function PricingCards() {
           Escolha seu plano
         </h2>
         <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-          Desbloqueie o acesso aos aplicativos do ecossistema com o plano ideal para você.
+          Desbloqueie o acesso aos aplicativos do UNITRIX com o plano ideal para você.
         </p>
       </div>
 
@@ -68,7 +68,7 @@ export default function PricingCards() {
           <div className="p-6 space-y-4">
             <div>
               <p className="text-xs font-medium text-primary uppercase tracking-wider flex items-center gap-1">
-                <Layers className="h-3 w-3" /> Ecossistema
+                <Layers className="h-3 w-3" /> UNITRIX
               </p>
               <h3 className="font-display text-lg font-bold text-foreground mt-1">Mensal</h3>
             </div>
@@ -117,7 +117,7 @@ export default function PricingCards() {
           <div className="p-6 space-y-4">
             <div>
               <p className="text-xs font-medium text-primary uppercase tracking-wider flex items-center gap-1">
-                <Layers className="h-3 w-3" /> Ecossistema
+                <Layers className="h-3 w-3" /> UNITRIX
               </p>
               <h3 className="font-display text-lg font-bold text-foreground mt-1">Anual</h3>
             </div>

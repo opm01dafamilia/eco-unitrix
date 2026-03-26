@@ -22,7 +22,7 @@ export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
       <div className="relative z-10 space-y-3">
         <h1 className="font-display text-xl sm:text-2xl md:text-[2rem] font-bold text-foreground leading-[1.2] tracking-tight">
           Olá, {firstName}! Bem-vindo ao{" "}
-          <span className="gradient-text">Ecossistema IA Apps</span>.
+          <span className="gradient-text">UNITRIX</span>.
         </h1>
 
         {isTrial && days !== null ? (
@@ -35,17 +35,17 @@ export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
           </p>
         ) : isDemo ? (
           <p className="text-muted-foreground text-xs sm:text-sm flex flex-wrap items-center gap-1.5 leading-relaxed">
-            Assine para desbloquear todo o ecossistema
+            Assine para desbloquear todos os aplicativos
           </p>
         ) : (
           <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-            Você tem acesso completo ao ecossistema.
+            Você tem acesso completo ao UNITRIX.
           </p>
         )}
 
         <p className="text-muted-foreground/60 text-[11px] sm:text-[13px] max-w-lg leading-relaxed">
           {isTrial
-            ? "Aproveite seu acesso gratuito por tempo limitado. Explore todos os aplicativos e descubra o poder do ecossistema."
+            ? "Aproveite seu acesso gratuito por tempo limitado. Explore todos os aplicativos e descubra o poder do UNITRIX."
             : isDemo
               ? "Assine um plano para liberar o acesso completo a todos os aplicativos."
               : "Explore nossos aplicativos e aproveite ao máximo o seu acesso."}

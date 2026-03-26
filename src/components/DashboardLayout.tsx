@@ -72,7 +72,7 @@ export function DashboardLayout() {
               <Layers className="h-3 w-3 text-white/70" />
             </div>
             <span className="text-[10px] sm:text-[11px] text-muted-foreground/60">
-              Ecossistema IA Apps
+              UNITRIX
             </span>
           </footer>
         </div>

@@ -31,7 +31,7 @@ export default function AdminPage() {
             </div>
             Administração
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">Painel central de gerenciamento do ecossistema.</p>
+          <p className="text-muted-foreground mt-1 text-sm">Painel central de gerenciamento do UNITRIX.</p>
         </div>
 
         {/* Quick links */}

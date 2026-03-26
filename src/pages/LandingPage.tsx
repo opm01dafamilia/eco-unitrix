@@ -41,7 +41,7 @@ const ecosystemApps: EcoApp[] = [
 ];
 
 const benefits = [
-  { icon: Lock, title: "Uma conta, acesso total", description: "Cadastre-se uma única vez e desbloqueie todos os aplicativos do ecossistema instantaneamente." },
+  { icon: Lock, title: "Uma conta, acesso total", description: "Cadastre-se uma única vez e desbloqueie todos os aplicativos do UNITRIX instantaneamente." },
   { icon: Layers, title: "Apps especializados", description: "Cada aplicativo é focado em resolver um problema específico com excelência e profundidade." },
   { icon: Globe, title: "Plataforma centralizada", description: "Gerencie todos os seus apps em um painel único, organizado e intuitivo." },
   { icon: Rocket, title: "Expansão contínua", description: "Novos aplicativos e funcionalidades são adicionados constantemente à plataforma." },
@@ -80,7 +80,7 @@ export default function LandingPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
               <Hexagon className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-display text-lg font-bold">Platform Hub</span>
+            <span className="font-display text-lg font-bold">UNITRIX</span>
           </Link>
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild>
@@ -110,12 +110,12 @@ export default function LandingPage() {
           >
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary mb-8">
               <Sparkles className="h-3.5 w-3.5" />
-              Ecossistema inteligente de aplicativos
+              Plataforma inteligente de aplicativos
             </motion.div>
 
             <motion.h1 variants={fadeUp} custom={1} className="font-display text-4xl font-extrabold leading-[1.1] sm:text-5xl lg:text-6xl xl:text-7xl">
               Todos os seus apps em um{" "}
-              <span className="gradient-text">único ecossistema</span>
+              <span className="gradient-text">única plataforma</span>
             </motion.h1>
 
             <motion.p variants={fadeUp} custom={2} className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
@@ -157,7 +157,7 @@ export default function LandingPage() {
           >
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary mb-4">
               <Zap className="h-3.5 w-3.5" />
-              Ecossistema
+              UNITRIX
             </motion.div>
             <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl font-bold sm:text-4xl">
               Aplicativos da Plataforma
@@ -273,7 +273,7 @@ export default function LandingPage() {
                 Vantagens
               </motion.div>
               <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl font-bold sm:text-4xl">
-                Por que escolher o Platform Hub?
+                Por que escolher o UNITRIX?
               </motion.h2>
               <motion.p variants={fadeUp} custom={2} className="mt-3 text-muted-foreground max-w-xl mx-auto">
                 Tudo o que você precisa para gerenciar sua vida digital em um só lugar.
@@ -341,7 +341,7 @@ export default function LandingPage() {
               Pronto para começar?
             </motion.h2>
             <motion.p variants={fadeUp} custom={1} className="mt-4 text-muted-foreground max-w-lg mx-auto leading-relaxed">
-              Crie sua conta gratuita e comece a explorar o ecossistema de aplicativos agora mesmo. Sem compromisso, sem cartão de crédito.
+              Crie sua conta gratuita e comece a explorar os aplicativos agora mesmo. Sem compromisso, sem cartão de crédito.
             </motion.p>
             <motion.div variants={fadeUp} custom={2} className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Button size="lg" asChild className="shadow-xl shadow-primary/25 text-base px-8 py-6">
@@ -364,13 +364,13 @@ export default function LandingPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
               <Hexagon className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="text-sm font-bold">Platform Hub</span>
+            <span className="text-sm font-bold">UNITRIX</span>
           </div>
           <div className="flex items-center gap-6 text-xs text-muted-foreground">
             <Link to="/login" className="hover:text-foreground transition-colors">Entrar</Link>
             <Link to="/signup" className="hover:text-foreground transition-colors">Criar conta</Link>
           </div>
-          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Platform Hub. Todos os direitos reservados.</p>
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} UNITRIX. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

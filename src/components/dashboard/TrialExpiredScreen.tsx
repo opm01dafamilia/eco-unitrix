@@ -2,7 +2,7 @@ import { ShieldX, Check, Rocket, Sparkles, ArrowRight, Star } from "lucide-react
 import { Link } from "react-router-dom";
 
 const benefits = [
-  { icon: Check, label: "Acesso completo a todos os apps do ecossistema" },
+  { icon: Check, label: "Acesso completo a todos os apps do UNITRIX" },
   { icon: Rocket, label: "Continuidade de uso sem interrupções" },
   { icon: Sparkles, label: "Recursos avançados e funcionalidades completas" },
   { icon: Star, label: "Atualizações e melhorias exclusivas" },
@@ -28,7 +28,7 @@ export function TrialExpiredScreen() {
             </h1>
             <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
               Seu período de avaliação gratuita chegou ao fim, mas seus dados e configurações continuam salvos.
-              Assine agora para retomar o acesso completo ao ecossistema.
+              Assine agora para retomar o acesso completo ao UNITRIX.
             </p>
           </div>
         </div>
@@ -44,7 +44,7 @@ export function TrialExpiredScreen() {
             Desbloqueie o <span className="gradient-text">Plano Completo</span>
           </h2>
           <p className="text-xs text-muted-foreground/70 mb-5">
-            Continue aproveitando tudo o que o ecossistema oferece
+            Continue aproveitando tudo o que o UNITRIX oferece
           </p>
 
           <div className="space-y-3 mb-7">
