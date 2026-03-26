@@ -382,13 +382,10 @@ export default function LandingPage() {
             variants={stagger}
             className="relative rounded-3xl glass-card-strong overflow-hidden p-12 sm:p-16 lg:p-20 text-center"
           >
-            {/* Glow */}
             <div className="absolute inset-0 -z-10">
               <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[600px] rounded-full bg-primary/8 blur-[140px]" />
               <div className="absolute right-0 bottom-0 h-[250px] w-[250px] rounded-full bg-accent/6 blur-[100px]" />
             </div>
-
-            {/* Top accent */}
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold text-primary mb-8">
@@ -397,21 +394,24 @@ export default function LandingPage() {
             </motion.div>
 
             <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl font-extrabold sm:text-4xl lg:text-5xl tracking-tight">
-              Pronto para <span className="gradient-text">transformar</span> sua rotina?
+              Comece agora com a <span className="gradient-text">UNITRIX</span>
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="mt-6 text-muted-foreground max-w-lg mx-auto text-base leading-relaxed">
-              Crie sua conta gratuita e comece a explorar os aplicativos agora mesmo. Sem compromisso, sem cartão de crédito.
+              Unifique sua rotina com aplicativos inteligentes em uma única plataforma. Cadastro gratuito, sem cartão de crédito.
             </motion.p>
             <motion.div variants={fadeUp} custom={3} className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Button size="lg" asChild className="btn-gradient shadow-xl shadow-primary/25 text-base font-bold px-10 py-6 rounded-2xl">
+              <Button size="lg" asChild className="btn-gradient shadow-xl shadow-primary/25 text-lg font-bold px-12 py-7 rounded-2xl">
                 <Link to="/signup">
-                  Criar conta grátis <ArrowRight className="ml-2 h-4 w-4" />
+                  Criar conta grátis <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="text-base px-10 py-6 rounded-2xl border-border/60 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
+              <Button size="lg" variant="outline" asChild className="text-base px-10 py-7 rounded-2xl border-border/60 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
                 <Link to="/login">Entrar na plataforma</Link>
               </Button>
             </motion.div>
+            <motion.p variants={fadeUp} custom={4} className="mt-8 text-xs text-muted-foreground/60">
+              Junte-se ao ecossistema que simplifica tudo.
+            </motion.p>
           </motion.div>
         </div>
       </section>
