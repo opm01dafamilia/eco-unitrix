@@ -32,17 +32,17 @@ interface EcoApp {
   description: string;
   category: string;
   icon: LucideIcon;
-  status?: "active" | "coming_soon";
+  appKey: string;
   accent: string;
   glow: string;
 }
 
-const ecosystemApps: EcoApp[] = [
-  { name: "FitPulse", description: "Acompanhe sua saúde, treinos e métricas corporais em um painel inteligente.", category: "Saúde", icon: Heart, accent: "from-violet-500 to-purple-400", glow: "violet-500" },
-  { name: "FinanceFlow", description: "Controle receitas, despesas e metas financeiras com análises visuais.", category: "Finanças", icon: DollarSign, accent: "from-emerald-500 to-teal-400", glow: "emerald-500" },
-  { name: "MarketFlow", description: "Planeje campanhas, analise crescimento e gerencie estratégias de marketing.", category: "Marketing", icon: TrendingUp, accent: "from-blue-500 to-sky-400", glow: "blue-500" },
-  { name: "IA Agenda", description: "Agendamentos inteligentes com IA que se adapta à sua rotina.", category: "Agendamento", icon: CalendarDays, accent: "from-amber-500 to-orange-400", glow: "amber-500" },
-  { name: "WhatsApp Auto", description: "Automação inteligente para WhatsApp Business com respostas e fluxos.", category: "Automação", icon: MessageSquare, status: "coming_soon", accent: "from-rose-500 to-pink-400", glow: "rose-500" },
+const ecosystemAppDefs: EcoApp[] = [
+  { name: "FitPulse", appKey: "fitpulse", description: "Acompanhe sua saúde, treinos e métricas corporais em um painel inteligente.", category: "Saúde", icon: Heart, accent: "from-violet-500 to-purple-400", glow: "violet-500" },
+  { name: "FinanceFlow", appKey: "financeflow", description: "Controle receitas, despesas e metas financeiras com análises visuais.", category: "Finanças", icon: DollarSign, accent: "from-emerald-500 to-teal-400", glow: "emerald-500" },
+  { name: "MarketFlow", appKey: "marketflow", description: "Planeje campanhas, analise crescimento e gerencie estratégias de marketing.", category: "Marketing", icon: TrendingUp, accent: "from-blue-500 to-sky-400", glow: "blue-500" },
+  { name: "IA Agenda", appKey: "ia_agenda", description: "Agendamentos inteligentes com IA que se adapta à sua rotina.", category: "Agendamento", icon: CalendarDays, accent: "from-amber-500 to-orange-400", glow: "amber-500" },
+  { name: "WhatsApp Auto", appKey: "whatsapp_auto", description: "Automação inteligente para WhatsApp Business com respostas e fluxos.", category: "Automação", icon: MessageSquare, accent: "from-rose-500 to-pink-400", glow: "rose-500" },
 ];
 
 const benefits = [
