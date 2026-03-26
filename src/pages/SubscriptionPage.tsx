@@ -65,7 +65,6 @@ export default function SubscriptionPage() {
     }
   });
 
-  // Trial warning data
   const trialApps = accessMap ? Object.values(accessMap).filter((a) => a.accessType === "trial" && a.expiresAt) : [];
   const nearestTrial = trialApps.length > 0 ? trialApps.sort((a, b) => new Date(a.expiresAt!).getTime() - new Date(b.expiresAt!).getTime())[0] : null;
   const trialDaysLeft = nearestTrial ? differenceInDays(new Date(nearestTrial.expiresAt!), new Date()) : 0;
@@ -73,9 +72,9 @@ export default function SubscriptionPage() {
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto space-y-8">
-        <Skeleton className="h-10 w-48 rounded-lg" />
-        <Skeleton className="h-32 rounded-xl" />
-        <Skeleton className="h-48 rounded-xl" />
+        <Skeleton className="h-10 w-48 rounded-xl" />
+        <Skeleton className="h-36 rounded-2xl" />
+        <Skeleton className="h-52 rounded-2xl" />
       </div>
     );
   }
@@ -83,43 +82,48 @@ export default function SubscriptionPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       <div>
-        <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">Minha Assinatura</h1>
-        <p className="text-muted-foreground mt-1">Gerencie seus planos e veja os aplicativos incluídos.</p>
+        <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground tracking-tight">Minha Assinatura</h1>
+        <p className="text-muted-foreground mt-1.5">Gerencie seus planos e veja os aplicativos incluídos.</p>
       </div>
 
       {isError && (
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-6 text-center">
+        <div className="rounded-2xl glass-card p-8 text-center">
           <AlertTriangle className="h-8 w-8 text-destructive mx-auto mb-3" />
-          <p className="text-sm font-medium text-foreground">Erro ao carregar assinaturas</p>
-          <button onClick={() => refetch()} className="mt-2 text-xs text-primary hover:underline">Tentar novamente</button>
+          <p className="text-sm font-semibold text-foreground">Erro ao carregar assinaturas</p>
+          <button onClick={() => refetch()} className="mt-3 text-xs text-primary hover:underline font-semibold">Tentar novamente</button>
         </div>
       )}
 
       {/* Trial warning */}
       {!isError && nearestTrial && trialDaysLeft >= 0 && (
-        <div className="rounded-xl border border-blue-400/20 bg-blue-400/5 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="rounded-2xl border border-blue-400/20 bg-blue-400/5 backdrop-blur-sm p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Gift className="h-5 w-5 text-blue-400 shrink-0" />
+            <div className="rounded-xl bg-blue-400/10 p-2.5">
+              <Gift className="h-5 w-5 text-blue-400" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-foreground">
+              <p className="text-sm font-semibold text-foreground">
                 Seu teste grátis termina em {trialDaysLeft} dia{trialDaysLeft !== 1 ? "s" : ""}.
               </p>
               <p className="text-xs text-muted-foreground">Assine um plano para manter o acesso contínuo.</p>
             </div>
           </div>
           <a href="https://pay.kiwify.com.br/tn6JpCc" target="_blank" rel="noopener noreferrer">
-            <Button size="sm" className="shrink-0">Assinar agora</Button>
+            <Button size="sm" className="shrink-0 btn-gradient rounded-xl shadow-lg shadow-primary/20 px-5">Assinar agora</Button>
           </a>
         </div>
       )}
 
       {/* My access overview */}
       {!isError && accessMap && (
-        <div className="space-y-4">
-          <h2 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
-            <AppWindow className="h-5 w-5 text-primary" /> Meus Aplicativos
+        <div className="space-y-5">
+          <h2 className="font-display text-lg font-bold text-foreground flex items-center gap-2.5 tracking-tight">
+            <div className="rounded-xl bg-primary/10 p-2">
+              <AppWindow className="h-5 w-5 text-primary" />
+            </div>
+            Meus Aplicativos
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Object.values(accessMap).map((info) => {
               const app = appNameMap.get(info.appKey);
               if (!app || !app.is_visible) return null;
@@ -127,26 +131,26 @@ export default function SubscriptionPage() {
               const cfg = accessTypeConfig[info.accessType];
 
               return (
-                <div key={info.appKey} className="rounded-xl border border-border bg-card p-4 flex items-center justify-between gap-3">
+                <div key={info.appKey} className="rounded-2xl glass-card p-4 flex items-center justify-between gap-3 card-glow">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center shrink-0">
                       <Icon className="h-5 w-5 text-primary" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{app.app_name}</p>
+                      <p className="text-sm font-semibold text-foreground truncate">{app.app_name}</p>
                       <div className="flex items-center gap-1 mt-0.5">
                         <cfg.icon className="h-3 w-3" />
                         <span className={`text-xs ${cfg.color}`}>{cfg.label}</span>
                       </div>
                       {info.expiresAt && info.accessType !== "inactive" && (
-                        <p className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                        <p className="text-[10px] text-muted-foreground/70 flex items-center gap-1 mt-0.5">
                           <Clock className="h-2.5 w-2.5" />
                           Expira: {format(new Date(info.expiresAt), "dd/MM/yyyy")}
                         </p>
                       )}
                     </div>
                   </div>
-                  <Badge variant="outline" className={`${cfg.color} border-current/20 shrink-0`}>
+                  <Badge variant="outline" className={`${cfg.color} border-current/20 shrink-0 rounded-lg`}>
                     {info.accessType === "inactive" ? "Inativo" : "Ativo"}
                   </Badge>
                 </div>
@@ -158,9 +162,12 @@ export default function SubscriptionPage() {
 
       {/* Active subscriptions */}
       {!isError && activeSubscriptions.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
-            <Crown className="h-5 w-5 text-primary" /> Planos Ativos
+        <div className="space-y-5">
+          <h2 className="font-display text-lg font-bold text-foreground flex items-center gap-2.5 tracking-tight">
+            <div className="rounded-xl bg-primary/10 p-2">
+              <Crown className="h-5 w-5 text-primary" />
+            </div>
+            Planos Ativos
           </h2>
           {activeSubscriptions.map((sub) => {
             const app = sub.app_key ? appNameMap.get(sub.app_key) : null;
@@ -168,30 +175,30 @@ export default function SubscriptionPage() {
             const st = statusMap[sub.subscription_status] ?? statusMap.active;
 
             return (
-              <div key={sub.id} className="rounded-xl border border-primary/20 bg-card p-5 md:p-6">
+              <div key={sub.id} className="rounded-2xl glass-card-strong border-primary/15 p-6 md:p-7">
                 <div className="flex items-start gap-4">
-                  <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center shrink-0">
                     <Icon className="h-6 w-6 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-display text-lg font-bold text-foreground">{sub.plan?.plan_name ?? "Plano"}</h3>
+                    <h3 className="font-display text-lg font-bold text-foreground tracking-tight">{sub.plan?.plan_name ?? "Plano"}</h3>
                     <p className="text-sm text-muted-foreground mt-0.5">{app?.app_name ?? sub.app_key ?? "—"}</p>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 text-sm">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-5 text-sm">
                       <div>
-                        <span className="text-muted-foreground text-xs">Status</span>
-                        <div className="mt-1"><Badge className={`${st.color} gap-1`}><st.icon className="h-3 w-3" />{st.label}</Badge></div>
+                        <span className="text-muted-foreground/70 text-xs">Status</span>
+                        <div className="mt-1.5"><Badge className={`${st.color} gap-1 rounded-lg`}><st.icon className="h-3 w-3" />{st.label}</Badge></div>
                       </div>
                       <div>
-                        <span className="text-muted-foreground text-xs">Início</span>
-                        <p className="text-foreground font-medium">{format(new Date(sub.started_at), "dd/MM/yyyy", { locale: ptBR })}</p>
+                        <span className="text-muted-foreground/70 text-xs">Início</span>
+                        <p className="text-foreground font-semibold mt-0.5">{format(new Date(sub.started_at), "dd/MM/yyyy", { locale: ptBR })}</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground text-xs">Expiração</span>
-                        <p className="text-foreground font-medium">{sub.expires_at ? format(new Date(sub.expires_at), "dd/MM/yyyy", { locale: ptBR }) : "Sem expiração"}</p>
+                        <span className="text-muted-foreground/70 text-xs">Expiração</span>
+                        <p className="text-foreground font-semibold mt-0.5">{sub.expires_at ? format(new Date(sub.expires_at), "dd/MM/yyyy", { locale: ptBR }) : "Sem expiração"}</p>
                       </div>
                       <div>
-                        <span className="text-muted-foreground text-xs">Tipo</span>
-                        <p className="text-foreground font-medium">{sub.plan?.billing_type === "yearly" ? "Anual" : "Mensal"}</p>
+                        <span className="text-muted-foreground/70 text-xs">Tipo</span>
+                        <p className="text-foreground font-semibold mt-0.5">{sub.plan?.billing_type === "yearly" ? "Anual" : "Mensal"}</p>
                       </div>
                     </div>
                   </div>
@@ -204,10 +211,10 @@ export default function SubscriptionPage() {
 
       {/* No active subscriptions */}
       {!isError && activeSubscriptions.length === 0 && !trialApps.length && !accessMap?.fitpulse?.accessType?.includes("lifetime") && (
-        <div className="rounded-xl border border-border bg-card p-8 text-center">
-          <CreditCard className="h-10 w-10 text-muted-foreground mx-auto mb-3 opacity-40" />
-          <p className="text-sm font-medium text-foreground">Nenhum plano ativo</p>
-          <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
+        <div className="rounded-2xl glass-card p-10 text-center">
+          <CreditCard className="h-10 w-10 text-muted-foreground mx-auto mb-4 opacity-30" />
+          <p className="text-sm font-semibold text-foreground">Nenhum plano ativo</p>
+          <p className="text-xs text-muted-foreground mt-1.5 max-w-sm mx-auto">
             Assine um plano abaixo para desbloquear o acesso aos aplicativos do UNITRIX.
           </p>
         </div>
@@ -218,23 +225,26 @@ export default function SubscriptionPage() {
 
       {/* Available apps to subscribe */}
       {!isError && unsubscribedApps.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
-            <CreditCard className="h-5 w-5 text-primary" /> Aplicativos Disponíveis para Assinar
+        <div className="space-y-5">
+          <h2 className="font-display text-lg font-bold text-foreground flex items-center gap-2.5 tracking-tight">
+            <div className="rounded-xl bg-primary/10 p-2">
+              <CreditCard className="h-5 w-5 text-primary" />
+            </div>
+            Aplicativos Disponíveis para Assinar
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {unsubscribedApps.map((app) => {
               const Icon = getAppIcon(app.app_key) || AppWindow;
               const plans = plansByApp.get(app.app_key) ?? [];
               return (
-                <div key={app.id} className="rounded-xl border border-border bg-card p-5 space-y-4">
+                <div key={app.id} className="rounded-2xl glass-card p-6 space-y-4 card-glow">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-secondary/50 flex items-center justify-center shrink-0">
+                    <div className="h-11 w-11 rounded-xl bg-gradient-to-br from-primary/15 to-accent/10 flex items-center justify-center shrink-0">
                       <Icon className="h-5 w-5 text-primary" />
                     </div>
                     <div className="min-w-0">
-                      <h3 className="font-display text-sm font-bold text-foreground">{app.app_name}</h3>
-                      <p className="text-xs text-muted-foreground truncate">{app.app_description}</p>
+                      <h3 className="font-display text-sm font-bold text-foreground tracking-tight">{app.app_name}</h3>
+                      <p className="text-xs text-muted-foreground/70 truncate">{app.app_description}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5">
@@ -244,17 +254,17 @@ export default function SubscriptionPage() {
                   {plans.length > 0 ? (
                     <div className="space-y-2">
                       {plans.map((plan) => (
-                        <a key={plan.id} href={plan.kiwify_url ?? "#"} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between rounded-lg border border-border bg-secondary/30 px-4 py-2.5 transition-colors hover:border-primary/30 hover:bg-primary/5 group">
+                        <a key={plan.id} href={plan.kiwify_url ?? "#"} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between rounded-xl border border-border/40 bg-secondary/20 backdrop-blur-sm px-4 py-3 transition-all duration-200 hover:border-primary/30 hover:bg-primary/5 group">
                           <div>
-                            <p className="text-sm font-medium text-foreground">{plan.plan_name}</p>
-                            <p className="text-xs text-muted-foreground">{plan.billing_type === "yearly" ? "Anual" : "Mensal"}{plan.price_description && ` • ${plan.price_description}`}</p>
+                            <p className="text-sm font-semibold text-foreground">{plan.plan_name}</p>
+                            <p className="text-xs text-muted-foreground/70">{plan.billing_type === "yearly" ? "Anual" : "Mensal"}{plan.price_description && ` • ${plan.price_description}`}</p>
                           </div>
-                          <span className="text-xs font-medium text-primary group-hover:underline flex items-center gap-1">Assinar <ExternalLink className="h-3 w-3" /></span>
+                          <span className="text-xs font-bold text-primary group-hover:underline flex items-center gap-1">Assinar <ExternalLink className="h-3 w-3" /></span>
                         </a>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-muted-foreground italic">Planos em breve disponíveis.</p>
+                    <p className="text-xs text-muted-foreground/60 italic">Planos em breve disponíveis.</p>
                   )}
                 </div>
               );
@@ -265,26 +275,26 @@ export default function SubscriptionPage() {
 
       {/* Subscription history */}
       {!isError && otherSubscriptions.length > 0 && (
-        <div className="space-y-3">
-          <h2 className="font-display text-base font-semibold text-muted-foreground">Histórico</h2>
+        <div className="space-y-4">
+          <h2 className="font-display text-base font-bold text-muted-foreground tracking-tight">Histórico</h2>
           {otherSubscriptions.map((sub) => {
             const st = statusMap[sub.subscription_status] ?? statusMap.cancelled;
             const Icon = sub.app_key ? getAppIcon(sub.app_key) || AppWindow : AppWindow;
             return (
-              <div key={sub.id} className="rounded-xl border border-border bg-card/50 p-4 flex items-center justify-between">
+              <div key={sub.id} className="rounded-2xl glass-card p-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="h-8 w-8 rounded-lg bg-secondary/50 flex items-center justify-center shrink-0">
+                  <div className="h-9 w-9 rounded-xl bg-secondary/30 flex items-center justify-center shrink-0">
                     <Icon className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-foreground">{sub.plan?.plan_name ?? "Plano"}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm font-semibold text-foreground">{sub.plan?.plan_name ?? "Plano"}</p>
+                    <p className="text-xs text-muted-foreground/70">
                       {format(new Date(sub.started_at), "dd/MM/yyyy", { locale: ptBR })}
                       {sub.expires_at && ` — ${format(new Date(sub.expires_at), "dd/MM/yyyy", { locale: ptBR })}`}
                     </p>
                   </div>
                 </div>
-                <Badge variant="outline" className={`${st.color} gap-1`}><st.icon className="h-3 w-3" />{st.label}</Badge>
+                <Badge variant="outline" className={`${st.color} gap-1 rounded-lg`}><st.icon className="h-3 w-3" />{st.label}</Badge>
               </div>
             );
           })}
