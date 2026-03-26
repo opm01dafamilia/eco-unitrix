@@ -53,7 +53,7 @@ export default function Login() {
               <Hexagon className="h-7 w-7 text-primary-foreground" />
             </div>
           </div>
-          <h1 className="font-display text-2xl font-bold text-foreground">Platform Hub</h1>
+          <h1 className="font-display text-2xl font-bold text-foreground">UNITRIX</h1>
           <p className="text-muted-foreground text-sm">Entre na sua conta para continuar</p>
         </div>
 

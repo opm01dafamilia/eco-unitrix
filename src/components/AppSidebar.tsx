@@ -46,8 +46,8 @@ export function AppSidebar() {
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="font-display text-sm font-bold text-foreground">Platform Hub</span>
-              <span className="text-[11px] text-muted-foreground">Central do Ecossistema</span>
+              <span className="font-display text-sm font-bold text-foreground">UNITRIX</span>
+              <span className="text-[11px] text-muted-foreground">Central de Aplicativos</span>
             </div>
           )}
         </div>

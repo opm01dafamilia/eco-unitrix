@@ -45,7 +45,7 @@ export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
 
         <p className="text-muted-foreground/60 text-[11px] sm:text-[13px] max-w-lg leading-relaxed">
           {isTrial
-            ? "Aproveite seu acesso gratuito por tempo limitado. Explore todos os aplicativos e descubra o poder do ecossistema."
+            ? "Aproveite seu acesso gratuito por tempo limitado. Explore todos os aplicativos e descubra o poder do UNITRIX."
             : isDemo
               ? "Assine um plano para liberar o acesso completo a todos os aplicativos."
               : "Explore nossos aplicativos e aproveite ao máximo o seu acesso."}

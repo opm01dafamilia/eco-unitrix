@@ -66,7 +66,7 @@ export default function Dashboard() {
             <Layers className="h-4 w-4 text-white" />
           </div>
           <span className="font-display text-sm sm:text-base font-bold text-foreground truncate tracking-tight">
-            Ecossistema IA Apps
+            UNITRIX
           </span>
         </div>
         <Link

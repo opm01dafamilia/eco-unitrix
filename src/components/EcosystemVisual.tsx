@@ -31,7 +31,7 @@ export default function EcosystemVisual() {
           Uma plataforma, vários aplicativos conectados
         </h2>
         <p className="text-muted-foreground leading-relaxed">
-          Acesse um ecossistema completo com login único. Cada aplicativo é especializado, mas todos fazem parte do mesmo sistema integrado.
+          Acesse o UNITRIX com login único. Cada aplicativo é especializado, mas todos fazem parte do mesmo sistema integrado.
         </p>
       </div>
 

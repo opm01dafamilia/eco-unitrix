@@ -23,9 +23,9 @@ export default defineConfig(({ mode }) => ({
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
       },
       manifest: {
-        name: "Platform Hub",
-        short_name: "PlatformHub",
-        description: "Ecossistema de aplicativos conectados",
+        name: "UNITRIX",
+        short_name: "UNITRIX",
+        description: "Central inteligente de aplicativos",
         theme_color: "#0f1729",
         background_color: "#0f1729",
         display: "standalone",
