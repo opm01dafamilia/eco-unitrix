@@ -110,7 +110,7 @@ export default function LandingPage() {
           >
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary mb-8">
               <Sparkles className="h-3.5 w-3.5" />
-              Ecossistema inteligente de aplicativos
+              Plataforma inteligente de aplicativos
             </motion.div>
 
             <motion.h1 variants={fadeUp} custom={1} className="font-display text-4xl font-extrabold leading-[1.1] sm:text-5xl lg:text-6xl xl:text-7xl">
