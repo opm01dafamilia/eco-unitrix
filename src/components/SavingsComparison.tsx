@@ -32,7 +32,7 @@ export default function SavingsComparison() {
           Compare e economize
         </h2>
         <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-          Veja quanto você economiza assinando o Plano Ecossistema em vez dos aplicativos separadamente.
+          Veja quanto você economiza assinando o Plano UNITRIX em vez dos aplicativos separadamente.
         </p>
       </div>
 
