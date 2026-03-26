@@ -59,7 +59,7 @@ export default function SavingsComparison() {
         saving={saveYearly}
         promoNote="Primeiro ano: 12x de R$ 67,42 ou R$ 697,00 à vista — depois R$ 997,00/ano"
         ctaHref="https://pay.kiwify.com.br/6ShHAbQ"
-        ctaLabel="Assinar Ecossistema Anual"
+        ctaLabel="Assinar UNITRIX Anual"
       />
     </div>
   );
