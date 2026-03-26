@@ -370,7 +370,7 @@ export default function LandingPage() {
             <Link to="/login" className="hover:text-foreground transition-colors">Entrar</Link>
             <Link to="/signup" className="hover:text-foreground transition-colors">Criar conta</Link>
           </div>
-          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Platform Hub. Todos os direitos reservados.</p>
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} UNITRIX. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>
