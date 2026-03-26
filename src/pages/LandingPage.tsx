@@ -216,7 +216,7 @@ export default function LandingPage() {
                 <div className={`h-[2px] bg-gradient-to-r ${app.accent} opacity-40 group-hover:opacity-100 transition-opacity duration-500`} />
 
                 <div className="p-7 sm:p-8">
-                  {app.status === "coming_soon" && (
+                  {app.isInactive && (
                     <span className="absolute top-5 right-5 rounded-full bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 text-[10px] font-bold text-amber-400 uppercase tracking-wider">
                       Em breve
                     </span>
