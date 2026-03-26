@@ -273,7 +273,7 @@ export default function LandingPage() {
                 Vantagens
               </motion.div>
               <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl font-bold sm:text-4xl">
-                Por que escolher o Platform Hub?
+                Por que escolher o UNITRIX?
               </motion.h2>
               <motion.p variants={fadeUp} custom={2} className="mt-3 text-muted-foreground max-w-xl mx-auto">
                 Tudo o que você precisa para gerenciar sua vida digital em um só lugar.
