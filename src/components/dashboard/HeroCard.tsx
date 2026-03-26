@@ -39,7 +39,7 @@ export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
           </p>
         ) : (
           <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-            Você tem acesso completo ao ecossistema.
+            Você tem acesso completo ao UNITRIX.
           </p>
         )}
 
