@@ -42,8 +42,8 @@ export default function EcosystemVisual() {
           <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-2xl border-2 border-primary bg-primary/10 shadow-lg shadow-primary/20">
             <Hexagon className="h-10 w-10 text-primary" />
           </div>
-          <span className="mt-2 text-sm font-bold text-foreground">Platform Hub</span>
-          <span className="text-[11px] text-muted-foreground">Centro do ecossistema</span>
+          <span className="mt-2 text-sm font-bold text-foreground">UNITRIX</span>
+          <span className="text-[11px] text-muted-foreground">Central de aplicativos</span>
         </div>
 
         {/* Connector line */}
