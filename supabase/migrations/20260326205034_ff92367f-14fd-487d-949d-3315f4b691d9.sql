@@ -1,0 +1,1 @@
+CREATE POLICY "Public can view apps" ON public.platform_apps FOR SELECT TO anon USING (true);

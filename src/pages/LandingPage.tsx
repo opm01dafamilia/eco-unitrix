@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import SavingsComparison from "@/components/SavingsComparison";
 import EcosystemVisual from "@/components/EcosystemVisual";
 import PricingCards from "@/components/PricingCards";
+import { usePublicApps, isAppInactive } from "@/hooks/usePublicApps";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
@@ -31,17 +32,17 @@ interface EcoApp {
   description: string;
   category: string;
   icon: LucideIcon;
-  status?: "active" | "coming_soon";
+  appKey: string;
   accent: string;
   glow: string;
 }
 
-const ecosystemApps: EcoApp[] = [
-  { name: "FitPulse", description: "Acompanhe sua saúde, treinos e métricas corporais em um painel inteligente.", category: "Saúde", icon: Heart, accent: "from-violet-500 to-purple-400", glow: "violet-500" },
-  { name: "FinanceFlow", description: "Controle receitas, despesas e metas financeiras com análises visuais.", category: "Finanças", icon: DollarSign, accent: "from-emerald-500 to-teal-400", glow: "emerald-500" },
-  { name: "MarketFlow", description: "Planeje campanhas, analise crescimento e gerencie estratégias de marketing.", category: "Marketing", icon: TrendingUp, accent: "from-blue-500 to-sky-400", glow: "blue-500" },
-  { name: "IA Agenda", description: "Agendamentos inteligentes com IA que se adapta à sua rotina.", category: "Agendamento", icon: CalendarDays, accent: "from-amber-500 to-orange-400", glow: "amber-500" },
-  { name: "WhatsApp Auto", description: "Automação inteligente para WhatsApp Business com respostas e fluxos.", category: "Automação", icon: MessageSquare, status: "coming_soon", accent: "from-rose-500 to-pink-400", glow: "rose-500" },
+const ecosystemAppDefs: EcoApp[] = [
+  { name: "FitPulse", appKey: "fitpulse", description: "Acompanhe sua saúde, treinos e métricas corporais em um painel inteligente.", category: "Saúde", icon: Heart, accent: "from-violet-500 to-purple-400", glow: "violet-500" },
+  { name: "FinanceFlow", appKey: "financeflow", description: "Controle receitas, despesas e metas financeiras com análises visuais.", category: "Finanças", icon: DollarSign, accent: "from-emerald-500 to-teal-400", glow: "emerald-500" },
+  { name: "MarketFlow", appKey: "marketflow", description: "Planeje campanhas, analise crescimento e gerencie estratégias de marketing.", category: "Marketing", icon: TrendingUp, accent: "from-blue-500 to-sky-400", glow: "blue-500" },
+  { name: "IA Agenda", appKey: "ia_agenda", description: "Agendamentos inteligentes com IA que se adapta à sua rotina.", category: "Agendamento", icon: CalendarDays, accent: "from-amber-500 to-orange-400", glow: "amber-500" },
+  { name: "WhatsApp Auto", appKey: "whatsapp_auto", description: "Automação inteligente para WhatsApp Business com respostas e fluxos.", category: "Automação", icon: MessageSquare, accent: "from-rose-500 to-pink-400", glow: "rose-500" },
 ];
 
 const benefits = [
@@ -72,6 +73,11 @@ const stagger = {
 
 export default function LandingPage() {
   const { user } = useAuth();
+  const { data: platformApps } = usePublicApps();
+  const ecosystemApps = ecosystemAppDefs.map((app) => ({
+    ...app,
+    isInactive: isAppInactive(platformApps, app.appKey),
+  }));
 
   if (user) return <Navigate to="/dashboard" replace />;
 
@@ -210,7 +216,7 @@ export default function LandingPage() {
                 <div className={`h-[2px] bg-gradient-to-r ${app.accent} opacity-40 group-hover:opacity-100 transition-opacity duration-500`} />
 
                 <div className="p-7 sm:p-8">
-                  {app.status === "coming_soon" && (
+                  {app.isInactive && (
                     <span className="absolute top-5 right-5 rounded-full bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 text-[10px] font-bold text-amber-400 uppercase tracking-wider">
                       Em breve
                     </span>
