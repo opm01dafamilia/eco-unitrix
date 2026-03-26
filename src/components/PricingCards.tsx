@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const ecosystemApps = [
-  "FitPulse",
-  "FinanceFlow",
-  "MarketFlow",
-  "IA Agenda",
-  "WhatsApp Auto",
+  { name: "FitPulse", comingSoon: false },
+  { name: "FinanceFlow", comingSoon: false },
+  { name: "MarketFlow", comingSoon: false },
+  { name: "IA Agenda", comingSoon: false },
+  { name: "WhatsApp Auto", comingSoon: true },
 ];
 
 export default function PricingCards() {
