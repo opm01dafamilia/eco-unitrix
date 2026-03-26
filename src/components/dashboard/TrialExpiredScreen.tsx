@@ -44,7 +44,7 @@ export function TrialExpiredScreen() {
             Desbloqueie o <span className="gradient-text">Plano Completo</span>
           </h2>
           <p className="text-xs text-muted-foreground/70 mb-5">
-            Continue aproveitando tudo o que o ecossistema oferece
+            Continue aproveitando tudo o que o UNITRIX oferece
           </p>
 
           <div className="space-y-3 mb-7">

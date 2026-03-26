@@ -41,7 +41,7 @@ const ecosystemApps: EcoApp[] = [
 ];
 
 const benefits = [
-  { icon: Lock, title: "Uma conta, acesso total", description: "Cadastre-se uma única vez e desbloqueie todos os aplicativos do ecossistema instantaneamente." },
+  { icon: Lock, title: "Uma conta, acesso total", description: "Cadastre-se uma única vez e desbloqueie todos os aplicativos do UNITRIX instantaneamente." },
   { icon: Layers, title: "Apps especializados", description: "Cada aplicativo é focado em resolver um problema específico com excelência e profundidade." },
   { icon: Globe, title: "Plataforma centralizada", description: "Gerencie todos os seus apps em um painel único, organizado e intuitivo." },
   { icon: Rocket, title: "Expansão contínua", description: "Novos aplicativos e funcionalidades são adicionados constantemente à plataforma." },

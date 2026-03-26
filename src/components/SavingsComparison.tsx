@@ -122,7 +122,7 @@ function ComparisonBlock({
         <div className="p-5 space-y-3 bg-primary/[0.03]">
           <div className="flex items-center justify-between">
             <p className="text-xs font-medium text-primary uppercase tracking-wider">
-              Plano Ecossistema
+              Plano UNITRIX
             </p>
             <Badge className="bg-primary/10 text-primary text-[10px] gap-1 px-2">
               <Zap className="h-2.5 w-2.5" /> Melhor custo

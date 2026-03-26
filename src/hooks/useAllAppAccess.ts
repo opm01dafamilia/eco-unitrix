@@ -65,7 +65,7 @@ export function useAllAppAccess() {
                 result[key] = {
                   appKey: key,
                   accessType: "paid",
-                  origin: "Assinatura Ecossistema",
+                  origin: "Assinatura UNITRIX",
                   startedAt: sub.started_at,
                   expiresAt: sub.expires_at,
                 };
