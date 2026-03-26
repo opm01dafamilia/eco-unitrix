@@ -95,7 +95,7 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
                 </div>
 
                 {/* Description */}
-                <p className="text-xs text-muted-foreground/70 line-clamp-2 mb-6 leading-relaxed flex-1">
+                <p className="text-xs text-muted-foreground line-clamp-2 mb-6 leading-relaxed flex-1">
                   {app.app_description || "Explore as funcionalidades com IA."}
                 </p>
 
