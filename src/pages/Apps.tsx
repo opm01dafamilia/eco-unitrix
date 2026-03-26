@@ -194,6 +194,49 @@ export default function Apps() {
               </div>
             </div>
           )}
+
+          {/* Coming Soon section */}
+          {comingSoonApps.length > 0 && (
+            <div>
+              <div className="flex items-center gap-2.5 mb-4 sm:mb-5">
+                <Clock className="h-4 w-4 text-amber-400" />
+                <h2 className="font-display text-base sm:text-lg font-bold text-muted-foreground tracking-tight">
+                  Em Breve
+                </h2>
+                <Badge variant="outline" className="text-[10px] px-2 py-0.5 rounded-lg border-amber-500/20 text-amber-400">{comingSoonApps.length}</Badge>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+                {comingSoonApps.map((app, i) => {
+                  const Icon = getAppIcon(app.app_key);
+                  return (
+                    <div
+                      key={app.id}
+                      className="group rounded-2xl glass-card overflow-hidden animate-fade-in opacity-50 hover:opacity-70 transition-all duration-300"
+                      style={{ animationDelay: `${i * 60}ms` }}
+                    >
+                      <div className="h-20 sm:h-24 bg-gradient-to-br from-amber-500/5 to-muted/15 flex items-center justify-center relative">
+                        {Icon ? <Icon className="h-7 sm:h-8 w-7 sm:w-8 text-muted-foreground/30" strokeWidth={1.5} /> : <AppWindow className="h-7 sm:h-8 w-7 sm:w-8 text-muted-foreground/30" strokeWidth={1.5} />}
+                        <div className="absolute top-3 right-3 flex items-center gap-1 px-2.5 py-1 rounded-lg text-[9px] font-bold border border-amber-500/20 text-amber-400 bg-amber-500/10 backdrop-blur-sm uppercase tracking-wider">
+                          <Clock className="h-2.5 w-2.5" />
+                          Em breve
+                        </div>
+                      </div>
+                      <div className="p-5 space-y-3.5">
+                        <div>
+                          <h3 className="font-display font-semibold text-foreground text-sm sm:text-base tracking-tight">{app.app_name}</h3>
+                          <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">{app.app_description || "Sem descrição disponível."}</p>
+                        </div>
+                        <div className="flex items-center gap-2 rounded-xl bg-amber-500/5 border border-amber-500/10 px-4 py-3 text-xs font-semibold text-amber-400/80">
+                          <Clock className="h-3.5 w-3.5" />
+                          Este app estará disponível em breve
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </>
       )}
 
