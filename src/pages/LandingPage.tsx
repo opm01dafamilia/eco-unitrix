@@ -73,6 +73,11 @@ const stagger = {
 
 export default function LandingPage() {
   const { user } = useAuth();
+  const { data: platformApps } = usePublicApps();
+  const ecosystemApps = ecosystemAppDefs.map((app) => ({
+    ...app,
+    isInactive: isAppInactive(platformApps, app.appKey),
+  }));
 
   if (user) return <Navigate to="/dashboard" replace />;
 
