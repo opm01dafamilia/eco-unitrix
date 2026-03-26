@@ -2,6 +2,7 @@ import { Link, Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import SavingsComparison from "@/components/SavingsComparison";
 import EcosystemVisual from "@/components/EcosystemVisual";
+import PricingCards from "@/components/PricingCards";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
@@ -21,6 +22,7 @@ import {
   Sparkles,
   Globe,
   Lock,
+  Star,
   type LucideIcon,
 } from "lucide-react";
 
@@ -56,16 +58,16 @@ const howItWorks = [
 ];
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
+  hidden: { opacity: 0, y: 24 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: i * 0.08, duration: 0.55, ease: [0.22, 1, 0.36, 1] as const },
+    transition: { delay: i * 0.09, duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
   }),
 };
 
 const stagger = {
-  visible: { transition: { staggerChildren: 0.07 } },
+  visible: { transition: { staggerChildren: 0.08 } },
 };
 
 export default function LandingPage() {
@@ -76,10 +78,10 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* ─── Header ─── */}
-      <header className="sticky top-0 z-50 border-b border-border/30 bg-background/70 backdrop-blur-2xl">
+      <header className="sticky top-0 z-50 border-b border-border/20 bg-background/60 backdrop-blur-2xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/25">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/25 transition-transform duration-300 group-hover:scale-105">
               <Hexagon className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="font-display text-lg font-extrabold tracking-tight">UNITRIX</span>
@@ -96,47 +98,48 @@ export default function LandingPage() {
       </header>
 
       {/* ─── Hero ─── */}
-      <section className="relative py-32 sm:py-44 overflow-hidden">
+      <section className="relative py-28 sm:py-40 lg:py-48 overflow-hidden">
         {/* Background effects */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 h-[800px] w-[1000px] rounded-full bg-primary/6 blur-[160px]" />
-          <div className="absolute right-[8%] top-[8%] h-[400px] w-[400px] rounded-full bg-accent/5 blur-[120px]" />
-          <div className="absolute left-[5%] bottom-[10%] h-[300px] w-[300px] rounded-full bg-primary/4 blur-[100px]" />
-          {/* Subtle grid pattern */}
-          <div className="absolute inset-0 opacity-[0.015]" style={{
+          <div className="absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2 h-[900px] w-[1100px] rounded-full bg-primary/6 blur-[180px]" />
+          <div className="absolute right-[5%] top-[5%] h-[500px] w-[500px] rounded-full bg-accent/5 blur-[140px]" />
+          <div className="absolute left-[3%] bottom-[5%] h-[350px] w-[350px] rounded-full bg-primary/4 blur-[120px]" />
+          {/* Dot grid */}
+          <div className="absolute inset-0 opacity-[0.012]" style={{
             backgroundImage: "radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)",
-            backgroundSize: "40px 40px"
+            backgroundSize: "32px 32px"
           }} />
         </div>
 
-        <div className="mx-auto max-w-4xl px-5 text-center sm:px-8">
+        <div className="mx-auto max-w-5xl px-5 text-center sm:px-8">
           <motion.div initial="hidden" animate="visible" variants={stagger}>
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm px-5 py-2 text-xs font-semibold text-primary mb-10">
-              <Sparkles className="h-3.5 w-3.5" />
-              Plataforma inteligente de aplicativos
+              <Star className="h-3.5 w-3.5" />
+              Ecossistema inteligente de aplicativos
             </motion.div>
 
-            <motion.h1 variants={fadeUp} custom={1} className="font-display text-5xl font-extrabold leading-[1.05] sm:text-6xl lg:text-7xl xl:text-[5.5rem] tracking-tight">
+            <motion.h1 variants={fadeUp} custom={1} className="font-display text-[2.75rem] font-extrabold leading-[1.05] sm:text-6xl lg:text-7xl xl:text-[5.5rem] tracking-tight">
               Todos os seus apps em{" "}
+              <br className="hidden sm:block" />
               <span className="gradient-text">uma única plataforma</span>
             </motion.h1>
 
             <motion.p variants={fadeUp} custom={2} className="mx-auto mt-8 max-w-2xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
-              Acesse aplicativos de saúde, finanças, marketing, automação e muito mais — tudo com uma única conta e um painel centralizado.
+              Saúde, finanças, marketing, automação — tudo integrado com uma única conta. Simplifique sua rotina com o UNITRIX.
             </motion.p>
 
             <motion.div variants={fadeUp} custom={3} className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Button size="lg" asChild className="btn-gradient w-full sm:w-auto shadow-xl shadow-primary/25 text-base font-semibold px-9 py-6 rounded-2xl">
+              <Button size="lg" asChild className="btn-gradient w-full sm:w-auto shadow-xl shadow-primary/25 text-base font-bold px-10 py-6 rounded-2xl">
                 <Link to="/signup">
-                  Criar conta grátis <ArrowRight className="ml-2 h-4 w-4" />
+                  Começar gratuitamente <ArrowRight className="ml-2 h-4.5 w-4.5" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="w-full sm:w-auto text-base px-9 py-6 rounded-2xl border-border/60 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
-                <Link to="/login">Entrar na plataforma</Link>
+              <Button size="lg" variant="outline" asChild className="w-full sm:w-auto text-base px-10 py-6 rounded-2xl border-border/60 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
+                <Link to="/login">Já tenho conta</Link>
               </Button>
             </motion.div>
 
-            <motion.div variants={fadeUp} custom={4} className="mt-16 flex items-center justify-center gap-6 sm:gap-10 text-sm text-muted-foreground">
+            <motion.div variants={fadeUp} custom={4} className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
               {["Cadastro gratuito", "Sem cartão de crédito", "Acesso imediato"].map((text) => (
                 <span key={text} className="flex items-center gap-2">
                   <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10">
@@ -150,8 +153,25 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ─── Social proof strip ─── */}
+      <div className="border-y border-border/20 bg-card/30 backdrop-blur-sm">
+        <div className="mx-auto max-w-6xl flex flex-wrap items-center justify-center gap-x-12 gap-y-4 px-5 py-6 sm:px-8">
+          {[
+            { value: "5+", label: "Aplicativos integrados" },
+            { value: "1", label: "Conta para tudo" },
+            { value: "100%", label: "Centralizado" },
+            { value: "24/7", label: "Disponível sempre" },
+          ].map((s) => (
+            <div key={s.label} className="flex items-center gap-3 text-sm">
+              <span className="font-display text-xl font-extrabold gradient-text">{s.value}</span>
+              <span className="text-muted-foreground">{s.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* ─── Apps ─── */}
-      <section className="border-t border-border/30 py-32">
+      <section className="py-28 sm:py-36">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <motion.div
             initial="hidden"
@@ -165,7 +185,7 @@ export default function LandingPage() {
               Aplicativos
             </motion.div>
             <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl font-extrabold sm:text-4xl lg:text-[2.75rem] tracking-tight">
-              Aplicativos da Plataforma
+              Conheça os aplicativos
             </motion.h2>
             <motion.p variants={fadeUp} custom={2} className="mt-5 text-muted-foreground max-w-xl mx-auto text-base leading-relaxed">
               Soluções especializadas para cada área da sua vida pessoal e profissional.
@@ -187,7 +207,7 @@ export default function LandingPage() {
                 className="group relative rounded-2xl glass-card overflow-hidden transition-all duration-500 hover:border-primary/25 card-glow"
               >
                 {/* Top accent line */}
-                <div className={`h-[2px] bg-gradient-to-r ${app.accent} opacity-30 group-hover:opacity-90 transition-opacity duration-500`} />
+                <div className={`h-[2px] bg-gradient-to-r ${app.accent} opacity-40 group-hover:opacity-100 transition-opacity duration-500`} />
 
                 <div className="p-7 sm:p-8">
                   {app.status === "coming_soon" && (
@@ -195,7 +215,7 @@ export default function LandingPage() {
                       Em breve
                     </span>
                   )}
-                  <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${app.accent} shadow-lg transition-transform duration-500 group-hover:scale-105`}>
+                  <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${app.accent} shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:shadow-xl`}>
                     <app.icon className="h-7 w-7 text-white" strokeWidth={1.8} />
                   </div>
                   <h3 className="mt-5 font-display text-lg font-bold text-foreground tracking-tight">{app.name}</h3>
@@ -211,7 +231,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Ecosystem Visual ─── */}
-      <section className="border-t border-border/30 py-32">
+      <section className="border-t border-border/20 py-28 sm:py-36">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <motion.div
             initial="hidden"
@@ -227,7 +247,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── How it works ─── */}
-      <section className="border-t border-border/30 py-32">
+      <section className="border-t border-border/20 py-28 sm:py-36">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <motion.div
             initial="hidden"
@@ -256,7 +276,11 @@ export default function LandingPage() {
             className="mt-16 grid gap-8 sm:grid-cols-3"
           >
             {howItWorks.map((item, i) => (
-              <motion.div key={item.step} variants={fadeUp} custom={i} className="group text-center rounded-2xl glass-card p-8 sm:p-10 transition-all duration-500 card-glow">
+              <motion.div key={item.step} variants={fadeUp} custom={i} className="group text-center rounded-2xl glass-card p-8 sm:p-10 transition-all duration-500 card-glow relative overflow-hidden">
+                {/* Step connector line on desktop */}
+                {i < howItWorks.length - 1 && (
+                  <div className="hidden sm:block absolute top-1/2 -right-4 w-8 h-px bg-border/40" />
+                )}
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 border border-primary/20 group-hover:border-primary/40 transition-colors duration-300">
                   <span className="font-display text-2xl font-extrabold gradient-text">{item.step}</span>
                 </div>
@@ -269,7 +293,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Benefits ─── */}
-      <section className="border-t border-border/30 py-32">
+      <section className="border-t border-border/20 py-28 sm:py-36">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <motion.div
             initial="hidden"
@@ -305,7 +329,7 @@ export default function LandingPage() {
                 custom={i}
                 className="group rounded-2xl glass-card p-8 text-center transition-all duration-500 card-glow"
               >
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 text-primary group-hover:from-primary/20 group-hover:to-accent/15 transition-colors duration-300">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-accent/10 text-primary group-hover:from-primary/25 group-hover:to-accent/20 transition-all duration-300 group-hover:scale-105">
                   <b.icon className="h-7 w-7" />
                 </div>
                 <h3 className="mt-7 font-display text-base font-bold text-foreground tracking-tight">{b.title}</h3>
@@ -316,8 +340,24 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ─── Pricing Cards ─── */}
+      <section className="border-t border-border/20 py-28 sm:py-36">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-80px" }}
+            variants={stagger}
+          >
+            <motion.div variants={fadeUp} custom={0}>
+              <PricingCards />
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ─── Savings Comparison ─── */}
-      <section className="border-t border-border/30 py-32">
+      <section className="border-t border-border/20 py-28 sm:py-36">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <motion.div
             initial="hidden"
@@ -333,14 +373,14 @@ export default function LandingPage() {
       </section>
 
       {/* ─── CTA ─── */}
-      <section className="py-32">
+      <section className="py-28 sm:py-36">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-80px" }}
             variants={stagger}
-            className="relative rounded-3xl glass-card-strong overflow-hidden p-14 sm:p-20 text-center"
+            className="relative rounded-3xl glass-card-strong overflow-hidden p-12 sm:p-16 lg:p-20 text-center"
           >
             {/* Glow */}
             <div className="absolute inset-0 -z-10">
@@ -351,19 +391,24 @@ export default function LandingPage() {
             {/* Top accent */}
             <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
-            <motion.h2 variants={fadeUp} custom={0} className="font-display text-3xl font-extrabold sm:text-4xl lg:text-5xl tracking-tight">
-              Pronto para começar?
+            <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-semibold text-primary mb-8">
+              <Rocket className="h-3.5 w-3.5" />
+              Comece agora
+            </motion.div>
+
+            <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl font-extrabold sm:text-4xl lg:text-5xl tracking-tight">
+              Pronto para <span className="gradient-text">transformar</span> sua rotina?
             </motion.h2>
-            <motion.p variants={fadeUp} custom={1} className="mt-6 text-muted-foreground max-w-lg mx-auto text-base leading-relaxed">
+            <motion.p variants={fadeUp} custom={2} className="mt-6 text-muted-foreground max-w-lg mx-auto text-base leading-relaxed">
               Crie sua conta gratuita e comece a explorar os aplicativos agora mesmo. Sem compromisso, sem cartão de crédito.
             </motion.p>
-            <motion.div variants={fadeUp} custom={2} className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-              <Button size="lg" asChild className="btn-gradient shadow-xl shadow-primary/25 text-base font-semibold px-9 py-6 rounded-2xl">
+            <motion.div variants={fadeUp} custom={3} className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <Button size="lg" asChild className="btn-gradient shadow-xl shadow-primary/25 text-base font-bold px-10 py-6 rounded-2xl">
                 <Link to="/signup">
-                  Começar agora <ChevronRight className="ml-1 h-4 w-4" />
+                  Criar conta grátis <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="text-base px-9 py-6 rounded-2xl border-border/60 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
+              <Button size="lg" variant="outline" asChild className="text-base px-10 py-6 rounded-2xl border-border/60 hover:border-primary/30 hover:bg-primary/5 transition-all duration-300">
                 <Link to="/login">Entrar na plataforma</Link>
               </Button>
             </motion.div>
@@ -372,7 +417,7 @@ export default function LandingPage() {
       </section>
 
       {/* ─── Footer ─── */}
-      <footer className="border-t border-border/30 py-12">
+      <footer className="border-t border-border/20 py-12">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-5 sm:flex-row sm:justify-between sm:px-8">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20">
