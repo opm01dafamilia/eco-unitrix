@@ -103,7 +103,8 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
                 <button
                   onClick={() => onLaunch(app)}
                   disabled={isLaunching}
-                  className={`w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r ${accent.gradient} px-4 py-3.5 text-sm font-bold text-white transition-all duration-300 active:scale-[0.97] disabled:opacity-60 hover:shadow-xl hover:brightness-110 hover:scale-[1.02] ${accent.shadow} min-h-[48px]`}
+                  className={`w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r ${accent.gradient} px-4 text-[13px] font-semibold tracking-wide text-white transition-all duration-300 active:scale-[0.97] disabled:opacity-60 hover:brightness-110 hover:-translate-y-0.5 hover:shadow-lg ${accent.shadow} h-[46px]`}
+                  style={{ boxShadow: `0 0 12px 0 ${accent.glow.replace('0.08', '0.22')}` }}
                 >
                   {isLaunching ? (
                     <>
