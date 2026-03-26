@@ -28,7 +28,7 @@ export function TrialExpiredScreen() {
             </h1>
             <p className="text-sm text-muted-foreground max-w-md mx-auto leading-relaxed">
               Seu período de avaliação gratuita chegou ao fim, mas seus dados e configurações continuam salvos.
-              Assine agora para retomar o acesso completo ao ecossistema.
+              Assine agora para retomar o acesso completo ao UNITRIX.
             </p>
           </div>
         </div>
