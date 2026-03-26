@@ -341,7 +341,7 @@ export default function LandingPage() {
               Pronto para começar?
             </motion.h2>
             <motion.p variants={fadeUp} custom={1} className="mt-4 text-muted-foreground max-w-lg mx-auto leading-relaxed">
-              Crie sua conta gratuita e comece a explorar o ecossistema de aplicativos agora mesmo. Sem compromisso, sem cartão de crédito.
+              Crie sua conta gratuita e comece a explorar os aplicativos agora mesmo. Sem compromisso, sem cartão de crédito.
             </motion.p>
             <motion.div variants={fadeUp} custom={2} className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Button size="lg" asChild className="shadow-xl shadow-primary/25 text-base px-8 py-6">
