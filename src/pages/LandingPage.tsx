@@ -115,7 +115,7 @@ export default function LandingPage() {
 
             <motion.h1 variants={fadeUp} custom={1} className="font-display text-4xl font-extrabold leading-[1.1] sm:text-5xl lg:text-6xl xl:text-7xl">
               Todos os seus apps em um{" "}
-              <span className="gradient-text">único ecossistema</span>
+              <span className="gradient-text">única plataforma</span>
             </motion.h1>
 
             <motion.p variants={fadeUp} custom={2} className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-muted-foreground leading-relaxed">
