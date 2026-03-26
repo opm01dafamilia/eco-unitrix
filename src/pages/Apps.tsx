@@ -63,6 +63,15 @@ export default function Apps() {
     return result;
   }, [visibleApps, search]);
 
+  const comingSoonApps = useMemo(() => {
+    let result = visibleApps.filter((a) => a.app_status !== "active");
+    if (search) {
+      const q = search.toLowerCase();
+      result = result.filter((a) => a.app_name.toLowerCase().includes(q) || a.app_description?.toLowerCase().includes(q));
+    }
+    return result;
+  }, [visibleApps, search]);
+
   const trialApps = useMemo(() => {
     if (!accessMap) return [];
     return Object.values(accessMap).filter((a) => a.accessType === "trial" && a.expiresAt);
