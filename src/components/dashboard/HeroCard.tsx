@@ -22,7 +22,7 @@ export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
       <div className="relative z-10 space-y-3">
         <h1 className="font-display text-xl sm:text-2xl md:text-[2rem] font-bold text-foreground leading-[1.2] tracking-tight">
           Olá, {firstName}! Bem-vindo ao{" "}
-          <span className="gradient-text">Ecossistema IA Apps</span>.
+          <span className="gradient-text">UNITRIX</span>.
         </h1>
 
         {isTrial && days !== null ? (
