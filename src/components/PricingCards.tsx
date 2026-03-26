@@ -20,7 +20,7 @@ export default function PricingCards() {
           Escolha seu plano
         </h2>
         <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-          Desbloqueie o acesso aos aplicativos do ecossistema com o plano ideal para você.
+          Desbloqueie o acesso aos aplicativos do UNITRIX com o plano ideal para você.
         </p>
       </div>
 
