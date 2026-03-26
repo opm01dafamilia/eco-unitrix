@@ -63,12 +63,12 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
           return (
             <div
               key={app.id}
-              className="rounded-2xl glass-card overflow-hidden group transition-all duration-500 hover:border-primary/20"
+              className="rounded-2xl glass-card overflow-hidden group transition-all duration-500 hover:border-primary/30 hover:-translate-y-1"
               style={{
                 animationDelay: `${0.12 + i * 0.04}s`,
                 boxShadow: `0 0 0 0 transparent`,
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 0 20px 2px ${accent.glow.replace('0.08', '0.18')}`; }}
+              onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 0 24px 4px ${accent.glow.replace('0.08', '0.22')}, inset 0 0 0 1px ${accent.glow.replace('0.08', '0.12')}`; }}
               onMouseLeave={(e) => { e.currentTarget.style.boxShadow = `0 0 0 0 transparent`; }}
             >
               {/* Top accent line */}
