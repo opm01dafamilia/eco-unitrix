@@ -76,9 +76,15 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
 
               <div className="p-5 sm:p-6 flex flex-col min-h-[240px]">
                 {/* Badge */}
-                <span className={`self-start rounded-lg bg-gradient-to-r ${accent.badge} px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white mb-5 shadow-sm ${accent.shadow}`}>
-                  Teste Grátis
-                </span>
+                {app.app_status !== "active" ? (
+                  <span className="self-start rounded-lg bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-amber-400 mb-5">
+                    Em Breve
+                  </span>
+                ) : (
+                  <span className={`self-start rounded-lg bg-gradient-to-r ${accent.badge} px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white mb-5 shadow-sm ${accent.shadow}`}>
+                    Teste Grátis
+                  </span>
+                )}
 
                 {/* Icon + Name */}
                 <div className="flex items-center gap-3.5 mb-4">
