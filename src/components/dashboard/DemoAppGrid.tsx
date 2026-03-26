@@ -76,9 +76,15 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
 
               <div className="p-5 sm:p-6 flex flex-col min-h-[240px]">
                 {/* Badge */}
-                <span className={`self-start rounded-lg bg-gradient-to-r ${accent.badge} px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white mb-5 shadow-sm ${accent.shadow}`}>
-                  Teste Grátis
-                </span>
+                {app.app_status !== "active" ? (
+                  <span className="self-start rounded-lg bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-amber-400 mb-5">
+                    Em Breve
+                  </span>
+                ) : (
+                  <span className={`self-start rounded-lg bg-gradient-to-r ${accent.badge} px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white mb-5 shadow-sm ${accent.shadow}`}>
+                    Teste Grátis
+                  </span>
+                )}
 
                 {/* Icon + Name */}
                 <div className="flex items-center gap-3.5 mb-4">
@@ -100,20 +106,26 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
                 </p>
 
                 {/* Button */}
-                <button
-                  onClick={() => onLaunch(app)}
-                  disabled={isLaunching}
-                  className={`w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r ${accent.gradient} px-4 text-[13px] font-semibold tracking-wide text-white transition-all duration-300 active:scale-[0.97] disabled:opacity-60 hover:brightness-110 hover:-translate-y-0.5 hover:shadow-lg ${accent.shadow} h-[46px]`}
-                  style={{ boxShadow: `0 0 12px 0 ${accent.glow.replace('0.08', '0.22')}` }}
-                >
-                  {isLaunching ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" /> Abrindo...
-                    </>
-                  ) : (
-                    "Abrir App"
-                  )}
-                </button>
+                {app.app_status !== "active" ? (
+                  <div className="w-full flex items-center justify-center gap-2 rounded-2xl bg-amber-500/10 border border-amber-500/20 px-4 text-[13px] font-semibold tracking-wide text-amber-400 h-[46px] cursor-default">
+                    Em breve
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => onLaunch(app)}
+                    disabled={isLaunching}
+                    className={`w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r ${accent.gradient} px-4 text-[13px] font-semibold tracking-wide text-white transition-all duration-300 active:scale-[0.97] disabled:opacity-60 hover:brightness-110 hover:-translate-y-0.5 hover:shadow-lg ${accent.shadow} h-[46px]`}
+                    style={{ boxShadow: `0 0 12px 0 ${accent.glow.replace('0.08', '0.22')}` }}
+                  >
+                    {isLaunching ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" /> Abrindo...
+                      </>
+                    ) : (
+                      "Abrir App"
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           );

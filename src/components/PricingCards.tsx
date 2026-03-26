@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
 const ecosystemApps = [
-  "FitPulse",
-  "FinanceFlow",
-  "MarketFlow",
-  "IA Agenda",
-  "WhatsApp Auto",
+  { name: "FitPulse", comingSoon: false },
+  { name: "FinanceFlow", comingSoon: false },
+  { name: "MarketFlow", comingSoon: false },
+  { name: "IA Agenda", comingSoon: false },
+  { name: "WhatsApp Auto", comingSoon: true },
 ];
 
 export default function PricingCards() {
@@ -88,9 +88,14 @@ export default function PricingCards() {
             <div className="pt-4 border-t border-border/40 space-y-2.5">
               <p className="text-xs font-semibold text-muted-foreground">Todos os apps incluídos:</p>
               {ecosystemApps.map((app) => (
-                <div key={app} className="flex items-center gap-2.5 text-sm text-foreground">
-                  <Check className="h-3.5 w-3.5 text-primary shrink-0" />
-                  <span>{app}</span>
+                <div key={app.name} className="flex items-center gap-2.5 text-sm text-foreground">
+                  <Check className={`h-3.5 w-3.5 shrink-0 ${app.comingSoon ? "text-muted-foreground" : "text-primary"}`} />
+                  <span className={app.comingSoon ? "text-muted-foreground" : ""}>{app.name}</span>
+                  {app.comingSoon && (
+                    <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[9px] font-bold text-amber-400 uppercase tracking-wider ml-auto">
+                      Em breve
+                    </span>
+                  )}
                 </div>
               ))}
               <div className="flex items-center gap-2.5 text-sm text-primary font-bold">
@@ -142,9 +147,14 @@ export default function PricingCards() {
             <div className="pt-4 border-t border-border/40 space-y-2.5">
               <p className="text-xs font-semibold text-muted-foreground">Todos os apps incluídos:</p>
               {ecosystemApps.map((app) => (
-                <div key={app} className="flex items-center gap-2.5 text-sm text-foreground">
-                  <Check className="h-3.5 w-3.5 text-primary shrink-0" />
-                  <span>{app}</span>
+                <div key={app.name} className="flex items-center gap-2.5 text-sm text-foreground">
+                  <Check className={`h-3.5 w-3.5 shrink-0 ${app.comingSoon ? "text-muted-foreground" : "text-primary"}`} />
+                  <span className={app.comingSoon ? "text-muted-foreground" : ""}>{app.name}</span>
+                  {app.comingSoon && (
+                    <span className="rounded-full bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 text-[9px] font-bold text-amber-400 uppercase tracking-wider ml-auto">
+                      Em breve
+                    </span>
+                  )}
                 </div>
               ))}
               <div className="flex items-center gap-2.5 text-sm text-primary font-bold">
