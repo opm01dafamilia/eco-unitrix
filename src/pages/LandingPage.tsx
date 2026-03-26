@@ -80,7 +80,7 @@ export default function LandingPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
               <Hexagon className="h-5 w-5 text-primary-foreground" />
             </div>
-            <span className="font-display text-lg font-bold">Platform Hub</span>
+            <span className="font-display text-lg font-bold">UNITRIX</span>
           </Link>
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" asChild>
