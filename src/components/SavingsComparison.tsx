@@ -46,7 +46,7 @@ export default function SavingsComparison() {
         saving={saveMonthly}
         promoNote="Primeiro mês por apenas R$ 67,00 — depois R$ 97,00/mês"
         ctaHref="https://pay.kiwify.com.br/tn6JpCc"
-        ctaLabel="Assinar Ecossistema Mensal"
+        ctaLabel="Assinar UNITRIX Mensal"
       />
 
       {/* Yearly comparison */}
