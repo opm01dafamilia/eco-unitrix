@@ -2,7 +2,7 @@ import { ShieldX, Check, Rocket, Sparkles, ArrowRight, Star } from "lucide-react
 import { Link } from "react-router-dom";
 
 const benefits = [
-  { icon: Check, label: "Acesso completo a todos os apps do ecossistema" },
+  { icon: Check, label: "Acesso completo a todos os apps do UNITRIX" },
   { icon: Rocket, label: "Continuidade de uso sem interrupções" },
   { icon: Sparkles, label: "Recursos avançados e funcionalidades completas" },
   { icon: Star, label: "Atualizações e melhorias exclusivas" },
