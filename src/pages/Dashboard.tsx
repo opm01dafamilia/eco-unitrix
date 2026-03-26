@@ -58,20 +58,20 @@ export default function Dashboard() {
   const totalAccessible = activeApps.length;
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-5 sm:space-y-7">
+    <div className="max-w-[1200px] mx-auto space-y-6 sm:space-y-8">
       {/* ─── Top Bar ─── */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="rounded-xl bg-gradient-to-br from-primary to-accent p-2 shadow-lg shadow-primary/15 shrink-0">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="rounded-xl bg-gradient-to-br from-primary to-accent p-2 shadow-lg shadow-primary/20 shrink-0">
             <Layers className="h-4 w-4 text-white" />
           </div>
-          <span className="font-display text-sm sm:text-base font-bold text-foreground truncate tracking-tight">
+          <span className="font-display text-sm sm:text-base font-extrabold text-foreground truncate tracking-tight">
             UNITRIX
           </span>
         </div>
         <Link
           to="/subscription"
-          className="inline-flex items-center gap-1.5 rounded-xl glass-card px-3 sm:px-4 py-2 text-[11px] sm:text-xs font-semibold text-foreground/90 hover:text-foreground transition-all shrink-0 min-h-[38px] card-glow"
+          className="inline-flex items-center gap-2 rounded-xl glass-card px-4 sm:px-5 py-2.5 text-[11px] sm:text-xs font-bold text-foreground/90 hover:text-foreground transition-all shrink-0 min-h-[40px] card-glow"
         >
           <Crown className="h-3.5 w-3.5 text-primary" />
           <span className="hidden sm:inline">Assinar Plano Completo</span>
@@ -80,20 +80,20 @@ export default function Dashboard() {
       </div>
 
       {isLoading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-32 sm:h-40 rounded-2xl" />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}
+        <div className="space-y-5">
+          <Skeleton className="h-36 sm:h-44 rounded-2xl" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 rounded-2xl" />)}
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-52 rounded-2xl" />)}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-56 rounded-2xl" />)}
           </div>
         </div>
       ) : appsError ? (
-        <div className="rounded-2xl glass-card p-5 flex items-center gap-3">
+        <div className="rounded-2xl glass-card p-6 flex items-center gap-4">
           <AlertTriangle className="h-5 w-5 text-destructive shrink-0" />
           <div>
-            <p className="text-sm font-medium text-foreground">Erro ao carregar aplicativos</p>
+            <p className="text-sm font-semibold text-foreground">Erro ao carregar aplicativos</p>
             <p className="text-xs text-muted-foreground mt-0.5">Tente recarregar a página.</p>
           </div>
         </div>

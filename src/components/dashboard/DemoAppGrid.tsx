@@ -27,6 +27,12 @@ const appAccents: Record<string, { gradient: string; shadow: string; badge: stri
     badge: "from-rose-500 to-pink-400",
     glow: "hsl(350 60% 50% / 0.08)",
   },
+  marketflow: {
+    gradient: "from-amber-500 to-orange-400",
+    shadow: "shadow-amber-500/20",
+    badge: "from-amber-500 to-orange-400",
+    glow: "hsl(30 70% 50% / 0.08)",
+  },
 };
 
 const defaultAccent = {
@@ -45,10 +51,10 @@ interface DemoAppGridProps {
 export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProps) {
   return (
     <section className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
-      <h2 className="font-display text-base sm:text-lg font-bold text-foreground mb-4 tracking-tight">
+      <h2 className="font-display text-base sm:text-lg font-bold text-foreground mb-5 tracking-tight">
         Seus Aplicativos
       </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-5">
         {apps.map((app, i) => {
           const Icon = getAppIcon(app.app_key);
           const isLaunching = launchingAppKey === app.app_key;
@@ -60,17 +66,17 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
               className="rounded-2xl glass-card overflow-hidden card-glow group"
               style={{ animationDelay: `${0.12 + i * 0.04}s` }}
             >
-              {/* Subtle top glow line */}
-              <div className={`h-[2px] bg-gradient-to-r ${accent.gradient} opacity-40 group-hover:opacity-70 transition-opacity duration-500`} />
+              {/* Top accent line */}
+              <div className={`h-[2px] bg-gradient-to-r ${accent.gradient} opacity-30 group-hover:opacity-80 transition-opacity duration-500`} />
 
               <div className="p-4 sm:p-5 flex flex-col">
                 {/* Badge */}
-                <span className={`self-start rounded-md bg-gradient-to-r ${accent.badge} px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white mb-4 shadow-sm ${accent.shadow}`}>
+                <span className={`self-start rounded-lg bg-gradient-to-r ${accent.badge} px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white mb-4 shadow-sm ${accent.shadow}`}>
                   Teste Grátis
                 </span>
 
                 {/* Icon + Name */}
-                <div className="flex items-center gap-3 mb-2.5">
+                <div className="flex items-center gap-3 mb-3">
                   <div className={`rounded-xl bg-gradient-to-br ${accent.gradient} p-2.5 shrink-0 shadow-lg ${accent.shadow}`}>
                     {Icon ? (
                       <Icon className="h-5 w-5 text-white" strokeWidth={1.8} />
@@ -92,7 +98,7 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
                 <button
                   onClick={() => onLaunch(app)}
                   disabled={isLaunching}
-                  className={`w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r ${accent.gradient} px-4 py-3 text-xs font-bold text-white transition-all duration-300 active:scale-[0.97] disabled:opacity-60 hover:shadow-lg ${accent.shadow} min-h-[46px]`}
+                  className={`w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r ${accent.gradient} px-4 py-3 text-xs font-bold text-white transition-all duration-300 active:scale-[0.97] disabled:opacity-60 hover:shadow-lg hover:brightness-110 ${accent.shadow} min-h-[46px]`}
                 >
                   {isLaunching ? (
                     <>
