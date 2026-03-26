@@ -3,6 +3,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import SavingsComparison from "@/components/SavingsComparison";
 import EcosystemVisual from "@/components/EcosystemVisual";
 import PricingCards from "@/components/PricingCards";
+import { usePublicApps, isAppInactive } from "@/hooks/usePublicApps";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {

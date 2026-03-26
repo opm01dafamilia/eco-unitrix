@@ -2,13 +2,14 @@ import { Check, Crown, ExternalLink, Layers, Sparkles, Star, Zap } from "lucide-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { usePublicApps, isAppInactive } from "@/hooks/usePublicApps";
 
-const ecosystemApps = [
-  { name: "FitPulse", comingSoon: false },
-  { name: "FinanceFlow", comingSoon: false },
-  { name: "MarketFlow", comingSoon: false },
-  { name: "IA Agenda", comingSoon: false },
-  { name: "WhatsApp Auto", comingSoon: true },
+const ecosystemAppDefs = [
+  { name: "FitPulse", appKey: "fitpulse" },
+  { name: "FinanceFlow", appKey: "financeflow" },
+  { name: "MarketFlow", appKey: "marketflow" },
+  { name: "IA Agenda", appKey: "ia_agenda" },
+  { name: "WhatsApp Auto", appKey: "whatsapp_auto" },
 ];
 
 export default function PricingCards() {
