@@ -33,8 +33,8 @@ export function InfoCards({ totalAccessible, totalApps, planName, isDemo }: Info
             {isTrial && days !== null
               ? `${days} dia${days !== 1 ? "s" : ""} restante${days !== 1 ? "s" : ""}`
               : isDemo
-                ? "Assine para acessar o ecossistema"
-                : "Aproveite o ecossistema completo"}
+                ? "Assine para acessar o UNITRIX"
+                : "Aproveite o UNITRIX completo"}
           </p>
         </div>
       </div>
