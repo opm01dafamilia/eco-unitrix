@@ -157,7 +157,7 @@ export default function LandingPage() {
           >
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary mb-4">
               <Zap className="h-3.5 w-3.5" />
-              Ecossistema
+              UNITRIX
             </motion.div>
             <motion.h2 variants={fadeUp} custom={1} className="font-display text-3xl font-bold sm:text-4xl">
               Aplicativos da Plataforma
