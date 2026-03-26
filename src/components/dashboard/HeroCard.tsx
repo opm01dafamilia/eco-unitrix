@@ -35,7 +35,7 @@ export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
           </p>
         ) : isDemo ? (
           <p className="text-muted-foreground text-xs sm:text-sm flex flex-wrap items-center gap-1.5 leading-relaxed">
-            Assine para desbloquear todo o ecossistema
+            Assine para desbloquear todos os aplicativos
           </p>
         ) : (
           <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
