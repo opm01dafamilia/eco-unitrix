@@ -364,7 +364,7 @@ export default function LandingPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/20">
               <Hexagon className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="text-sm font-bold">Platform Hub</span>
+            <span className="text-sm font-bold">UNITRIX</span>
           </div>
           <div className="flex items-center gap-6 text-xs text-muted-foreground">
             <Link to="/login" className="hover:text-foreground transition-colors">Entrar</Link>
