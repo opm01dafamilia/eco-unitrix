@@ -15,7 +15,7 @@ export function DashboardFooter() {
           </div>
         </div>
         <p className="text-[10px] text-muted-foreground/40 text-center tracking-wide">
-          © {new Date().getFullYear()} Ecossistema IA Apps. Todos os direitos reservados.
+          © {new Date().getFullYear()} UNITRIX. Todos os direitos reservados.
         </p>
       </div>
     </footer>

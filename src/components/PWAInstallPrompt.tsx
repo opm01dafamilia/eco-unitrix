@@ -67,7 +67,7 @@ export function PWAInstallPrompt() {
               <Smartphone className="h-5 w-5 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground">Instalar Platform Hub</p>
+              <p className="text-sm font-semibold text-foreground">Instalar UNITRIX</p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Adicione à tela inicial para acesso rápido como um app nativo.
               </p>

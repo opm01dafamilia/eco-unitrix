@@ -74,7 +74,7 @@ export function AccessBlockedModal({ open, onOpenChange, appName, appKey, reason
             }}
           >
             <Hexagon className="h-4 w-4 mr-2" />
-            Voltar ao Platform Hub
+            Voltar à UNITRIX
           </Button>
         </div>
       </DialogContent>

@@ -208,7 +208,7 @@ export default function SubscriptionPage() {
           <CreditCard className="h-10 w-10 text-muted-foreground mx-auto mb-3 opacity-40" />
           <p className="text-sm font-medium text-foreground">Nenhum plano ativo</p>
           <p className="text-xs text-muted-foreground mt-1 max-w-sm mx-auto">
-            Assine um plano abaixo para desbloquear o acesso aos aplicativos do ecossistema.
+            Assine um plano abaixo para desbloquear o acesso aos aplicativos do UNITRIX.
           </p>
         </div>
       )}

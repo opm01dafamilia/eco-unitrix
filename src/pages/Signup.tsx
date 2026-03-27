@@ -66,7 +66,7 @@ export default function Signup() {
             </div>
           </div>
           <h1 className="font-display text-2xl font-bold text-foreground">Criar Conta</h1>
-          <p className="text-muted-foreground text-sm">Junte-se à plataforma</p>
+          <p className="text-muted-foreground text-sm">Junte-se à UNITRIX</p>
         </div>
 
         <div className="space-y-4 rounded-xl border border-border bg-card p-6">

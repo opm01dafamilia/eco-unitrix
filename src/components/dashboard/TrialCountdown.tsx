@@ -27,7 +27,7 @@ export function TrialCountdown() {
                 Teste grátis expirado
               </span>
               <p className="text-[11px] text-muted-foreground/70 leading-snug mt-0.5">
-                Assine para continuar usando o ecossistema
+                Assine para continuar usando o UNITRIX
               </p>
             </div>
           </div>

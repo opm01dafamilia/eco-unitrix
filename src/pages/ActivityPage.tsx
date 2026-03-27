@@ -33,7 +33,7 @@ export default function ActivityPage() {
     <div className="max-w-3xl mx-auto space-y-8">
       <div>
         <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">Atividade da Conta</h1>
-        <p className="text-muted-foreground mt-1">Histórico de uso dos aplicativos da plataforma.</p>
+        <p className="text-muted-foreground mt-1">"Histórico de uso dos aplicativos da UNITRIX."</p>
       </div>
 
       {/* Summary */}

@@ -32,7 +32,7 @@ export default function SavingsComparison() {
           Compare e economize
         </h2>
         <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-          Veja quanto você economiza assinando o Plano Ecossistema em vez dos aplicativos separadamente.
+          Veja quanto você economiza assinando o Plano UNITRIX em vez dos aplicativos separadamente.
         </p>
       </div>
 
@@ -46,7 +46,7 @@ export default function SavingsComparison() {
         saving={saveMonthly}
         promoNote="Primeiro mês por apenas R$ 67,00 — depois R$ 97,00/mês"
         ctaHref="https://pay.kiwify.com.br/tn6JpCc"
-        ctaLabel="Assinar Ecossistema Mensal"
+        ctaLabel="Assinar UNITRIX Mensal"
       />
 
       {/* Yearly comparison */}
@@ -59,7 +59,7 @@ export default function SavingsComparison() {
         saving={saveYearly}
         promoNote="Primeiro ano: 12x de R$ 67,42 ou R$ 697,00 à vista — depois R$ 997,00/ano"
         ctaHref="https://pay.kiwify.com.br/6ShHAbQ"
-        ctaLabel="Assinar Ecossistema Anual"
+        ctaLabel="Assinar UNITRIX Anual"
       />
     </div>
   );
@@ -122,7 +122,7 @@ function ComparisonBlock({
         <div className="p-5 space-y-3 bg-primary/[0.03]">
           <div className="flex items-center justify-between">
             <p className="text-xs font-medium text-primary uppercase tracking-wider">
-              Plano Ecossistema
+              PLANO UNITRIX
             </p>
             <Badge className="bg-primary/10 text-primary text-[10px] gap-1 px-2">
               <Zap className="h-2.5 w-2.5" /> Melhor custo
