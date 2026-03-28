@@ -117,7 +117,7 @@ export default function PricingCards() {
           <div className="p-6 space-y-4">
             <div>
               <p className="text-xs font-medium text-primary uppercase tracking-wider flex items-center gap-1">
-                <Layers className="h-3 w-3" /> Ecossistema
+                <Layers className="h-3 w-3" /> UNITRIX
               </p>
               <h3 className="font-display text-lg font-bold text-foreground mt-1">Anual</h3>
             </div>
