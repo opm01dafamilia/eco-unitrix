@@ -77,7 +77,7 @@ export default function AdminUserAccess() {
           const appSub = userSubs.find((s) => s.app_key === appKey && (!s.expires_at || new Date(s.expires_at) >= new Date()));
 
           if (ecosystemSub) {
-            return { appKey, accessType: "paid" as AccessType, origin: "Assinatura Ecossistema", startedAt: ecosystemSub.started_at, expiresAt: ecosystemSub.expires_at };
+            return { appKey, accessType: "paid" as AccessType, origin: "Assinatura UNITRIX", startedAt: ecosystemSub.started_at, expiresAt: ecosystemSub.expires_at };
           }
           if (appSub) {
             return { appKey, accessType: "paid" as AccessType, origin: "Assinatura", startedAt: appSub.started_at, expiresAt: appSub.expires_at };

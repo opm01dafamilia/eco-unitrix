@@ -38,7 +38,6 @@ export default function SettingsPage() {
     .slice(0, 2)
     .toUpperCase() ?? "U";
 
-  // Apply theme on mount
   useEffect(() => {
     if (profile?.theme_preference) {
       document.documentElement.classList.toggle("dark", profile.theme_preference === "dark");
@@ -150,10 +149,10 @@ export default function SettingsPage() {
   if (isLoading) {
     return (
       <div className="max-w-3xl mx-auto space-y-8">
-        <Skeleton className="h-10 w-48 rounded-lg" />
-        <Skeleton className="h-48 rounded-xl" />
-        <Skeleton className="h-36 rounded-xl" />
-        <Skeleton className="h-36 rounded-xl" />
+        <Skeleton className="h-10 w-48 rounded-xl" />
+        <Skeleton className="h-52 rounded-2xl" />
+        <Skeleton className="h-40 rounded-2xl" />
+        <Skeleton className="h-40 rounded-2xl" />
       </div>
     );
   }
@@ -168,33 +167,36 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground">Configurações</h1>
+      <h1 className="font-display text-2xl md:text-3xl font-bold text-foreground tracking-tight">Configurações</h1>
 
       <div className="space-y-5">
         {/* Avatar & Account Data */}
-        <div className="rounded-xl border border-border bg-card p-5 md:p-6">
-          <h2 className="font-display text-base font-semibold text-foreground flex items-center gap-2 mb-4">
-            <User className="h-4 w-4 text-primary" /> Dados da Conta
+        <div className="rounded-2xl glass-card p-6 md:p-7">
+          <h2 className="font-display text-base font-bold text-foreground flex items-center gap-2.5 mb-5">
+            <div className="rounded-xl bg-primary/10 p-2">
+              <User className="h-4 w-4 text-primary" />
+            </div>
+            Dados da Conta
           </h2>
 
           {/* Avatar */}
-          <div className="flex items-center gap-4 mb-5 pb-4 border-b border-border">
+          <div className="flex items-center gap-4 mb-5 pb-5 border-b border-border/30">
             <div className="relative group">
               {profile?.avatar_url ? (
                 <img
                   src={profile.avatar_url}
                   alt="Avatar"
-                  className="h-16 w-16 rounded-full object-cover border-2 border-border"
+                  className="h-16 w-16 rounded-2xl object-cover border-2 border-border/50 shadow-lg"
                 />
               ) : (
-                <div className="h-16 w-16 rounded-full bg-primary/20 flex items-center justify-center text-lg font-bold text-primary font-display border-2 border-border">
+                <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary/20 to-accent/10 flex items-center justify-center text-lg font-bold text-primary font-display border-2 border-primary/10">
                   {initials}
                 </div>
               )}
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={avatarLoading}
-                className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                className="absolute inset-0 rounded-2xl bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200"
               >
                 {avatarLoading ? (
                   <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -211,32 +213,32 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-              <p className="text-sm font-medium text-foreground">{profile?.full_name || "Sem nome"}</p>
-              <p className="text-xs text-muted-foreground">{profile?.email}</p>
+              <p className="text-sm font-semibold text-foreground">{profile?.full_name || "Sem nome"}</p>
+              <p className="text-xs text-muted-foreground/70">{profile?.email}</p>
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="text-xs text-primary hover:underline mt-1"
+                className="text-xs text-primary hover:underline mt-1 font-medium"
               >
                 Alterar foto
               </button>
             </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-0">
             {/* Name */}
-            <div className="flex items-center justify-between py-2 border-b border-border">
+            <div className="flex items-center justify-between py-3.5 border-b border-border/30">
               <span className="text-sm text-muted-foreground">Nome</span>
               {editingName ? (
                 <div className="flex items-center gap-2">
-                  <Input value={name} onChange={(e) => setName(e.target.value)} className="h-8 w-48" />
-                  <Button size="sm" variant="ghost" onClick={handleSaveName} disabled={updateProfile.isPending}>
+                  <Input value={name} onChange={(e) => setName(e.target.value)} className="h-8 w-48 rounded-lg" />
+                  <Button size="sm" variant="ghost" onClick={handleSaveName} disabled={updateProfile.isPending} className="rounded-lg">
                     <Save className="h-3 w-3" />
                   </Button>
-                  <Button size="sm" variant="ghost" onClick={() => setEditingName(false)}>✕</Button>
+                  <Button size="sm" variant="ghost" onClick={() => setEditingName(false)} className="rounded-lg">✕</Button>
                 </div>
               ) : (
                 <button
-                  className="text-sm text-foreground font-medium hover:text-primary transition-colors"
+                  className="text-sm text-foreground font-semibold hover:text-primary transition-colors"
                   onClick={() => { setName(profile?.full_name ?? ""); setEditingName(true); }}
                 >
                   {profile?.full_name || "Sem nome"} ✎
@@ -245,7 +247,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Email */}
-            <div className="flex items-center justify-between py-2 border-b border-border">
+            <div className="flex items-center justify-between py-3.5 border-b border-border/30">
               <span className="text-sm text-muted-foreground">E-mail</span>
               {editingEmail ? (
                 <div className="flex items-center gap-2">
@@ -254,16 +256,16 @@ export default function SettingsPage() {
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
                     placeholder="Novo e-mail"
-                    className="h-8 w-48"
+                    className="h-8 w-48 rounded-lg"
                   />
-                  <Button size="sm" onClick={handleChangeEmail} disabled={emailLoading}>
+                  <Button size="sm" onClick={handleChangeEmail} disabled={emailLoading} className="rounded-lg btn-gradient">
                     {emailLoading ? <div className="h-3 w-3 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> : "Salvar"}
                   </Button>
-                  <Button size="sm" variant="ghost" onClick={() => setEditingEmail(false)}>✕</Button>
+                  <Button size="sm" variant="ghost" onClick={() => setEditingEmail(false)} className="rounded-lg">✕</Button>
                 </div>
               ) : (
                 <button
-                  className="text-sm text-foreground font-medium hover:text-primary transition-colors"
+                  className="text-sm text-foreground font-semibold hover:text-primary transition-colors"
                   onClick={() => { setNewEmail(profile?.email ?? ""); setEditingEmail(true); }}
                 >
                   {profile?.email} ✎
@@ -272,56 +274,59 @@ export default function SettingsPage() {
             </div>
 
             {/* Created at */}
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between py-3.5">
               <span className="text-sm text-muted-foreground">Conta criada em</span>
-              <span className="text-sm text-foreground font-medium">{createdDate}</span>
+              <span className="text-sm text-foreground font-semibold">{createdDate}</span>
             </div>
           </div>
         </div>
 
         {/* Preferences */}
-        <div className="rounded-xl border border-border bg-card p-5 md:p-6">
-          <h2 className="font-display text-base font-semibold text-foreground flex items-center gap-2 mb-4">
-            <Palette className="h-4 w-4 text-primary" /> Preferências
+        <div className="rounded-2xl glass-card p-6 md:p-7">
+          <h2 className="font-display text-base font-bold text-foreground flex items-center gap-2.5 mb-5">
+            <div className="rounded-xl bg-primary/10 p-2">
+              <Palette className="h-4 w-4 text-primary" />
+            </div>
+            Preferências
           </h2>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between py-2 border-b border-border">
-              <div className="flex items-center gap-2">
+          <div className="space-y-0">
+            <div className="flex items-center justify-between py-3.5 border-b border-border/30">
+              <div className="flex items-center gap-2.5">
                 <Monitor className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Tema</span>
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => handleThemeChange("dark")}
-                  className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${
+                  className={`text-xs px-4 py-2 rounded-xl border transition-all duration-200 font-semibold ${
                     profile?.theme_preference === "dark"
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border text-muted-foreground hover:border-primary/50"
+                      ? "border-primary/30 bg-primary/10 text-primary shadow-sm"
+                      : "border-border/50 text-muted-foreground hover:border-primary/30 hover:bg-primary/5"
                   }`}
                 >
                   Escuro
                 </button>
                 <button
                   onClick={() => handleThemeChange("light")}
-                  className={`text-xs px-3 py-1.5 rounded-md border transition-colors ${
+                  className={`text-xs px-4 py-2 rounded-xl border transition-all duration-200 font-semibold ${
                     profile?.theme_preference === "light"
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border text-muted-foreground hover:border-primary/50"
+                      ? "border-primary/30 bg-primary/10 text-primary shadow-sm"
+                      : "border-border/50 text-muted-foreground hover:border-primary/30 hover:bg-primary/5"
                   }`}
                 >
                   Claro
                 </button>
               </div>
             </div>
-            <div className="flex items-center justify-between py-2 border-b border-border">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between py-3.5 border-b border-border/30">
+              <div className="flex items-center gap-2.5">
                 <Globe className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Idioma</span>
               </div>
-              <span className="text-sm text-foreground font-medium">Português (BR)</span>
+              <span className="text-sm text-foreground font-semibold">Português (BR)</span>
             </div>
-            <div className="flex items-center justify-between py-2">
-              <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between py-3.5">
+              <div className="flex items-center gap-2.5">
                 <Bell className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Notificações</span>
               </div>
@@ -331,20 +336,23 @@ export default function SettingsPage() {
         </div>
 
         {/* Security */}
-        <div className="rounded-xl border border-border bg-card p-5 md:p-6">
-          <h2 className="font-display text-base font-semibold text-foreground flex items-center gap-2 mb-4">
-            <Shield className="h-4 w-4 text-primary" /> Segurança
+        <div className="rounded-2xl glass-card p-6 md:p-7">
+          <h2 className="font-display text-base font-bold text-foreground flex items-center gap-2.5 mb-5">
+            <div className="rounded-xl bg-primary/10 p-2">
+              <Shield className="h-4 w-4 text-primary" />
+            </div>
+            Segurança
           </h2>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between py-2 border-b border-border">
-              <div className="flex items-center gap-2">
+          <div className="space-y-0">
+            <div className="flex items-center justify-between py-3.5 border-b border-border/30">
+              <div className="flex items-center gap-2.5">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">Último login</span>
               </div>
-              <span className="text-sm text-foreground font-medium">{lastSignIn}</span>
+              <span className="text-sm text-foreground font-semibold">{lastSignIn}</span>
             </div>
 
-            <div className="flex items-center justify-between py-2 border-b border-border">
+            <div className="flex items-center justify-between py-3.5 border-b border-border/30">
               <span className="text-sm text-muted-foreground">Alterar senha</span>
               {changingPassword ? (
                 <div className="flex items-center gap-2">
@@ -353,16 +361,16 @@ export default function SettingsPage() {
                     placeholder="Nova senha"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="h-8 w-48"
+                    className="h-8 w-48 rounded-lg"
                   />
-                  <Button size="sm" onClick={handleChangePassword} disabled={passwordLoading}>
+                  <Button size="sm" onClick={handleChangePassword} disabled={passwordLoading} className="rounded-lg btn-gradient">
                     {passwordLoading ? <div className="h-3 w-3 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" /> : "Salvar"}
                   </Button>
-                  <Button size="sm" variant="ghost" onClick={() => setChangingPassword(false)}>Cancelar</Button>
+                  <Button size="sm" variant="ghost" onClick={() => setChangingPassword(false)} className="rounded-lg">Cancelar</Button>
                 </div>
               ) : (
                 <button
-                  className="text-sm text-primary hover:underline"
+                  className="text-sm text-primary hover:underline font-semibold"
                   onClick={() => setChangingPassword(true)}
                 >
                   Alterar
@@ -370,23 +378,23 @@ export default function SettingsPage() {
               )}
             </div>
 
-            <div className="flex items-center justify-between py-2 border-b border-border">
+            <div className="flex items-center justify-between py-3.5 border-b border-border/30">
               <span className="text-sm text-muted-foreground">Sessão ativa</span>
-              <div className="flex items-center gap-1.5 text-xs text-primary">
+              <div className="flex items-center gap-1.5 text-xs text-primary font-semibold">
                 <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                 Conectado
               </div>
             </div>
 
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between py-3.5">
               <span className="text-sm text-muted-foreground">Autenticação em 2 fatores</span>
-              <span className="text-sm text-foreground font-medium">Desativada</span>
+              <span className="text-sm text-foreground font-semibold">Desativada</span>
             </div>
           </div>
         </div>
 
         {/* Logout */}
-        <Button variant="destructive" className="w-full" onClick={handleLogout}>
+        <Button variant="destructive" className="w-full rounded-xl h-12 text-sm font-bold" onClick={handleLogout}>
           <LogOut className="h-4 w-4 mr-2" /> Sair da conta
         </Button>
       </div>

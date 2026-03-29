@@ -27,6 +27,12 @@ const appAccents: Record<string, { gradient: string; shadow: string; badge: stri
     badge: "from-rose-500 to-pink-400",
     glow: "hsl(350 60% 50% / 0.08)",
   },
+  marketflow: {
+    gradient: "from-amber-500 to-orange-400",
+    shadow: "shadow-amber-500/20",
+    badge: "from-amber-500 to-orange-400",
+    glow: "hsl(30 70% 50% / 0.08)",
+  },
 };
 
 const defaultAccent = {
@@ -45,10 +51,10 @@ interface DemoAppGridProps {
 export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProps) {
   return (
     <section className="animate-fade-in" style={{ animationDelay: "0.1s" }}>
-      <h2 className="font-display text-base sm:text-lg font-bold text-foreground mb-4 tracking-tight">
+      <h2 className="font-display text-base sm:text-lg font-bold text-foreground mb-5 tracking-tight">
         Seus Aplicativos
       </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
         {apps.map((app, i) => {
           const Icon = getAppIcon(app.app_key);
           const isLaunching = launchingAppKey === app.app_key;
@@ -57,51 +63,69 @@ export function DemoAppGrid({ apps, onLaunch, launchingAppKey }: DemoAppGridProp
           return (
             <div
               key={app.id}
-              className="rounded-2xl glass-card overflow-hidden card-glow group"
-              style={{ animationDelay: `${0.12 + i * 0.04}s` }}
+              className="rounded-2xl glass-card overflow-hidden group transition-all duration-500 hover:border-primary/30 hover:-translate-y-1"
+              style={{
+                animationDelay: `${0.12 + i * 0.04}s`,
+                boxShadow: `0 0 0 0 transparent`,
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.boxShadow = `0 0 24px 4px ${accent.glow.replace('0.08', '0.22')}, inset 0 0 0 1px ${accent.glow.replace('0.08', '0.12')}`; }}
+              onMouseLeave={(e) => { e.currentTarget.style.boxShadow = `0 0 0 0 transparent`; }}
             >
-              {/* Subtle top glow line */}
-              <div className={`h-[2px] bg-gradient-to-r ${accent.gradient} opacity-40 group-hover:opacity-70 transition-opacity duration-500`} />
+              {/* Top accent line */}
+              <div className={`h-[2px] bg-gradient-to-r ${accent.gradient} opacity-30 group-hover:opacity-90 transition-opacity duration-500`} />
 
-              <div className="p-4 sm:p-5 flex flex-col">
+              <div className="p-5 sm:p-6 flex flex-col min-h-[240px]">
                 {/* Badge */}
-                <span className={`self-start rounded-md bg-gradient-to-r ${accent.badge} px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white mb-4 shadow-sm ${accent.shadow}`}>
-                  Teste Grátis
-                </span>
+                {app.app_status !== "active" ? (
+                  <span className="self-start rounded-lg bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-amber-400 mb-5">
+                    Em Breve
+                  </span>
+                ) : (
+                  <span className={`self-start rounded-lg bg-gradient-to-r ${accent.badge} px-2.5 py-1 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest text-white mb-5 shadow-sm ${accent.shadow}`}>
+                    Teste Grátis
+                  </span>
+                )}
 
                 {/* Icon + Name */}
-                <div className="flex items-center gap-3 mb-2.5">
-                  <div className={`rounded-xl bg-gradient-to-br ${accent.gradient} p-2.5 shrink-0 shadow-lg ${accent.shadow}`}>
+                <div className="flex items-center gap-3.5 mb-4">
+                  <div className={`rounded-xl bg-gradient-to-br ${accent.gradient} p-3 shrink-0 shadow-lg ${accent.shadow}`}>
                     {Icon ? (
                       <Icon className="h-5 w-5 text-white" strokeWidth={1.8} />
                     ) : (
                       <AppWindow className="h-5 w-5 text-white" strokeWidth={1.8} />
                     )}
                   </div>
-                  <h3 className="font-display font-bold text-foreground text-sm leading-tight tracking-tight">
+                  <h3 className="font-semibold text-foreground text-[15px] leading-snug tracking-tight">
                     {app.app_name}
                   </h3>
                 </div>
 
                 {/* Description */}
-                <p className="text-[11px] text-muted-foreground/70 line-clamp-2 mb-5 leading-relaxed flex-1">
+                <p className="text-xs text-muted-foreground line-clamp-2 mb-6 leading-relaxed flex-1">
                   {app.app_description || "Explore as funcionalidades com IA."}
                 </p>
 
                 {/* Button */}
-                <button
-                  onClick={() => onLaunch(app)}
-                  disabled={isLaunching}
-                  className={`w-full flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r ${accent.gradient} px-4 py-3 text-xs font-bold text-white transition-all duration-300 active:scale-[0.97] disabled:opacity-60 hover:shadow-lg ${accent.shadow} min-h-[46px]`}
-                >
-                  {isLaunching ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" /> Abrindo...
-                    </>
-                  ) : (
-                    "Abrir App"
-                  )}
-                </button>
+                {app.app_status !== "active" ? (
+                  <div className="w-full flex items-center justify-center gap-2 rounded-2xl bg-amber-500/10 border border-amber-500/20 px-4 text-[13px] font-semibold tracking-wide text-amber-400 h-[46px] cursor-default">
+                    Em breve
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => onLaunch(app)}
+                    disabled={isLaunching}
+                    className={`w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r ${accent.gradient} px-4 text-[13px] font-semibold tracking-wide text-white transition-all duration-300 active:scale-[0.97] disabled:opacity-60 hover:brightness-110 hover:-translate-y-0.5 hover:shadow-lg ${accent.shadow} h-[46px]`}
+                    style={{ boxShadow: `0 0 12px 0 ${accent.glow.replace('0.08', '0.22')}` }}
+                  >
+                    {isLaunching ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" /> Abrindo...
+                      </>
+                    ) : (
+                      "Abrir App"
+                    )}
+                  </button>
+                )}
               </div>
             </div>
           );
