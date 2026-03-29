@@ -65,10 +65,12 @@ export default function Dashboard() {
           <div className="rounded-xl bg-gradient-to-br from-primary to-accent p-2.5 shadow-lg shadow-primary/20 shrink-0">
             <Layers className="h-4 w-4 text-white" strokeWidth={2} />
           </div>
-          <span className="text-sm sm:text-base font-extrabold text-foreground truncate tracking-tight">
+
+          <span className="font-display text-sm sm:text-base font-bold text-foreground truncate tracking-tight">
             UNITRIX
           </span>
         </div>
+
         <Link
           to="/subscription"
           className="inline-flex items-center gap-2 rounded-xl glass-card px-4 sm:px-5 py-2.5 text-[11px] sm:text-xs font-bold text-foreground/80 hover:text-foreground transition-all duration-300 shrink-0 min-h-[40px] hover:border-primary/20"

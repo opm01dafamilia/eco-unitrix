@@ -6,12 +6,17 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "::",
-    port: 8080,
-    hmr: {
-      overlay: false,
-    },
-  },
+  host: "::",
+  port: 8080,
+  hmr: {
+    overlay: false,
+   },
+ },
+
+  preview: {
+   allowedHosts: ["eco.unitrixapp.com.br"]
+ },
+
   plugins: [
     react(),
     mode === "development" && componentTagger(),

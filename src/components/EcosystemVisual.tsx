@@ -16,7 +16,7 @@ const apps: AppNode[] = [
 
 const values = [
   { icon: LogIn, text: "Login único para tudo" },
-  { icon: Layers, text: "Plataforma centralizada" },
+  { icon: Layers, text: "Central da UNITRIX" },
   { icon: Sparkles, text: "Apps especializados" },
   { icon: Link2, text: "Tudo conectado" },
   { icon: Rocket, text: "Expansão contínua" },
@@ -35,7 +35,7 @@ export default function EcosystemVisual() {
           Uma plataforma, vários apps <span className="gradient-text">conectados</span>
         </h2>
         <p className="text-muted-foreground leading-relaxed text-base">
-          Acesse o UNITRIX com login único. Cada aplicativo é especializado, mas todos fazem parte do mesmo sistema integrado.
+          Acesse a UNITRIX com login único. Cada aplicativo é especializado, mas todos fazem parte do mesmo sistema integrado.
         </p>
       </div>
 
@@ -47,7 +47,7 @@ export default function EcosystemVisual() {
             <Hexagon className="h-10 w-10 text-primary" />
           </div>
           <span className="mt-3 text-sm font-extrabold text-foreground tracking-tight">UNITRIX</span>
-          <span className="text-[11px] text-muted-foreground">Central de aplicativos</span>
+          <span className="text-[11px] text-muted-foreground">Central da UNITRIX</span>
         </div>
 
         {/* Connector line */}
@@ -60,7 +60,6 @@ export default function EcosystemVisual() {
               key={app.name}
               className="group flex flex-col items-center gap-2.5 rounded-2xl glass-card p-5 transition-all duration-500 card-glow"
             >
-              {/* tiny connector on desktop */}
               <div className="hidden sm:block mx-auto -mt-8 mb-1 h-4 w-px bg-border/40 group-hover:bg-primary/40 transition-colors duration-300" />
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary/15 group-hover:scale-105">
                 <app.icon className="h-6 w-6" />

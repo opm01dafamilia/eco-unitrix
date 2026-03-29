@@ -14,7 +14,8 @@ export function DashboardFooter() {
             </Link>
           </div>
         </div>
-        <p className="text-[10px] text-muted-foreground/35 text-center tracking-wide">
+
+        <p className="text-[10px] text-muted-foreground/40 text-center tracking-wide">
           © {new Date().getFullYear()} UNITRIX. Todos os direitos reservados.
         </p>
       </div>

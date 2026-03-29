@@ -17,6 +17,7 @@ export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
         background: "linear-gradient(135deg, hsl(var(--primary) / 0.06) 0%, hsl(var(--accent) / 0.04) 50%, hsl(255 80% 65% / 0.05) 100%)",
         boxShadow: "0 0 40px 0 hsl(var(--primary) / 0.08), inset 0 1px 0 0 hsl(0 0% 100% / 0.05)"
       }}>
+      
       {/* Gradient orbs */}
       <div className="absolute -top-28 -right-28 w-56 sm:w-80 h-56 sm:h-80 rounded-full pointer-events-none"
         style={{ background: "radial-gradient(circle, hsl(255 80% 65% / 0.12), transparent 65%)" }} />
@@ -28,7 +29,12 @@ export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
       <div className="relative z-10 space-y-5">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-foreground leading-[1.15] tracking-tight drop-shadow-sm">
           Olá, {firstName}! Bem-vindo ao{" "}
-          <span className="gradient-text font-black tracking-wide" style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.3)" }}>UNITRIX</span>.
+          <span 
+            className="gradient-text font-black tracking-wide"
+            style={{ textShadow: "0 0 30px hsl(var(--primary) / 0.3)" }}
+          >
+            UNITRIX
+          </span>.
         </h1>
 
         {isTrial && days !== null ? (
@@ -41,7 +47,7 @@ export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
           </p>
         ) : isDemo ? (
           <p className="text-foreground/80 text-sm sm:text-base flex flex-wrap items-center gap-2 leading-relaxed">
-            Assine para desbloquear todos os aplicativos
+            Assine para desbloquear todo o UNITRIX
           </p>
         ) : (
           <p className="text-foreground/80 text-sm sm:text-base leading-relaxed">
@@ -53,7 +59,7 @@ export function HeroCard({ firstName, isLoading, isDemo }: HeroCardProps) {
           {isTrial
             ? "Aproveite seu acesso gratuito por tempo limitado. Explore todos os aplicativos e descubra o poder do UNITRIX."
             : isDemo
-              ? "Assine um plano para liberar o acesso completo a todos os aplicativos."
+              ? "Assine um plano para liberar o acesso completo ao UNITRIX."
               : "Explore nossos aplicativos e aproveite ao máximo o seu acesso."}
         </p>
       </div>

@@ -60,7 +60,7 @@ export default function DestinationChooser() {
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-foreground">UNITRIX</p>
                 <p className="text-xs text-muted-foreground">
-                  Acesse a central com todos os recursos
+                  Acesse o centro de controle da UNITRIX
                 </p>
               </div>
               <ArrowRight className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />

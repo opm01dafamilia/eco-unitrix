@@ -47,7 +47,7 @@ export function AppSidebar() {
           {!collapsed && (
             <div className="flex flex-col">
               <span className="font-display text-sm font-extrabold text-foreground tracking-tight">UNITRIX</span>
-              <span className="text-[11px] text-muted-foreground/70">Central de Aplicativos</span>
+              <span className="text-[11px] text-muted-foreground/70">Central da UNITRIX</span>
             </div>
           )}
         </div>
@@ -116,7 +116,9 @@ export function AppSidebar() {
         {!collapsed && (
           <div className="rounded-xl border border-border/50 bg-secondary/30 backdrop-blur-sm p-3">
             <p className="text-[10px] text-muted-foreground/60 uppercase tracking-wider font-semibold">Logado como</p>
-            <p className="text-sm font-semibold text-foreground truncate mt-0.5">{profile?.full_name || profile?.email || "..."}</p>
+            <p className="text-sm font-semibold text-foreground truncate mt-0.5">
+              {profile?.full_name || profile?.email || "..."}
+            </p>
           </div>
         )}
         <button
